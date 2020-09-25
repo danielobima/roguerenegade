@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - joystick
+  - gun
+  - Playergun
+  - Fire
+  - Attack Handler
+  - GameMech
+  - enemy
+  - healthBar
+  - pickUpGun
+  - DroppedGun
+  - PlayerMiddleSpine
+  - joystickImg
+  - shootButton
+  - playerRightElbow
+  - wall
+  - floor
+  - SecondaryGun
+  - switchGun
+  - dropGun
+  - Pause menu
+  - pickup
+  - DroppedGrenade
+  - Grenade
+  - throw
+  - Spawners
+  - screenButtons
+  - SlowMoBar
+  - FlashBar
+  - crossHair
+  - scopeBlackness
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - World
+  - Enemies
+  - Barrier
+  - pickups
+  - bullets
+  - Player
+  - RPG
+  - AimHelper
+  - noBloom
+  - flash
+  - CameraCollision
+  - Armature bones
+  - floor
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
