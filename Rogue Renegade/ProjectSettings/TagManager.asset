@@ -34,6 +34,8 @@ TagManager:
   - FlashBar
   - crossHair
   - scopeBlackness
+  - thirdPersonCam
+  - AimCylinder
   layers:
   - Default
   - TransparentFX

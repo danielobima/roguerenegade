@@ -20,6 +20,10 @@ public class GameMech : MonoBehaviour
     public Volume volume;
     private Transform player;
     private DepthOfField depthOfField;
+    public GameObject[] playerSpawners;
+    public GameObject playerAsset;
+    public bool playerSpawned = true;
+    public bool canSpawnPlayer = true;
    
 
     void Start()
@@ -40,8 +44,57 @@ public class GameMech : MonoBehaviour
         {
             depthOfField = dof;
         }
-        player = GameObject.FindGameObjectWithTag("Player").transform;
+        if (playerSpawned)
+        {
+            player = GameObject.FindGameObjectWithTag("Player").transform;
+        }
+        else
+        {
+            if (canSpawnPlayer)
+            {
+                spawnPlayer(true);
+            }
+        }
         Cursor.visible = false;
+    }
+    public void spawnPlayer(bool randomPoint, int spawner = 0)
+    {
+        if (randomPoint)
+        {
+            spawner = Random.Range(0, playerSpawners.Length);
+            Instantiate(playerAsset, playerSpawners[spawner].transform.position, playerSpawners[spawner].transform.rotation);
+        }
+        else
+        {
+            Instantiate(playerAsset, playerSpawners[spawner].transform.position, playerSpawners[spawner].transform.rotation);
+        }
+        extraSetup();
+    }
+    public GameObject spawnAndReturnPlayer(bool randomPoint, int spawner = 0)
+    {
+        GameObject go;
+        if (randomPoint)
+        {
+            spawner = Random.Range(0, playerSpawners.Length);
+            go = Instantiate(playerAsset, playerSpawners[spawner].transform.position, playerSpawners[spawner].transform.rotation);
+        }
+        else
+        {
+           go = Instantiate(playerAsset, playerSpawners[spawner].transform.position, playerSpawners[spawner].transform.rotation);
+        }
+        extraSetup();
+        return go;
+    }
+    public void extraSetup()
+    {
+        playerSpawned = true;
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+        GameplayButtons[] gameplayButtons = FindObjectsOfType<GameplayButtons>();
+        foreach (GameplayButtons g in gameplayButtons)
+        {
+            g.getPlayer();
+        }
+        screentexts.getPlayer();
     }
     public void setQuality()
     {
@@ -92,22 +145,7 @@ public class GameMech : MonoBehaviour
                 ResumeGame();
             }
         }
-        if(depthOfField != null)
-        {
-            if (!PlayerGun.isFineAim)
-            {
-                depthOfField.active = true;
-                depthOfField.focusDistance.value = Vector3.Distance(Camera.main.transform.position, player.position);
-            }
-            else
-            {
-                depthOfField.active = false;
-                /*if(Physics.Raycast(Camera.main.transform.position,Camera.main.transform.forward,out RaycastHit hit))
-                {
-                    depthOfField.focusDistance.value = Vector3.Distance(Camera.main.transform.position, hit.collider.transform.position);
-                }*/
-            }
-        }
+        
     }
     public void PauseGame()
     {

@@ -2260,6 +2260,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 502a78fa82ec88b419addaa870e548dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   isUsingKeyBoard: 0
   motion: 0
   speed: 5
@@ -2301,6 +2303,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9f15fc3f92edae419d6c4eb7bb82f20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   smoke: {fileID: 198029985508498878, guid: e026391e924d9bc4ea95bd86b1ef48ed, type: 3}
   bullet: {fileID: 1653814031381372, guid: 46be1246a2cba5d46b7eaea8b1b6eb64, type: 3}
   shotGunBullet: {fileID: 3438188127385316086, guid: 299b522cee62ad24ab66ef8257d08ef4,
@@ -2314,7 +2318,7 @@ MonoBehaviour:
   rightElbow: {fileID: 6141980848758515218}
   rightArm: {fileID: 6351458132049038708}
   head: {fileID: 3805334362390044179}
-  playerMiddleSpine: {fileID: 0}
+  playerMiddleSpine: {fileID: 5751596783464025244}
   attacking: 0
   addSpeed: 0.5
   meleeDamage: 2.5
@@ -2326,8 +2330,6 @@ MonoBehaviour:
   bloodParticleSystem: {fileID: 5209554905794623516, guid: 8f08a9b059de55e4fa6c4a35c9d96b78,
     type: 3}
   ammoText: 
-  veryFineAimCam: {fileID: 0}
-  fineAimCam: {fileID: 0}
   thirdPersonCam: {fileID: 0}
   isRecoil: 0
   gunDrop: {fileID: 0}

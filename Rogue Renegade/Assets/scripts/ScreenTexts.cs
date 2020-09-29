@@ -8,7 +8,7 @@ public class ScreenTexts : MonoBehaviour
     public Text AmmoText;
     public GameObject AmmoTextP;
     private PlayerGun playerGun;
-    private GameObject gameMech;
+    private GameMech gameMech;
     public GameObject pickupGunButton;
     private bool hasSetOff = false;
     private bool hasSetOn = false;
@@ -31,7 +31,14 @@ public class ScreenTexts : MonoBehaviour
     private void Start()
     {
 
-        gameMech = GameObject.FindGameObjectWithTag("GameMech");
+        gameMech = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMech>();
+        if (gameMech.playerSpawned)
+        {
+            getPlayer();
+        }
+    }
+    public void getPlayer()
+    {
         playerGun = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerGun>();
     }
     public void changeGunIcon(){
@@ -154,87 +161,90 @@ public class ScreenTexts : MonoBehaviour
     {
 
 
-        if (playerGun.gun != null)
+        if (gameMech.playerSpawned)
         {
-            if (!hasSetOn)
+            if (playerGun.gun != null)
             {
-                AmmoText.gameObject.SetActive(true);
-                AmmoTextP.gameObject.SetActive(true);
-                
-                hasSetOn = true;
-                hasSetOff = false;
-            }
-
-            AmmoText.text = playerGun.ammoText;
-            if (playerGun.ammoText == "0/0")
-            {
-                AmmoText.color = new Color(1, 0, 0);
-            }
-            else
-            {
-                AmmoText.color = new Color(1, 1, 1);
-            }
-            if (playerGun.isReloading)
-            {
-                AmmoBar.gameObject.SetActive(true);
-                abf += 1 * Time.deltaTime;
-                if(abf <= 1)
+                if (!hasSetOn)
                 {
-                    AmmoBar.transform.localScale = new Vector3(abf, 1, 1);
+                    AmmoText.gameObject.SetActive(true);
+                    AmmoTextP.gameObject.SetActive(true);
+
+                    hasSetOn = true;
+                    hasSetOff = false;
+                }
+
+                AmmoText.text = playerGun.ammoText;
+                if (playerGun.ammoText == "0/0")
+                {
+                    AmmoText.color = new Color(1, 0, 0);
                 }
                 else
                 {
-                    AmmoBar.transform.localScale = new Vector3(1, 1, 1);
+                    AmmoText.color = new Color(1, 1, 1);
+                }
+                if (playerGun.isReloading)
+                {
+                    AmmoBar.gameObject.SetActive(true);
+                    abf += 1 * Time.deltaTime;
+                    if (abf <= 1)
+                    {
+                        AmmoBar.transform.localScale = new Vector3(abf, 1, 1);
+                    }
+                    else
+                    {
+                        AmmoBar.transform.localScale = new Vector3(1, 1, 1);
+                    }
+                }
+                else
+                {
+                    AmmoBar.gameObject.SetActive(false);
+                    abf = 0;
                 }
             }
             else
             {
-                AmmoBar.gameObject.SetActive(false);
-                abf = 0;
-            }
-        }
-        else
-        {
-            if (!hasSetOff)
-            {
-                AmmoText.gameObject.SetActive(false);
-                if(secondaryGun == null)
+                if (!hasSetOff)
                 {
-                    AmmoTextP.gameObject.SetActive(false);
+                    AmmoText.gameObject.SetActive(false);
+                    if (secondaryGun == null)
+                    {
+                        AmmoTextP.gameObject.SetActive(false);
+                    }
+                    if (primaryGun != null)
+                    {
+                        Destroy(primaryGun);
+                    }
+                    hasSetOn = false;
+                    hasSetOff = true;
                 }
-                if(primaryGun != null)
-                {
-                    Destroy(primaryGun);
-                }
-                hasSetOn = false;
-                hasSetOff = true;
-            }
 
-        }
-        if(playerGun.grenadeDrop != null || playerGun.gunDrop != null)
-        {
-            if(gunDropCache != null)
+            }
+            if (playerGun.grenadeDrop != null || playerGun.gunDrop != null)
             {
-                if (gunDropCache != playerGun.grenadeDrop && gunDropCache != playerGun.gunDrop)
+                if (gunDropCache != null)
+                {
+                    if (gunDropCache != playerGun.grenadeDrop && gunDropCache != playerGun.gunDrop)
+                    {
+                        changeGunDropIcon();
+                    }
+                }
+                else
                 {
                     changeGunDropIcon();
                 }
             }
             else
             {
-                changeGunDropIcon();
-            }
-        }
-        else
-        {
-            if(gunDrop != null)
-            {
-                Destroy(gunDrop);
-                gunDropCache = null;
+                if (gunDrop != null)
+                {
+                    Destroy(gunDrop);
+                    gunDropCache = null;
+                }
             }
         }
 
-        if (gameMech.GetComponent<SurvivalMech>())
+        if (gameMech.GetComponent<SurvivalMech>() != null)
         {
             if (SurvivalMech.survivalOngoing)
             {

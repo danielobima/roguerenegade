@@ -19,14 +19,23 @@ public class GameplayButtons : MonoBehaviour, IDragHandler, IPointerDownHandler,
 
     private void Start()
     {
-        playerGun = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerGun>();
-        playerMotion = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMotion>();
+       
+        
         gameMech = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMech>();
+        if (gameMech.playerSpawned)
+        {
+            getPlayer();
+        }
         button = GetComponent<Image>();
         if (!buttonFunction.Equals("pause") && !buttonFunction.Equals("resume"))
         {
             text = transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         }
+    }
+    public void getPlayer()
+    {
+        playerGun = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerGun>();
+        playerMotion = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMotion>();
     }
     
     public virtual void OnDrag(PointerEventData ped)
@@ -160,6 +169,7 @@ public class GameplayButtons : MonoBehaviour, IDragHandler, IPointerDownHandler,
                 Debug.Log("yeet");
                 break;
             case "exit":
+                Debug.Log("Exited");
                 Application.Quit();
                 break;
 

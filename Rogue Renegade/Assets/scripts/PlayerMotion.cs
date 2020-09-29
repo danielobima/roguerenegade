@@ -5,11 +5,12 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 using Cinemachine;
+using Mirror;
 
-public class PlayerMotion : MonoBehaviour {
+public class PlayerMotion : NetworkBehaviour {
 
     public bool isUsingKeyBoard = true;
-   
+
     //reference variables.
     private Transform myTransform;
     private GameObject cam;
@@ -21,7 +22,6 @@ public class PlayerMotion : MonoBehaviour {
     public float speed = 10;
     private float initSpeed;
     private float halfSpeed;
-    private float slowMoSpeed;
     private float startSpeed;
     private Vector3 difference;
     private Rigidbody rigidBody;
@@ -57,7 +57,7 @@ public class PlayerMotion : MonoBehaviour {
     public Material trailMat;
     public int abilityType = 0;
     public float slowMoMeter = 1;
-    private GameObject slowMoBar;
+    //private GameObject slowMoBar;
     public float slowMoCoolDown = 2;
     public float slowMoBarRatio = 0;
     private Animator slowMoBarGlow;
@@ -87,76 +87,102 @@ public class PlayerMotion : MonoBehaviour {
     public Transform cylinder;
     private Vector3 screenPoint;
     private Vector3 offset;
+    private PlayerMultiDetails playerMultiDetails;
+
 
 
     private void Start()
     {
-        
-        screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
-        offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
-        rigidBody = GetComponent<Rigidbody>();
-        playerGun = GetComponent<PlayerGun>();
-        animator = GetComponent<Animator>();
-        ragdoll = GetComponent<RagdollSwitch>();
-        myTransform = gameObject.transform;
-        cam = Camera.main.gameObject;
-        target = GetComponent<Target>();
-        fresnelEffect = GetComponent<FresnelEffect>();
-        capsuleCollider = GetComponent<CapsuleCollider>();
-        defaultFresnelColor = fresnelEffect.fresnelColor;
-        defaultFresnelDuration = fresnelEffect.duration;
-        initSpeed = speed;
-        startSpeed = speed;
-        halfSpeed = speed;
-        slowMoSpeed = speed * 2.5f;
-        difference = cam.transform.position - transform.position;
-        slowMoBar = GameObject.FindGameObjectWithTag("SlowMoBar");
-        slowMoBarGlow = slowMoBar.transform.GetChild(0).GetComponent<Animator>();
-        
-        if (initializeOnStart)
-        {
-            UISetup();
-        }
-        Time.timeScale = 1;
-        slowMoMeter = 2;
 
-         
+        if (isLocalPlayer)
+        {
+            playerMultiDetails = GetComponent<PlayerMultiDetails>();
+            GameMechMulti gameMechMulti = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMechMulti>();
+            if (playerMultiDetails.isMultiPlayer)
+            {
+               
+                Instantiate(gameMechMulti.mainCamera);
+                Instantiate(gameMechMulti.uiCamera);
+                cylinder = Instantiate(gameMechMulti.aimCylinder).transform;
+                cylinder.gameObject.SetActive(true);
+            }
+           
+            screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
+            offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
+            rigidBody = GetComponent<Rigidbody>();
+            playerGun = GetComponent<PlayerGun>();
+            animator = GetComponent<Animator>();
+            ragdoll = GetComponent<RagdollSwitch>();
+            myTransform = gameObject.transform;
+            cam = Camera.main.gameObject;
+            target = GetComponent<Target>();
+            fresnelEffect = GetComponent<FresnelEffect>();
+            capsuleCollider = GetComponent<CapsuleCollider>();
+            defaultFresnelColor = fresnelEffect.fresnelColor;
+            defaultFresnelDuration = fresnelEffect.duration;
+            initSpeed = speed;
+            startSpeed = speed;
+            halfSpeed = speed;
+            difference = cam.transform.position - transform.position;
+            //cylinder = GameObject.FindGameObjectWithTag("AimCylinder").transform;
+           
+            //slowMoBar = GameObject.FindGameObjectWithTag("SlowMoBar");
+            //slowMoBarGlow = slowMoBar.transform.GetChild(0).GetComponent<Animator>();
+
+            if (initializeOnStart)
+            {
+                UISetup();
+            }
+            Time.timeScale = 1;
+            slowMoMeter = 2;
+        }
+
+
     }
     private void FixedUpdate()
     {
-        movementTechnologies();
-        slowMoTechnologies();
-        Vector3 yBounds = new Vector3(0, 0.6f,0);
-        cylinder.position = MoveCylinder() + yBounds;
-        cylinder.LookAt(new Vector3(transform.position.x, cylinder.position.y, transform.position.z));
+        if (isLocalPlayer)
+        {
+            movementTechnologies();
+            slowMoTechnologies();
+            Vector3 yBounds = new Vector3(0, 0.6f, 0);
+            cylinder.position = MoveCylinder() + yBounds;
+            cylinder.LookAt(new Vector3(transform.position.x, cylinder.position.y, transform.position.z));
+        }
     }
     private void Update()
     {
-        MoveWhenTold(isUsingKeyBoard);
-        
+        if (isLocalPlayer)
+        {
+            MoveWhenTold(isUsingKeyBoard);
+        }
+
     }
     private void CoverTechnologies()
     {
-        if (!isTakingCover)
+        if (isLocalPlayer)
         {
-            if (possibleCoverAble != null)
+            if (!isTakingCover)
             {
-                currentCoverAble = possibleCoverAble;
-                isTakingCover = true;
-                shouldStandCover = currentCoverAble.shouldStand;
-                if (!shouldStandCover)
+                if (possibleCoverAble != null)
                 {
-                    capsuleCollider.center = new Vector3(0, -1.573208f, 0.2924273f);
-                    capsuleCollider.height = 3.448039f;
+                    currentCoverAble = possibleCoverAble;
+                    isTakingCover = true;
+                    shouldStandCover = currentCoverAble.shouldStand;
+                    if (!shouldStandCover)
+                    {
+                        capsuleCollider.center = new Vector3(0, -1.573208f, 0.2924273f);
+                        capsuleCollider.height = 3.448039f;
+                    }
                 }
             }
+            else
+            {
+                isTakingCover = false;
+                currentCoverAble = null;
+            }
         }
-        else
-        {
-            isTakingCover = false;
-            currentCoverAble = null;
-        }
-        
+
     }
     public void UISetup()
     {
@@ -170,99 +196,113 @@ public class PlayerMotion : MonoBehaviour {
         isUsingKeyBoard = true;
 #endif
     }
-    
+
     private void Move()
     {
-        
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
-        direction = new Vector3(horizontal, 0, vertical).normalized;
-        targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
-        if (!obstaculated && isOnFloor && !isJumping && !isTakingCover && !isRolling && !playerGun.isPunching)
-        {
-            if (!isBeingPunched)
-            {
-                if (direction.magnitude >= .1f)
-                {
-                    float target = targetAngle + cam.transform.eulerAngles.y;
 
-                    float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, target, ref turnSmoothRef, turnSmoothing);
-                   
-                    
-                    if (!PlayerGun.isFineAim)
+        if (isLocalPlayer)
+        {
+            float horizontal = Input.GetAxisRaw("Horizontal");
+            float vertical = Input.GetAxisRaw("Vertical");
+            direction = new Vector3(horizontal, 0, vertical).normalized;
+            targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+            if (!obstaculated && isOnFloor && !isJumping && !isTakingCover && !isRolling && !playerGun.isPunching)
+            {
+                if (!isBeingPunched)
+                {
+                    if (direction.magnitude >= .1f)
                     {
-                        transform.rotation = Quaternion.Euler(0, angle, 0);
-                    }
-                    if (!playerGun.meleeMode)
-                    {
-                        if (!PlayerGun.isFineAim )
+                        float target = targetAngle + cam.transform.eulerAngles.y;
+
+                        float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, target, ref turnSmoothRef, turnSmoothing);
+
+
+                        if (!PlayerGun.isFineAim)
                         {
-                            if (!isCrouching)
+                            transform.rotation = Quaternion.Euler(0, angle, 0);
+                        }
+                        if (!playerGun.meleeMode)
+                        {
+                            if (!PlayerGun.isFineAim)
                             {
-                                if (!isGoingBack)
+                                if (!isCrouching)
                                 {
-                                    myTransform.Translate(Vector3.forward * Time.deltaTime * speed);
+                                    if (!isGoingBack)
+                                    {
+                                        myTransform.Translate(Vector3.forward * Time.deltaTime * speed);
+                                    }
+                                    else
+                                    {
+                                        myTransform.Translate(Vector3.back * Time.deltaTime * speed);
+                                    }
+
+                                    //rigidBody.velocity = transform.forward * speed;
                                 }
                                 else
                                 {
-                                    myTransform.Translate(Vector3.back * Time.deltaTime * speed);
-                                }
+                                    myTransform.Translate(Vector3.forward * Time.deltaTime * speed * 0.5f);
 
-                                //rigidBody.velocity = transform.forward * speed;
+                                }
+                                lastMagnitude = direction.magnitude;
                             }
                             else
                             {
-                                myTransform.Translate(Vector3.forward * Time.deltaTime * speed * 0.5f);
-                                
+                                myTransform.Translate(Vector3.right * Time.deltaTime * direction.x * speed * 0.25f);
+                                myTransform.Translate(Vector3.forward * Time.deltaTime * direction.z * speed * 0.25f);
+
+
                             }
-                            lastMagnitude = direction.magnitude;
+                            isMoving = true;
+
                         }
                         else
                         {
-                            myTransform.Translate(Vector3.right * Time.deltaTime * direction.x * speed * 0.25f);
-                            myTransform.Translate(Vector3.forward * Time.deltaTime * direction.z * speed * 0.25f);
-                            
-
+                            if (!playerGun.isPunching)
+                            {
+                                myTransform.Translate(Vector3.forward * Time.deltaTime * speed * 0.5f);
+                                isMoving = true;
+                            }
+                            else
+                            {
+                                isMoving = false;
+                            }
                         }
-                        isMoving = true;
 
                     }
                     else
                     {
-                        if (!playerGun.isPunching)
-                        {
-                            myTransform.Translate(Vector3.forward * Time.deltaTime * speed * 0.5f);
-                            isMoving = true;
-                        }
-                        else
-                        {
-                            isMoving = false;
-                        }
+
+                        isMoving = false;
+                        lastMagnitude = 0;
                     }
+                }
 
-                }
-                else
-                {
-                   
-                    isMoving = false;
-                    lastMagnitude = 0;
-                }
             }
-
-        }
-        else
-        {
-            
-            lastMagnitude = 0;
-            if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hits, obstacleDistance))
+            else
             {
 
-                if (hits.collider.GetComponent<Obstacles>())
+                lastMagnitude = 0;
+                if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hits, obstacleDistance))
                 {
-                    obstaculated = true;
-                    if (animator.GetInteger("motion") == 5 || animator.GetInteger("motion") == 2)
+
+                    if (hits.collider.GetComponent<Obstacles>())
                     {
-                        animator.SetInteger("motion", 0);
+                        obstaculated = true;
+                        if (animator.GetInteger("motion") == 5 || animator.GetInteger("motion") == 2)
+                        {
+                            animator.SetInteger("motion", 0);
+                        }
+                    }
+                    else
+                    {
+                        if (!isBeingPunched)
+                        {
+                            obstaculated = false;
+                        }
+                    }
+                    if (targetAngle >= 90 || targetAngle <= -90)
+                    {
+                        obstaculated = false;
                     }
                 }
                 else
@@ -272,312 +312,314 @@ public class PlayerMotion : MonoBehaviour {
                         obstaculated = false;
                     }
                 }
-                if(targetAngle >= 90 || targetAngle <= -90)
-                {
-                    obstaculated = false;
-                }
             }
-            else
+            if (isRolling)
             {
-                if (!isBeingPunched)
-                {
-                    obstaculated = false;
-                }
+                myTransform.Translate(Vector3.forward * rollForce * Time.deltaTime);
             }
-        }
-        if (isRolling)
-        {
-            myTransform.Translate(Vector3.forward * rollForce * Time.deltaTime);
-        }
-        if (isTakingCover)
-        {
-            if (!PlayerGun.isFineAim)
+            if (isTakingCover)
             {
-                if (transformToWall == Vector2.zero)
-                    transformToWall = new Vector2(coverPoint.x - transform.position.x, coverPoint.z - transform.position.z);
-                Vector2 perp = Vector2.Perpendicular(transformToWall);
-                Vector3 movementDir = new Vector3(transformToWall.normalized.x < 0 ? -transformToWall.normalized.x : transformToWall.normalized.x,
-                    0, transformToWall.normalized.y);
-                //Debug.Log(movementDir);
-                myTransform.Translate(movementDir * horizontal * speed * 0.25f * Time.deltaTime);
-                if (horizontal >= 1 || horizontal <= -1)
+                if (!PlayerGun.isFineAim)
                 {
-                    isMoving = true;
-                    if (horizontal >= 1)
+                    if (transformToWall == Vector2.zero)
+                        transformToWall = new Vector2(coverPoint.x - transform.position.x, coverPoint.z - transform.position.z);
+                    Vector2 perp = Vector2.Perpendicular(transformToWall);
+                    Vector3 movementDir = new Vector3(transformToWall.normalized.x < 0 ? -transformToWall.normalized.x : transformToWall.normalized.x,
+                        0, transformToWall.normalized.y);
+                    //Debug.Log(movementDir);
+                    myTransform.Translate(movementDir * horizontal * speed * 0.25f * Time.deltaTime);
+                    if (horizontal >= 1 || horizontal <= -1)
                     {
-                        isCoverMovingRight = true;
+                        isMoving = true;
+                        if (horizontal >= 1)
+                        {
+                            isCoverMovingRight = true;
+                        }
+                        else
+                        {
+                            isCoverMovingRight = false;
+                        }
                     }
                     else
                     {
-                        isCoverMovingRight = false;
+                        isMoving = false;
                     }
-                }
-                else
-                {
-                    isMoving = false;
                 }
             }
         }
-        
-        
+
+
 
     }
-    
+
 
 
     private void movementTechnologies()
     {
-        if (!target.isDead)
+        if (isLocalPlayer)
         {
-            if (isUsingKeyBoard)
+            if (!target.isDead)
             {
-                Move();
-
-                if (isMoving)
+                if (isUsingKeyBoard)
                 {
+                    Move();
 
-                    if (isOnFloor && !isTakingCover)
+                    if (isMoving)
                     {
-                        if (!obstaculated )
+
+                        if (isOnFloor && !isTakingCover)
                         {
-                            if (movementType.Equals("run"))
+                            if (!obstaculated)
                             {
-                                if (!isCrouching)
+                                if (movementType.Equals("run"))
                                 {
-                                    if (!PlayerGun.isFineAim)
+                                    if (!isCrouching)
                                     {
-                                        if (Quaternion.Angle(playerGun.playerMiddleSpine.rotation,transform.rotation) < 120)
+                                        if (!PlayerGun.isFineAim)
                                         {
-                                            
-                                            animator.SetInteger("motion", 2);
+                                            if (Quaternion.Angle(playerGun.playerMiddleSpine.rotation, transform.rotation) < 120)
+                                            {
+
+                                                animator.SetInteger("motion", 2);
+                                            }
+                                            else
+                                            {
+
+                                                animator.SetInteger("motion", 16);
+                                            }
                                         }
                                         else
                                         {
-                                            
-                                            animator.SetInteger("motion", 16);
+                                            animator.SetInteger("motion", 1);
                                         }
                                     }
                                     else
                                     {
-                                        animator.SetInteger("motion", 1);
+                                        animator.SetInteger("motion", 7);
+                                    }
+                                }
+                                if (movementType.Equals("stairs"))
+                                {
+                                    animator.SetInteger("motion", 5);
+                                }
+                                if (playerGun.meleeMode)
+                                {
+                                    if (!playerGun.isPunching)
+                                    {
+                                        animator.SetInteger("punch", 1);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                animator.SetInteger("motion", 0);
+                            }
+                        }
+                        else
+                        {
+                            if (isTakingCover)
+                            {
+                                if (isCoverMovingRight)
+                                {
+                                    if (!shouldStandCover)
+                                    {
+                                        animator.SetInteger("motion", 13);
+                                    }
+                                    else
+                                    {
+                                        animator.SetInteger("motion", 15);
                                     }
                                 }
                                 else
                                 {
-                                    animator.SetInteger("motion", 7);
-                                }
-                            }
-                            if (movementType.Equals("stairs"))
-                            {
-                                animator.SetInteger("motion", 5);
-                            }
-                            if (playerGun.meleeMode)
-                            {
-                                if (!playerGun.isPunching)
-                                {
-                                    animator.SetInteger("punch", 1);
+                                    if (!shouldStandCover)
+                                    {
+                                        animator.SetInteger("motion", 12);
+                                    }
+                                    else
+                                    {
+                                        animator.SetInteger("motion", 14);
+                                    }
                                 }
                             }
                         }
-                        else
+                        if (justKilledEnemy)
                         {
-                            animator.SetInteger("motion", 0);
+                            target.isAiming = false;
+                            justKilledEnemy = false;
                         }
+
+
+
+
+
+
                     }
                     else
                     {
-                        if (isTakingCover)
+
+
+                        if (isOnFloor)
                         {
-                            if (isCoverMovingRight)
+                            if (!isTakingCover)
                             {
-                                if (!shouldStandCover)
+                                if (!isCrouching)
                                 {
-                                    animator.SetInteger("motion", 13);
+                                    animator.SetInteger("motion", 0);
                                 }
                                 else
                                 {
-                                    animator.SetInteger("motion", 15);
+                                    animator.SetInteger("motion", 6);
                                 }
                             }
                             else
                             {
-                                if (!shouldStandCover)
-                                {
-                                    animator.SetInteger("motion", 12);
-                                }
-                                else
-                                {
-                                    animator.SetInteger("motion", 14);
-                                }
+                                coverAnim();
+                            }
+
+                        }
+                        if (playerGun.meleeMode)
+                        {
+                            if (!playerGun.isPunching)
+                            {
+                                animator.SetInteger("punch", 0);
                             }
                         }
+
                     }
-                    if (justKilledEnemy)
-                    {
-                        target.isAiming = false;
-                        justKilledEnemy = false;
-                    }
-
-
-
-
-
 
                 }
                 else
                 {
 
 
-                    if (isOnFloor)
+
+                    myTransform.Translate(Vector3.forward * 1 * Time.deltaTime * motion);
+
+
+                    if (motion > 0)
                     {
-                        if (!isTakingCover)
+                        //Debug.Log(motion);
+                        if (justKilledEnemy)
                         {
-                            if (!isCrouching)
+                            target.isAiming = false;
+                            justKilledEnemy = false;
+                        }
+                        if (isOnFloor && !obstaculated)
+                        {
+                            if (motion > 0.04f)
                             {
-                                animator.SetInteger("motion", 0);
+                                animator.SetInteger("motion", 2);
+
                             }
                             else
                             {
-                                animator.SetInteger("motion", 6);
+                                animator.SetInteger("motion", 1);
                             }
+
                         }
-                        else
-                        {
-                            coverAnim();
-                        }
-                        
+
                     }
-                    if (playerGun.meleeMode)
+                    else
                     {
-                        if (!playerGun.isPunching)
+                        if (isOnFloor)
                         {
-                            animator.SetInteger("punch", 0);
-                        }
-                    }
-
-                }
-
-            }
-            else
-            {
-
-
-
-                myTransform.Translate(Vector3.forward * 1 * Time.deltaTime * motion);
-
-
-                if (motion > 0)
-                {
-                    //Debug.Log(motion);
-                    if (justKilledEnemy)
-                    {
-                        target.isAiming = false;
-                        justKilledEnemy = false;
-                    }
-                    if (isOnFloor && !obstaculated)
-                    {
-                        if (motion > 0.04f)
-                        {
-                            animator.SetInteger("motion", 2);
-
-                        }
-                        else
-                        {
-                            animator.SetInteger("motion", 1);
+                            animator.SetInteger("motion", 0);
                         }
 
                     }
-
                 }
-                else
+                if (!isOnFloor)
                 {
-                    if (isOnFloor)
+                    if (!jumpAnim)
                     {
-                        animator.SetInteger("motion", 0);
+                        animator.SetInteger("motion", 4);
                     }
-
                 }
-            }
-            if (!isOnFloor)
-            {
-                if (!jumpAnim)
+                if (jumpAnim)
                 {
-                    animator.SetInteger("motion", 4);
+                    if (!isCrouching && !isCrouchJumping && !animator.GetCurrentAnimatorStateInfo(0).IsName("dive"))
+                    {
+                        animator.SetInteger("motion", 3);
+                    }
+                    else
+                    {
+                        animator.SetInteger("motion", 8);
+                    }
                 }
-            }
-            if (jumpAnim)
-            {
-                if (!isCrouching && !isCrouchJumping && !animator.GetCurrentAnimatorStateInfo(0).IsName("dive"))
+                if (isRolling)
                 {
-                    animator.SetInteger("motion", 3);
+                    animator.SetInteger("motion", 9);
                 }
-                else
+
+
+            }
+
+            if (Physics.Raycast(transform.position, transform.up * -1, out RaycastHit hit))
+            {
+                if (hit.distance >= 1.2f)
                 {
-                    animator.SetInteger("motion", 8);
+                    isOnFloor = false;
                 }
-            }
-            if (isRolling)
-            {
-                animator.SetInteger("motion", 9);
-            }
 
-
-        }
-        
-        if (Physics.Raycast(transform.position, transform.up * -1, out RaycastHit hit))
-        {
-            if (hit.distance >= 1.2f)
-            {
-                isOnFloor = false;
             }
-
         }
     }
     private void coverAnim()
     {
-        if (!shouldStandCover)
+        if (isLocalPlayer)
         {
-            if (!PlayerGun.isFineAim)
+            if (!shouldStandCover)
             {
-                animator.SetInteger("motion", 10);
-            }
-            else
-            {
-                if (!isCrouching)
+                if (!PlayerGun.isFineAim)
                 {
-                    animator.SetInteger("motion", 0);
+                    animator.SetInteger("motion", 10);
                 }
                 else
                 {
-                    animator.SetInteger("motion", 6);
+                    if (!isCrouching)
+                    {
+                        animator.SetInteger("motion", 0);
+                    }
+                    else
+                    {
+                        animator.SetInteger("motion", 6);
+                    }
                 }
             }
-        }
-        else
-        {
-            animator.SetInteger("motion", 11);
+            else
+            {
+                animator.SetInteger("motion", 11);
+            }
         }
     }
     private Vector3 MoveCylinder()
     {
 
-        Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
-        Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint) + offset;
-
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        string[] layers = { "Player", "Enemies","Armature bones" ,"bullets"};
-        int mask = LayerMask.GetMask(layers);
-        mask = ~mask;
-        if (Physics.Raycast(ray, out RaycastHit hit,1000,mask))
+        if (isLocalPlayer)
         {
-            Debug.Log(hit.collider.name);
-            return hit.point;
+            Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
+            Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint) + offset;
+
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            string[] layers = { "Player", "Enemies", "Armature bones", "bullets" };
+            int mask = LayerMask.GetMask(layers);
+            mask = ~mask;
+            if (Physics.Raycast(ray, out RaycastHit hit, 1000, mask))
+            {
+                // Debug.Log(hit.collider.name);
+                return hit.point;
+            }
+            else
+            {
+                return curPosition;
+            }
         }
         else
         {
-            return curPosition;
+            return new Vector3();
         }
-        
+
     }
     private void lookAtMouse()
     {
@@ -585,33 +627,36 @@ public class PlayerMotion : MonoBehaviour {
         //mousePos.x -= Screen.width / 2;
         //mousePos.y -= Screen.height / 2;
 
-       
+
 
 
         //float targetAngle = Mathf.Atan2(mousePos.normalized.x, mousePos.normalized.y) * Mathf.Rad2Deg + cam.transform.eulerAngles.y;
 
 
-       // Vector3 lookat = new Vector3(playerGun.playerMiddleSpine.position.x + mousePos.x, playerGun.playerMiddleSpine.position.y,
+        // Vector3 lookat = new Vector3(playerGun.playerMiddleSpine.position.x + mousePos.x, playerGun.playerMiddleSpine.position.y,
         //    playerGun.playerMiddleSpine.position.z + mousePos.y);
 
-       // Vector3 lookat2 = new Vector3(transform.position.x + mousePos.normalized.x, transform.position.y,
-       //     transform.position.z + mousePos.normalized.y);
+        // Vector3 lookat2 = new Vector3(transform.position.x + mousePos.normalized.x, transform.position.y,
+        //     transform.position.z + mousePos.normalized.y);
 
 
 
-        if(!target.isDead && !isRolling && joked)
+        if (isLocalPlayer)
         {
-            
-            if (playerGun.meleeMode && !isMoving)
+            if (!target.isDead && !isRolling && joked)
             {
-                transform.LookAt(new Vector3(cylinder.position.x, transform.position.y, cylinder.position.z));
-            }
-            else
-            {
-                playerGun.playerMiddleSpine.LookAt(cylinder);
+
+                if (playerGun.meleeMode && !isMoving)
+                {
+                    transform.LookAt(new Vector3(cylinder.position.x, transform.position.y, cylinder.position.z));
+                }
+                else
+                {
+                    playerGun.playerMiddleSpine.LookAt(cylinder);
+                }
             }
         }
-       
+
         //playerGun.playerMiddleSpine.eulerAngles = new Vector3(0, playerGun.playerMiddleSpine.eulerAngles.y + cam.transform.eulerAngles.y, 0);
         //playerGun.playerMiddleSpine.eulerAngles = new Vector3(0, targetAngle, 0);
         /*if (!isMoving)
@@ -619,77 +664,84 @@ public class PlayerMotion : MonoBehaviour {
             transform.LookAt(cylinder);
             //playerGun.playerMiddleSpine.eulerAngles = new Vector3(0, transform.eulerAngles.y + cam.transform.eulerAngles.y, 0);
         }*/
-       
-       
-       
+
+
+
     }
     private void LateUpdate()
     {
-        lookAtMouse();
+        if (isLocalPlayer)
+        {
+            lookAtMouse();
+        }
     }
 
 
     private void MoveWhenTold(bool isUsingKeys = true)
     {
-        
-        if (isUsingKeys)
+
+        if (isLocalPlayer)
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (isUsingKeys)
             {
-                startJump();
-            }
-            if (Input.GetKeyDown("f"))
-            {
-                if (!isSlowMo)
+                if (Input.GetKeyDown(KeyCode.Space))
                 {
-                    ability(0);
+                    startJump();
+                }
+                /*if (Input.GetKeyDown("f"))
+                {
+                    if (!isSlowMo)
+                    {
+                        ability(0);
+                    }
+                    else
+                    {
+                        sss = s;
+                        s = slowMoTime;
+                    }
+                }*/
+
+                /*if (Input.GetKey(KeyCode.LeftControl))
+                {
+                    isCrouching = true;
+                    if (!isTakingCover)
+                    {
+                        capsuleCollider.center = new Vector3(0, -0.82f, 0.54f);
+                        capsuleCollider.height = 4.6f;
+                    }
+
                 }
                 else
                 {
-                    sss = s;
-                    s = slowMoTime;
-                }
-            }
-            /*if (Input.GetKey(KeyCode.LeftControl))
-            {
-                isCrouching = true;
-                if (!isTakingCover)
-                {
-                    capsuleCollider.center = new Vector3(0, -0.82f, 0.54f);
-                    capsuleCollider.height = 4.6f;
-                }
-
-            }
-            else
-            {
-                if(!isCrouchJumping && !isRolling)
-                {
-                    isCrouching = false;
-                    if (!isTakingCover)
+                    if(!isCrouchJumping && !isRolling)
                     {
-                        capsuleCollider.center = new Vector3(0, 0, 0);
-                        capsuleCollider.height = 6;
+                        isCrouching = false;
+                        if (!isTakingCover)
+                        {
+                            capsuleCollider.center = new Vector3(0, 0, 0);
+                            capsuleCollider.height = 6;
+                        }
                     }
+                }*/
+                if (Input.GetKeyDown("g"))
+                {
+                    //CoverTechnologies();
                 }
-            }*/
-            if (Input.GetKeyDown("g"))
-            {
-                //CoverTechnologies();
+                if (Input.GetKeyDown("u"))
+                {
+                    joked = ragdoll.ragdollJokes(joked);
+                }
             }
-            if (Input.GetKeyDown("u"))
+            if (isTakingCover)
             {
-                joked = ragdoll.ragdollJokes(joked);
+                transform.LookAt(coverPoint);
+                //transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(coverPoint), 5 * Time.deltaTime);
+                //transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(coverPoint - transform.position), 5*Time.deltaTime);
             }
-        }
-        if (isTakingCover)
-        {
-            transform.LookAt(coverPoint);
-            //transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(coverPoint), 5 * Time.deltaTime);
-            //transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(coverPoint - transform.position), 5*Time.deltaTime);
         }
     }
-   
-    public static Vector3 checkAxisOfObjRelativeToTarget(Collider obj,Transform target)
+
+    /*public static Vector3 checkAxisOfObjRelativeToTarget(Collider obj, Transform target)
     {
         Vector3 closestPos = obj.ClosestPointOnBounds(target.position);
         Vector3 difference = closestPos - target.position;
@@ -702,7 +754,7 @@ public class PlayerMotion : MonoBehaviour {
         //-90 is forward
         //180 is right
         //0 is left
-        
+
         return new Vector3();
     }
 
@@ -714,23 +766,26 @@ public class PlayerMotion : MonoBehaviour {
             case 0:
                 slowMo();
                 break;
-            
+
         }
-    }
+    }*/
 
 
     private void startJump()
     {
-        if (!target.isDead && !playerGun.meleeMode)
+        if (isLocalPlayer)
         {
-            if (isOnFloor && !PlayerGun.isFineAim && !isJumping && !isRolling && !isCrouchJumping)
+            if (!target.isDead && !playerGun.meleeMode)
             {
-                
-                jumpAnim = true;
-                //jump();
-                diveInterruptable = false;
+                if (isOnFloor && !PlayerGun.isFineAim && !isJumping && !isRolling && !isCrouchJumping)
+                {
 
-                
+                    jumpAnim = true;
+                    //jump();
+                    diveInterruptable = false;
+
+
+                }
             }
         }
 
@@ -739,174 +794,203 @@ public class PlayerMotion : MonoBehaviour {
 
     public void endRoll()
     {
-        isRolling = false;
-        jumpAnim = false;
+        if (isLocalPlayer)
+        {
+            isRolling = false;
+            jumpAnim = false;
+        }
     }
 
 
     public void jump()
     {
-        if (!isCrouchJumping && !isJumping)
+        if (isLocalPlayer)
         {
-            isJumping = true;
-
-            if (!isCrouching)
+            if (!isCrouchJumping && !isJumping)
             {
-                rigidBody.AddForce(transform.up * jumpHeight);
-                if (isMoving)
+                isJumping = true;
+
+                if (!isCrouching)
                 {
+                    rigidBody.AddForce(transform.up * jumpHeight);
+                    if (isMoving)
+                    {
+                        rigidBody.AddForce(transform.forward * jumpForce);
+                    }
+
+                }
+                else
+                {
+                    isCrouchJumping = true;
+                    rigidBody.AddForce(transform.up * jumpHeight * 0.5f);
                     rigidBody.AddForce(transform.forward * jumpForce);
                 }
-                
-            }
-            else
-            {
-                isCrouchJumping = true;
-                rigidBody.AddForce(transform.up * jumpHeight * 0.5f);
-                rigidBody.AddForce(transform.forward * jumpForce );
             }
         }
-        
+
         //Debug.Log(direction.magnitude);
-       
+
     }
-   
+
 
     public void endJump()
     {
-        if (!isCrouchJumping)
+        if (isLocalPlayer)
         {
-            jumpAnim = false;
+            if (!isCrouchJumping)
+            {
+                jumpAnim = false;
+            }
+            //isRolling = false;
+            diveInterruptable = true;
         }
-        //isRolling = false;
-        diveInterruptable = true;
     }
     public void JokeTrue()
     {
-        if (joked)
+        if (isLocalPlayer)
         {
-            joked = ragdoll.ragdollJokes(true);
+            if (joked)
+            {
+                joked = ragdoll.ragdollJokes(true);
+            }
         }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (isCrouchJumping)
+        if (isLocalPlayer)
         {
-            isRolling = true;
-            isCrouchJumping = false;
-            isJumping = false;
-            if (!collision.collider.CompareTag("floor"))
+            if (isCrouchJumping)
             {
-                JokeTrue();
-            }
-        }
-        else
-        {
-            isRolling = false;
-        }
-        if (!isOnFloor)
-        {
-            isOnFloor = true;
-            isJumping = false;
-            if (Input.GetKey(KeyCode.LeftControl)){
                 isRolling = true;
                 isCrouchJumping = false;
                 isJumping = false;
-            }
-            
-        }
-        else
-        {
-            isJumping = false;
-        }
-       
-        
-        /*if (Physics.Raycast(transform.position,transform.forward,out RaycastHit hit, obstacleDistance))
-        {
-            
-            if (hit.collider.GetComponent<Obstacles>())
-            {
-                obstaculated = true;
-                if(animator.GetInteger("motion") == 5 || animator.GetInteger("motion") == 2)
+                if (!collision.collider.CompareTag("floor"))
                 {
-                    animator.SetInteger("motion", 0);
+                    JokeTrue();
                 }
             }
-        }*/
-        if (collision.collider.GetComponent<CoverAble>())
-        {
-            possibleCoverAble = collision.collider.GetComponent<CoverAble>();
-        }
-        if (animator.GetInteger("motion") == 8)
-        {
-            animator.SetInteger("motion", 9);
-            isJumping = false;
-            isCrouchJumping = false;
-            jumpAnim = false;
+            else
+            {
+                isRolling = false;
+            }
+            if (!isOnFloor)
+            {
+                isOnFloor = true;
+                isJumping = false;
+                if (Input.GetKey(KeyCode.LeftControl))
+                {
+                    isRolling = true;
+                    isCrouchJumping = false;
+                    isJumping = false;
+                }
+
+            }
+            else
+            {
+                isJumping = false;
+            }
+
+
+
+            /*if (Physics.Raycast(transform.position,transform.forward,out RaycastHit hit, obstacleDistance))
+            {
+
+                if (hit.collider.GetComponent<Obstacles>())
+                {
+                    obstaculated = true;
+                    if(animator.GetInteger("motion") == 5 || animator.GetInteger("motion") == 2)
+                    {
+                        animator.SetInteger("motion", 0);
+                    }
+                }
+            }*/
+            if (collision.collider.GetComponent<CoverAble>())
+            {
+                possibleCoverAble = collision.collider.GetComponent<CoverAble>();
+            }
+            if (animator.GetInteger("motion") == 8)
+            {
+                animator.SetInteger("motion", 9);
+                isJumping = false;
+                isCrouchJumping = false;
+                jumpAnim = false;
+            }
         }
     }
 
 
     private void OnCollisionStay(Collision collision)
     {
-        
-        
-        if (!isOnFloor || isJumping)
-        {
-            
-            if (!obstaculated)
-                isOnFloor = true;
-            
-        }
-        if (!jumpAnim)
-        {
-            isJumping = false;
-        }
-        if (isTakingCover)
-        {
-            if (collision.collider.GetComponent<CoverAble>())
-            {
-                coverPoint = collision.GetContact(0).point;
-                coverPoint.y = transform.position.y;
-                transformToWall = collision.GetContact(0).point;
-            }
-        }
 
-        if(isCrouchJumping && diveInterruptable)
+
+        if (isLocalPlayer)
         {
-            jumpAnim = false;
-            isCrouchJumping = false;
-            isRolling = true;
-            isJumping = false;
+            if (!isOnFloor || isJumping)
+            {
+
+                if (!obstaculated)
+                    isOnFloor = true;
+
+            }
+            if (!jumpAnim)
+            {
+                isJumping = false;
+            }
+            if (isTakingCover)
+            {
+                if (collision.collider.GetComponent<CoverAble>())
+                {
+                    coverPoint = collision.GetContact(0).point;
+                    coverPoint.y = transform.position.y;
+                    transformToWall = collision.GetContact(0).point;
+                }
+            }
+
+            if (isCrouchJumping && diveInterruptable)
+            {
+                jumpAnim = false;
+                isCrouchJumping = false;
+                isRolling = true;
+                isJumping = false;
+            }
         }
     }
 
 
     private void OnCollisionExit(Collision collision)
     {
-        if (collision.collider.GetComponent<CoverAble>())
+        if (isLocalPlayer)
         {
-            possibleCoverAble = null;
+            if (collision.collider.GetComponent<CoverAble>())
+            {
+                possibleCoverAble = null;
+            }
         }
     }
-    
-    
+
+
     public void stopPunchImpact()
     {
-        isBeingPunched = false;
+        if (isLocalPlayer)
+        {
+            isBeingPunched = false;
+        }
     }
 
 
     public void setAnimatorWeight(float weight)
     {
-        animator.SetLayerWeight(2, weight);
+        if (isLocalPlayer)
+        {
+            animator.SetLayerWeight(2, weight);
+        }
     }
-    
+
 
     public void slowMo()
     {
-        if (!isSlowMo && slowMoMeter >= 2 )
+        /*if (!isSlowMo && slowMoMeter >= 2 )
         {
             if (!gotVolume)
             {
@@ -930,14 +1014,14 @@ public class PlayerMotion : MonoBehaviour {
             Time.timeScale = 0.2f;
             Time.fixedDeltaTime = Time.timeScale * 0.02f;
             
-        }
+        }*/
 
     }
 
 
     private void slowMoTechnologies()
     {
-        if (isSlowMo)
+        /*if (isSlowMo)
         {
             s += 1 * Time.deltaTime;
             ss += 1 * Time.deltaTime;
@@ -983,9 +1067,7 @@ public class PlayerMotion : MonoBehaviour {
             }
             slowMoBarRatio = slowMoMeter / slowMoCoolDown;
             slowMoBar.transform.localScale = new Vector3(slowMoBarRatio, 1, 1);
-        }
+        }*/
     }
-
-
 
 }
