@@ -36,6 +36,7 @@ TagManager:
   - scopeBlackness
   - thirdPersonCam
   - AimCylinder
+  - damagePointer
   layers:
   - Default
   - TransparentFX

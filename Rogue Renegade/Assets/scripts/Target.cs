@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Mirror;
 
-public class Target : MonoBehaviour {
+public class Target : NetworkBehaviour {
 
     public float health = 5;
     public float healthFull = 5;
@@ -37,72 +38,83 @@ public class Target : MonoBehaviour {
 
     private void Start()
     {
-        ragdollSwitch = GetComponent<RagdollSwitch>();
-        r = GetComponent<Rigidbody>();
-        player = GameObject.FindGameObjectWithTag("Player");
-        t = player.GetComponent<Target>();
-        p = player.GetComponent<PlayerMotion>();
-        playerMiddleSpine = GameObject.FindGameObjectWithTag("PlayerMiddleSpine").transform;
-        if (isPlayer)
-        {
-            healthBar = GetComponent<HealthBar>();
-            playerGun = GetComponent<PlayerGun>();
-        }
+            ragdollSwitch = GetComponent<RagdollSwitch>();
+            r = GetComponent<Rigidbody>();
+            player = GameObject.FindGameObjectWithTag("Player");
+            t = player.GetComponent<Target>();
+            p = player.GetComponent<PlayerMotion>();
+            playerMiddleSpine = GameObject.FindGameObjectWithTag("PlayerMiddleSpine").transform;
+            if (isPlayer)
+            {
+                healthBar = GetComponent<HealthBar>();
+                playerGun = GetComponent<PlayerGun>();
+            }
+        
+        
     }
     public void damagePoint(Vector3 pos)
     {
-        if (isPlayer)
-        {
-
-            float z = Camera.main.transform.eulerAngles.y - (Mathf.Atan2(pos.normalized.x, pos.normalized.z) * Mathf.Rad2Deg);
-            //Debug.Log(Camera.main.transform.eulerAngles.y);
-            damagePointer.transform.localRotation = Quaternion.Euler(0, 0, z);
-            Animator[] a = damagePointer.transform.GetComponentsInChildren<Animator>();
-            
-            foreach (Animator an in a)
+        
+            if (isPlayer && isLocalPlayer)
             {
-                an.SetTrigger("slow-glow");
+
+                float z = Camera.main.transform.eulerAngles.y - (Mathf.Atan2(pos.normalized.x, pos.normalized.z) * Mathf.Rad2Deg);
+                //Debug.Log(Camera.main.transform.eulerAngles.y);
+                damagePointer.transform.localRotation = Quaternion.Euler(0, 0, z);
+                Animator[] a = damagePointer.transform.GetComponentsInChildren<Animator>();
+
+                foreach (Animator an in a)
+                {
+                    an.SetTrigger("slow-glow");
+                }
             }
-        }
+        
+        
     }
     public void TakeDamage(float DamageAmount)
     {
-        if(health - DamageAmount >= 0)
-        {
-            if (isPlayer)
+        
+            if (health - DamageAmount >= 0)
             {
-                health -= DamageAmount;
-                healthBar.healthbarGlow();
+                if (isPlayer)
+                {
+                    health -= DamageAmount;
+                    healthBar.healthbarGlow();
+                }
+                else
+                {
+                    health -= DamageAmount;
+                }
             }
             else
             {
-                health -= DamageAmount;
+                health = 0;
             }
-        }
-        else
-        {
-            health = 0;
-        }
-        if (!isPlayer)
-        {
-            isTakingDamage = true;
-            Image image = myRing.transform.GetChild(0).GetComponent<Image>();
-            image.color = new Color(1, 0, 0);
-        }
-        dc = 0;
+            if (!isPlayer)
+            {
+                isTakingDamage = true;
+                Image image = myRing.transform.GetChild(0).GetComponent<Image>();
+                image.color = new Color(1, 0, 0);
+            }
+            dc = 0;
+        
+        
        
         
     }
     public void addHealth(float HealthAmount)
     {
-        if(health + HealthAmount <= healthFull)
-        {
-            health += HealthAmount;
-        }
-        else
-        {
-            health = healthFull;
-        }
+        
+            if (health + HealthAmount <= healthFull)
+            {
+                health += HealthAmount;
+            }
+            else
+            {
+                health = healthFull;
+            }
+        
+        
 
     }
     public void TakePunchForce(Transform puncher, float force)
@@ -117,7 +129,10 @@ public class Target : MonoBehaviour {
         {
             timeForPunchForce = 0;
         }*/
-        r.AddForce(puncher.forward * force);
+        if (isLocalPlayer)
+        {
+            r.AddForce(puncher.forward * force);
+        }
     }
     private void Update()
     {
@@ -210,7 +225,7 @@ public class Target : MonoBehaviour {
                     }
                     else
                     {
-                        health += 1 * Time.deltaTime;
+                        //health += 1 * Time.deltaTime;
                     }
 
                 }

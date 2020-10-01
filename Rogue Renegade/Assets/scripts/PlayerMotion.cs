@@ -88,21 +88,24 @@ public class PlayerMotion : NetworkBehaviour {
     private Vector3 screenPoint;
     private Vector3 offset;
     private PlayerMultiDetails playerMultiDetails;
+    //public Transform middleSpineAim;
+    
+    public Quaternion thisPlayersMiddlespineRotation;
+    public Vector3 thisPlayersLookat;
+    private Vector3 yBounds = new Vector3(0, 0.6f, 0);
+    public GameObject virtualMiddleSpine;
 
 
 
     private void Start()
     {
-
+        
         if (isLocalPlayer)
         {
             playerMultiDetails = GetComponent<PlayerMultiDetails>();
             GameMechMulti gameMechMulti = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMechMulti>();
             if (playerMultiDetails.isMultiPlayer)
             {
-               
-                Instantiate(gameMechMulti.mainCamera);
-                Instantiate(gameMechMulti.uiCamera);
                 cylinder = Instantiate(gameMechMulti.aimCylinder).transform;
                 cylinder.gameObject.SetActive(true);
             }
@@ -110,7 +113,7 @@ public class PlayerMotion : NetworkBehaviour {
             screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
             offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
             rigidBody = GetComponent<Rigidbody>();
-            playerGun = GetComponent<PlayerGun>();
+            
             animator = GetComponent<Animator>();
             ragdoll = GetComponent<RagdollSwitch>();
             myTransform = gameObject.transform;
@@ -135,8 +138,20 @@ public class PlayerMotion : NetworkBehaviour {
             }
             Time.timeScale = 1;
             slowMoMeter = 2;
+            
         }
+        playerGun = GetComponent<PlayerGun>();
+        setVirtualMiddleSpine();
 
+
+    }
+    private void setVirtualMiddleSpine()
+    {
+
+        virtualMiddleSpine.transform.SetParent(playerGun.playerMiddleSpine.parent);
+        virtualMiddleSpine.transform.position = playerGun.playerMiddleSpine.position;
+        virtualMiddleSpine.transform.rotation = playerGun.playerMiddleSpine.rotation;
+        playerGun.playerMiddleSpine.SetParent(virtualMiddleSpine.transform);
 
     }
     private void FixedUpdate()
@@ -145,11 +160,24 @@ public class PlayerMotion : NetworkBehaviour {
         {
             movementTechnologies();
             slowMoTechnologies();
-            Vector3 yBounds = new Vector3(0, 0.6f, 0);
             cylinder.position = MoveCylinder() + yBounds;
+
             cylinder.LookAt(new Vector3(transform.position.x, cylinder.position.y, transform.position.z));
+            if (!isRolling && joked)
+            {
+                //virtualMiddleSpine.transform.LookAt(cylinder);
+                Vector3 lTargetDir = cylinder.position - transform.position;
+                //lTargetDir.y = 0.0f;
+                Quaternion targetRotation = Quaternion.LookRotation(lTargetDir);
+
+                virtualMiddleSpine.transform.rotation = Quaternion.Slerp(virtualMiddleSpine.transform.rotation, targetRotation, 10 * Time.deltaTime);
+
+            }
         }
+       
     }
+
+
     private void Update()
     {
         if (isLocalPlayer)
@@ -252,6 +280,7 @@ public class PlayerMotion : NetworkBehaviour {
 
 
                             }
+                            
                             isMoving = true;
 
                         }
@@ -346,6 +375,8 @@ public class PlayerMotion : NetworkBehaviour {
                     }
                 }
             }
+            
+               
         }
 
 
@@ -377,7 +408,7 @@ public class PlayerMotion : NetworkBehaviour {
                                     {
                                         if (!PlayerGun.isFineAim)
                                         {
-                                            if (Quaternion.Angle(playerGun.playerMiddleSpine.rotation, transform.rotation) < 120)
+                                            /*if (Quaternion.Angle(virtualMiddleSpine.transform.rotation, transform.rotation) < 120)
                                             {
 
                                                 animator.SetInteger("motion", 2);
@@ -386,7 +417,8 @@ public class PlayerMotion : NetworkBehaviour {
                                             {
 
                                                 animator.SetInteger("motion", 16);
-                                            }
+                                            }*/
+                                            animator.SetInteger("motion", 2);
                                         }
                                         else
                                         {
@@ -551,7 +583,7 @@ public class PlayerMotion : NetworkBehaviour {
                 {
                     animator.SetInteger("motion", 9);
                 }
-
+                lookAtMouse();
 
             }
 
@@ -595,9 +627,7 @@ public class PlayerMotion : NetworkBehaviour {
     }
     private Vector3 MoveCylinder()
     {
-
-        if (isLocalPlayer)
-        {
+        
             Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
             Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint) + offset;
 
@@ -608,17 +638,25 @@ public class PlayerMotion : NetworkBehaviour {
             if (Physics.Raycast(ray, out RaycastHit hit, 1000, mask))
             {
                 // Debug.Log(hit.collider.name);
+                
+                if (playerMultiDetails.isMultiPlayer)
+                {
+                    thisPlayersLookat = hit.point;
+                    //sendLookAt(thisPlayersLookat, netId);
+                }
                 return hit.point;
             }
             else
             {
+                if (playerMultiDetails.isMultiPlayer)
+                {
+                    thisPlayersLookat = curPosition;
+                    //sendLookAt(thisPlayersLookat, netId);
+                }
+                    
                 return curPosition;
             }
-        }
-        else
-        {
-            return new Vector3();
-        }
+      
 
     }
     private void lookAtMouse()
@@ -641,21 +679,23 @@ public class PlayerMotion : NetworkBehaviour {
 
 
 
-        if (isLocalPlayer)
-        {
-            if (!target.isDead && !isRolling && joked)
-            {
 
-                if (playerGun.meleeMode && !isMoving)
-                {
-                    transform.LookAt(new Vector3(cylinder.position.x, transform.position.y, cylinder.position.z));
-                }
-                else
-                {
-                    playerGun.playerMiddleSpine.LookAt(cylinder);
-                }
+        if (!isRolling && joked)
+        {
+
+            if (playerGun.meleeMode && !isMoving)
+            {
+                transform.LookAt(new Vector3(cylinder.position.x, transform.position.y, cylinder.position.z));
             }
+            else
+            {
+                playerGun.playerMiddleSpine.LookAt(cylinder);
+                thisPlayersMiddlespineRotation = playerGun.playerMiddleSpine.rotation;
+                
+            }
+            // transform.LookAt(new Vector3(cylinder.position.x, transform.position.y, cylinder.position.z));
         }
+
 
         //playerGun.playerMiddleSpine.eulerAngles = new Vector3(0, playerGun.playerMiddleSpine.eulerAngles.y + cam.transform.eulerAngles.y, 0);
         //playerGun.playerMiddleSpine.eulerAngles = new Vector3(0, targetAngle, 0);
@@ -668,12 +708,26 @@ public class PlayerMotion : NetworkBehaviour {
 
 
     }
-    private void LateUpdate()
+    [Command]
+    private void sendLookAt(Vector3 lookAt, uint conn)
     {
-        if (isLocalPlayer)
+        updateRotation(lookAt,conn);
+    }
+    [ClientRpc]
+    private void updateRotation(Vector3 lookAt, uint conn)
+    {
+        if (!isLocalPlayer && conn == netId)
         {
-            lookAtMouse();
+            Vector3 pos = lookAt + yBounds;
+            transform.LookAt(new Vector3(pos.x, transform.position.y, pos.z));
         }
+    }
+    
+    private void LateUpdate() 
+    {
+        /*if (isLocalPlayer)
+            lookAtMouse();*/
+        
     }
 
 

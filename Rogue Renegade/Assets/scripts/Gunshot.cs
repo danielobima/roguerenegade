@@ -9,11 +9,34 @@ public class Gunshot : MonoBehaviour {
     public float damage;
     public GameObject bloodParicleSystem;
     private float t;
+    
 
     private void Start()
     {
         r = GetComponent<Rigidbody>();
         
+    }
+    //use this to ricoche as well
+    private bool canDestroy(Collider collider)
+    {
+        if (collider.GetComponent<Target>())
+        {
+            Target t;
+            t = collider.GetComponent<Target>();
+            if (t.isPlayer)
+            {
+                return t.isLocalPlayer;
+
+            }
+            else
+            {
+                return true;
+            }
+        }
+        else
+        {
+            return true;
+        }
     }
     private void FixedUpdate()
     {
@@ -28,7 +51,11 @@ public class Gunshot : MonoBehaviour {
     private void OnCollisionEnter(Collision collision)
     {
         BulletCollision(collision.GetContact(0).point, collision.collider, damage, bloodParicleSystem);
-        Destroy(gameObject);
+
+        if (canDestroy(collision.collider))
+        {
+            Destroy(gameObject);
+        }
         // Debug.Log(collision.collider.name);
        
     }
@@ -38,12 +65,29 @@ public class Gunshot : MonoBehaviour {
         {
             Target t;
             t = collider.GetComponent<Target>();
-            t.TakeDamage(damage);
-            t.damagePoint(collisionPoint - collider.transform.position);
-            if (collider.GetComponent<Bloody>())
+            if (t.isPlayer)
             {
-                Instantiate(bloodParticleSystem, collisionPoint, bloodParticleSystem.transform.rotation);
+                if (t.isLocalPlayer)
+                {
+                    t.TakeDamage(damage);
+                    t.damagePoint(collisionPoint - collider.transform.position);
+                    if (collider.GetComponent<Bloody>())
+                    {
+                        Instantiate(bloodParticleSystem, collisionPoint, bloodParticleSystem.transform.rotation);
+                    }
+                }
             }
+            else
+            {
+                t.TakeDamage(damage);
+                t.damagePoint(collisionPoint - collider.transform.position);
+                if (collider.GetComponent<Bloody>())
+                {
+                    Instantiate(bloodParticleSystem, collisionPoint, bloodParticleSystem.transform.rotation);
+                }
+            }
+            
+            
         }
         if (collider.GetComponent<BodyPart>())
         {

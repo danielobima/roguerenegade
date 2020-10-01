@@ -101,10 +101,10 @@ public class PlayerGun : NetworkBehaviour {
             GameMechMulti gameMechMulti = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMechMulti>();
             if (playerMultiDetails.isMultiPlayer)
             {
-                GameObject canvas = Instantiate(gameMechMulti.Canvas);
-                canvas.SetActive(true);
+                
                 thirdPersonCam = Instantiate(gameMechMulti.tpp).GetComponent<CinemachineFreeLook>();
                 thirdPersonCam.gameObject.SetActive(true);
+                
             }
                 
             t = GetComponent<Target>();
@@ -874,6 +874,7 @@ public class PlayerGun : NetworkBehaviour {
             isReloading = false;
         }
     }
+    [Client]
     public void Shoot()
     {
         if (isLocalPlayer)
@@ -897,17 +898,21 @@ public class PlayerGun : NetworkBehaviour {
                         }
                         else
                         {
-                            GameObject go;
+                            
 
-
-                            go = Instantiate(bullet, bulletSpawnPos.position, bulletSpawnPos.rotation);
-                            go.transform.LookAt(playerMotion.cylinder);
-
-                            go.GetComponent<Gunshot>().damage = gunDetails.damage;
                             if (playerMultiDetails.isMultiPlayer)
                             {
-                                NetworkServer.Spawn(go);
+
+                                requestShooting(bulletSpawnPos.position, bulletSpawnPos.rotation, playerMotion.cylinder.position, gunDetails.damage);
                             }
+                            else
+                            {
+                                GameObject go;
+                                go = Instantiate(bullet, bulletSpawnPos.position, bulletSpawnPos.rotation);
+                                go.transform.LookAt(playerMotion.cylinder);
+                                go.GetComponent<Gunshot>().damage = gunDetails.damage;
+                            }
+                            
                         }
 
                         muzzleFlash.Play();
@@ -922,14 +927,16 @@ public class PlayerGun : NetworkBehaviour {
                             gunDetails.gunSound.Play();
                             GameObject go;
                             go = Instantiate(shotGunBullet, bulletSpawnPos.position, bulletSpawnPos.rotation);
+                            go.transform.LookAt(playerMotion.cylinder);
 
-                            muzzleFlash.Play();
-                            Instantiate(smoke, bulletSpawnPos.position, bulletSpawnPos.rotation);
-                            gunDetails.ammoLoaded -= 1;
+
                             if (playerMultiDetails.isMultiPlayer)
                             {
                                 NetworkServer.Spawn(go);
                             }
+                            muzzleFlash.Play();
+                            Instantiate(smoke, bulletSpawnPos.position, bulletSpawnPos.rotation);
+                            gunDetails.ammoLoaded -= 1;
                         }
 
 
@@ -972,6 +979,16 @@ public class PlayerGun : NetworkBehaviour {
             }
         }
        
+    }
+    [Command]
+    private void requestShooting(Vector3 pos,Quaternion rot,Vector3 lookat,float damage)
+    {
+        //Validate logic 
+        GameObject go;
+        go = Instantiate(bullet, pos, rot);
+        go.transform.LookAt(lookat);
+        go.GetComponent<Gunshot>().damage = damage;
+        NetworkServer.Spawn(go);
     }
    
     public void pickupGrenade(GameObject grenadePickup)
