@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using Mirror;
 
-public class RagdollSwitch : MonoBehaviour
+public class RagdollSwitch : NetworkBehaviour
 {
     public bool isPlayer = false;
     public Collider mainBody;
@@ -31,9 +32,28 @@ public class RagdollSwitch : MonoBehaviour
        
         
     }
+    [Command]
+    public void TellServerToSwitchRagdoll(bool value,uint netID)
+    {
+        if (playerMotion.playerMultiDetails.isMultiPlayer)
+        {
+            InstructionsFromServerToSwitchRagdoll(value, netID);
+        }
+        
+    }
+    [ClientRpc]
+    private void InstructionsFromServerToSwitchRagdoll(bool value,uint NetID)
+    {
+        Target t = gameObject.GetComponent<Target>();
+        if(t.netId == NetID)
+        {
+            SwitchRagdoll(value);
+        }
+    }
     public void SwitchRagdoll(bool value)
     {
         animator.enabled = !value;
+        
         foreach(Collider c in colliders)
         {
             /*if (!isPlayer)
@@ -49,6 +69,7 @@ public class RagdollSwitch : MonoBehaviour
                 if (isPlayer)
                 {
                     b.playerMotion = gameObject.GetComponent<PlayerMotion>();
+                    
                 }
                 hasInitedBodyParts = true;
             }
@@ -118,6 +139,9 @@ public class RagdollSwitch : MonoBehaviour
                 navMeshAgent.enabled = !value;
             }
         }
+        
+            
+        
         
     }
     public bool ragdollJokes(bool value)

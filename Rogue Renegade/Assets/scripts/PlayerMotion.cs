@@ -87,15 +87,11 @@ public class PlayerMotion : NetworkBehaviour {
     public Transform cylinder;
     private Vector3 screenPoint;
     private Vector3 offset;
-    private PlayerMultiDetails playerMultiDetails;
-    //public Transform middleSpineAim;
-    
+    public PlayerMultiDetails playerMultiDetails;
     public Quaternion thisPlayersMiddlespineRotation;
     public Vector3 thisPlayersLookat;
     private Vector3 yBounds = new Vector3(0, 0.6f, 0);
     public GameObject virtualMiddleSpine;
-
-
 
     private void Start()
     {
@@ -103,9 +99,11 @@ public class PlayerMotion : NetworkBehaviour {
         if (isLocalPlayer)
         {
             playerMultiDetails = GetComponent<PlayerMultiDetails>();
-            GameMechMulti gameMechMulti = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMechMulti>();
+           
             if (playerMultiDetails.isMultiPlayer)
             {
+                
+                GameMechMulti gameMechMulti = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMechMulti>();
                 cylinder = Instantiate(gameMechMulti.aimCylinder).transform;
                 cylinder.gameObject.SetActive(true);
             }

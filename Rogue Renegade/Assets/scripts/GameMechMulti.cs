@@ -12,11 +12,13 @@ public class GameMechMulti : NetworkManager
     public GameObject aimCylinder;
     public GameObject Canvas;
     public GameObject tpp;
+    public Dictionary<uint, GameObject> playerDictionary;
 
+    
     private void Start()
     {
         gameMech = GetComponent<GameMech>();
-
+        playerDictionary = new Dictionary<uint, GameObject>();
     }
     public override void OnServerAddPlayer(NetworkConnection conn)
     {
@@ -34,12 +36,10 @@ public class GameMechMulti : NetworkManager
         GameObject player = gameMech.spawnAndReturnPlayer(true);
         PlayerMotion playerMotion = player.GetComponent<PlayerMotion>();
         PlayerGun playerGun = player.GetComponent<PlayerGun>();
-        playerMotion.cylinder = aimCylinder.transform;
-        CinemachineFreeLook tp = tpp.GetComponent<CinemachineFreeLook>();
-        playerGun.thirdPersonCam = tp;
-        tp.m_Follow = player.transform;
-        tp.m_LookAt = player.transform;
-
+       
+        
         NetworkServer.AddPlayerForConnection(conn, player);
+        playerDictionary.Add(playerMotion.netId, player);
+
     }
 }

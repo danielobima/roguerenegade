@@ -159,6 +159,7 @@ public class Target : NetworkBehaviour {
             if (!hasSwitchedRagdoll)
             {
                 ragdollSwitch.SwitchRagdoll(isDead);
+                //ragdollSwitch.TellServerToSwitchRagdoll(isDead, netId);
             }
         }
         if (!isPlayer)
