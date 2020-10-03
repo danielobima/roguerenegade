@@ -22,8 +22,10 @@ public class SurvivalMech : MonoBehaviour
     public GameObject startButton;
     public int floor;
     private int easyWeapons = 50;
+    private GameMech gameMech;
     private int meduimWeapons = 80;
     //private int hardWeapons = 100;
+
 
     // Floor is now called level. PLEASE DONT CONFUSE AND MAKE RUSSIA EXPLODE FOR NO REASON!
     void Start()
@@ -37,6 +39,7 @@ public class SurvivalMech : MonoBehaviour
         {
             playerTarget.health = playerTarget.healthFull;
         }
+        gameMech = GetComponent<GameMech>();
     }
 
    
@@ -209,7 +212,7 @@ public class SurvivalMech : MonoBehaviour
     }
     private void Update()
     {
-        if (!survivalOngoing)
+        if (!survivalOngoing && gameMech.playerSpawned)
         {
             if (!playerTarget.isDead)
             {

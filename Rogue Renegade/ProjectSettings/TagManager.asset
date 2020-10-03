@@ -12,7 +12,6 @@ TagManager:
   - GameMech
   - enemy
   - healthBar
-  - pickUpGun
   - DroppedGun
   - PlayerMiddleSpine
   - joystickImg
@@ -21,22 +20,17 @@ TagManager:
   - wall
   - floor
   - SecondaryGun
-  - switchGun
-  - dropGun
   - Pause menu
   - pickup
   - DroppedGrenade
   - Grenade
-  - throw
   - Spawners
   - screenButtons
-  - SlowMoBar
-  - FlashBar
-  - crossHair
   - scopeBlackness
   - thirdPersonCam
   - AimCylinder
   - damagePointer
+  - screen objects
   layers:
   - Default
   - TransparentFX

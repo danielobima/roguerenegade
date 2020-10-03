@@ -53,10 +53,8 @@ public class PlayerGun : NetworkBehaviour {
     private PlayerMotion playerMotion;
     private GameMech gameMech;
 
-    private GameObject pickUpGunButton;
-    private GameObject switchGunButton;
-    private GameObject dropGunButton;
-    private GameObject throwButton;
+    
+    private ScreenObjects screenObjects;
     private bool hasChangedGun = false;
     private bool setGunPos = false;
     private bool hasRemovedParent = false;
@@ -85,7 +83,16 @@ public class PlayerGun : NetworkBehaviour {
     private Vector3 defaultRightArmRot = new Vector3();
     private Vector3 defaultLeftArmRot;
     private float recoilEasing = 0;
-    private PlayerMultiDetails playerMultiDetails;
+
+
+    //Networking Stuffs
+    public PlayerMultiDetails playerMultiDetails;
+    private GameMechMulti gameMechMulti;
+
+    [SyncVar]
+    public int primaryGunInt = -1;
+    [SyncVar]
+    public int secondaryGunInt = -1;
 
 
     //To make gun drops accessible by the pick up button
@@ -95,10 +102,18 @@ public class PlayerGun : NetworkBehaviour {
 
     private void Start()
     {
-        if (isLocalPlayer)
+        gameMechMulti = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMechMulti>();
+        gameMech = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMech>();
+        ragdollSwitch = GetComponent<RagdollSwitch>();
+        playerMotion = GetComponent<PlayerMotion>();
+        animator = GetComponent<Animator>();
+        playerMultiDetails = GetComponent<PlayerMultiDetails>();
+        
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
-            playerMultiDetails = GetComponent<PlayerMultiDetails>();
-            GameMechMulti gameMechMulti = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMechMulti>();
+            primaryGunInt = -1;
+            secondaryGunInt = -1;
+
             if (playerMultiDetails.isMultiPlayer)
             {
                 
@@ -106,29 +121,34 @@ public class PlayerGun : NetworkBehaviour {
                 thirdPersonCam.gameObject.SetActive(true);
                 
             }
+            else
+            {
+                thirdPersonCam = gameMech.tpp;
+
+            }
                 
             t = GetComponent<Target>();
-            pickUpGunButton = GameObject.FindGameObjectWithTag("pickUpGun");
-            switchGunButton = GameObject.FindGameObjectWithTag("switchGun");
-            dropGunButton = GameObject.FindGameObjectWithTag("dropGun");
-            throwButton = GameObject.FindGameObjectWithTag("throw");
+            screenObjects = GameObject.FindGameObjectWithTag("screen objects").GetComponent<ScreenObjects>();
             //playerMiddleSpine = GameObject.FindGameObjectWithTag("PlayerMiddleSpine").transform;
             
            
             //thirdPersonCam = GameObject.FindGameObjectWithTag("thirdPersonCam").GetComponent<CinemachineFreeLook>();
             thirdPersonCam.m_Follow = transform;
             thirdPersonCam.m_LookAt = transform;
-            
+
             /*crossHair = GameObject.FindGameObjectWithTag("crossHair").GetComponent<Image>();
             scopeBlackness = GameObject.FindGameObjectWithTag("scopeBlackness");
             crossHair.gameObject.SetActive(false);
             scopeBlackness.GetComponent<SVGImage>().color = new Color(1, 1, 1, 1);
             scopeBlackness.SetActive(false);*/
 
-            ragdollSwitch = GetComponent<RagdollSwitch>();
-            animator = GetComponent<Animator>();
-            playerMotion = GetComponent<PlayerMotion>();
-            setGun(true, 36);
+
+
+
+            if (!playerMultiDetails.isMultiPlayer)
+            {
+                setGun(true, 36);
+            }
             if (gun != null || secondaryGun != null)
             {
                 ragdollSwitch.getGuns();
@@ -140,31 +160,53 @@ public class PlayerGun : NetworkBehaviour {
         }
 #endif
         }
+        else
+        {
+            if (playerMultiDetails.isMultiPlayer)
+            {
+                if (primaryGunInt != -1)
+                {
+                    GameObject go = Instantiate(gameMechMulti.guns[primaryGunInt]);
+                    changeGun(go);
+                }
+                if (secondaryGunInt != -1)
+                {
+
+                    GameObject go = Instantiate(gameMechMulti.guns[secondaryGunInt]);
+                    GunDetails g = go.GetComponent<GunDetails>();
+                    go.transform.SetParent(playerMiddleSpine);
+                    go.transform.localPosition = new Vector3(-0.001965688f, 0.004141954f, -0.01004855f);
+                    go.transform.localEulerAngles = new Vector3(-52.211f, -76.771f, 164.239f);
+                    ragdollSwitch.SecondaryGun = gun.GetComponent<Collider>();
+                }
+            }
+        }
 
 
 
     }
     private void setGun(bool overwriteAmmo, int ammoToPut = 0)
     {
-        if (isLocalPlayer)
-        {
-            if (overwriteAmmo)
-            {
-                gun = GameObject.FindGameObjectWithTag("Playergun");
-                if (gun != null)
-                {
-                    gunDetails = gun.GetComponent<GunDetails>();
-                    muzzleFlash = gun.transform.GetChild(0).GetComponent<ParticleSystem>();
-                    bulletSpawnPos = gun.transform.GetChild(0).transform;
-                    ammoMax = gunDetails.ammoMax;
-                    //ammo = ammoMax;
-                    gunDetails.ammoSpare = ammoToPut;
-                    timeToShoot = gunDetails.timeToNextShot;
-                    hasHandgun = gunDetails.handgun;
-                    gunRigidBody = gun.GetComponent<Rigidbody>();
-                    setGunPos = false;
-                    updateGunPos();
 
+        if (overwriteAmmo)
+        {
+            gun = GameObject.FindGameObjectWithTag("Playergun");
+            if (gun != null)
+            {
+                gunDetails = gun.GetComponent<GunDetails>();
+                muzzleFlash = gun.transform.GetChild(0).GetComponent<ParticleSystem>();
+                bulletSpawnPos = gun.transform.GetChild(0).transform;
+                ammoMax = gunDetails.ammoMax;
+                //ammo = ammoMax;
+                gunDetails.ammoSpare = ammoToPut;
+                timeToShoot = gunDetails.timeToNextShot;
+                hasHandgun = gunDetails.handgun;
+                gunRigidBody = gun.GetComponent<Rigidbody>();
+                setGunPos = false;
+                updateGunPos();
+
+                if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
+                {
                     if (gameMech == null)
                     {
                         gameMech = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMech>();
@@ -180,25 +222,28 @@ public class PlayerGun : NetworkBehaviour {
                         veryFineAimRef = null;
                     }
                 }
-
             }
-            else
-            {
-                gun = GameObject.FindGameObjectWithTag("Playergun");
-                if (gun != null)
-                {
-                    gunDetails = gun.GetComponent<GunDetails>();
-                    muzzleFlash = gun.transform.GetChild(0).GetComponent<ParticleSystem>();
-                    bulletSpawnPos = gun.transform.GetChild(0).transform;
-                    ammoMax = gunDetails.ammoMax;
-                    gunDetails.ammoLoaded = ammoPreserve;
-                    timeToShoot = gunDetails.timeToNextShot;
-                    hasHandgun = gunDetails.handgun;
-                    gunRigidBody = gun.GetComponent<Rigidbody>();
-                    setGunPos = false;
-                    updateGunPos();
 
-                    gunDetails.ammoSpare = newAmmo;
+        }
+        else
+        {
+            gun = GameObject.FindGameObjectWithTag("Playergun");
+            if (gun != null)
+            {
+                gunDetails = gun.GetComponent<GunDetails>();
+                muzzleFlash = gun.transform.GetChild(0).GetComponent<ParticleSystem>();
+                bulletSpawnPos = gun.transform.GetChild(0).transform;
+                ammoMax = gunDetails.ammoMax;
+                gunDetails.ammoLoaded = ammoPreserve;
+                timeToShoot = gunDetails.timeToNextShot;
+                hasHandgun = gunDetails.handgun;
+                gunRigidBody = gun.GetComponent<Rigidbody>();
+                setGunPos = false;
+                updateGunPos();
+
+                gunDetails.ammoSpare = newAmmo;
+                if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
+                {
                     if (gameMech == null)
                     {
                         gameMech = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMech>();
@@ -216,10 +261,101 @@ public class PlayerGun : NetworkBehaviour {
                 }
             }
         }
+
+    }
+    [Command]
+    private void updatePrimaryGun(int no)
+    {
+        primaryGunInt = no;
+    }
+    [Command]
+    private void updateSecondaryGun(int no)
+    {
+        secondaryGunInt = no;
+    }
+    private void setgun2(bool overwriteAmmo, int ammoToPut = 0 )
+    {
+        
+        
+
+        if (overwriteAmmo)
+        {
+            
+            if (gun != null)
+            {
+                gunDetails = gun.GetComponent<GunDetails>();
+                muzzleFlash = gun.transform.GetChild(0).GetComponent<ParticleSystem>();
+                bulletSpawnPos = gun.transform.GetChild(0).transform;
+                ammoMax = gunDetails.ammoMax;
+                //ammo = ammoMax;
+                gunDetails.ammoSpare = ammoToPut;
+                timeToShoot = gunDetails.timeToNextShot;
+                hasHandgun = gunDetails.handgun;
+                gunRigidBody = gun.GetComponent<Rigidbody>();
+                setGunPos = false;
+                updateGunPos();
+                updatePrimaryGun(gunDetails.gunInt);
+                if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
+                {
+                    if (gameMech == null)
+                    {
+                        gameMech = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMech>();
+                        gameMech.screentexts.changeGunIcon();
+                    }
+                    else
+                    {
+                        gameMech.screentexts.changeGunIcon();
+                    }
+                    if (veryFineAimRef != null)
+                    {
+                        Destroy(veryFineAimRef);
+                        veryFineAimRef = null;
+                    }
+                }
+            }
+
+        }
+        else
+        {
+            if (gun != null)
+            {
+                gunDetails = gun.GetComponent<GunDetails>();
+                muzzleFlash = gun.transform.GetChild(0).GetComponent<ParticleSystem>();
+                bulletSpawnPos = gun.transform.GetChild(0).transform;
+                ammoMax = gunDetails.ammoMax;
+                gunDetails.ammoLoaded = ammoPreserve;
+                timeToShoot = gunDetails.timeToNextShot;
+                hasHandgun = gunDetails.handgun;
+                gunRigidBody = gun.GetComponent<Rigidbody>();
+                setGunPos = false;
+                updateGunPos();
+                updatePrimaryGun(gunDetails.gunInt);
+                gunDetails.ammoSpare = newAmmo;
+                if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
+                {
+                    if (gameMech == null)
+                    {
+                        gameMech = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMech>();
+                        gameMech.screentexts.changeGunIcon();
+                    }
+                    else
+                    {
+                        gameMech.screentexts.changeGunIcon();
+                    }
+                    if (veryFineAimRef != null)
+                    {
+                        Destroy(veryFineAimRef);
+                        veryFineAimRef = null;
+                    }
+                }
+            }
+        }
+
+        
     }
     private void FixedUpdate()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             if (gun != null && !t.isDead)
             {
@@ -300,7 +436,7 @@ public class PlayerGun : NetworkBehaviour {
             {
                 if (gunDrop != null)
                 {
-                    pickUpGunButton.SetActive(true);
+                    screenObjects.pickUpGunButton.SetActive(true);
                     GameObject[] otherGuns = GameObject.FindGameObjectsWithTag("DroppedGun");
                     foreach (GameObject g in otherGuns)
                     {
@@ -317,7 +453,7 @@ public class PlayerGun : NetworkBehaviour {
                 {
                     if (grenade == null)
                     {
-                        pickUpGunButton.SetActive(true);
+                        screenObjects.pickUpGunButton.SetActive(true);
                     }
                     GameObject[] otherGrenades = GameObject.FindGameObjectsWithTag("DroppedGrenade");
                     foreach (GameObject g in otherGrenades)
@@ -332,7 +468,7 @@ public class PlayerGun : NetworkBehaviour {
             }
             else
             {
-                pickUpGunButton.SetActive(false);
+                screenObjects.pickUpGunButton.SetActive(false);
             }
 
 
@@ -402,7 +538,7 @@ public class PlayerGun : NetworkBehaviour {
     }
     public void punch()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, 0.5f))
             {
@@ -439,7 +575,7 @@ public class PlayerGun : NetworkBehaviour {
     private bool isStoppingFightingMode = false;
     public void fightingMode(bool on)
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             if (on)
             {
@@ -468,7 +604,7 @@ public class PlayerGun : NetworkBehaviour {
     }
     public void endPunch()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             animator.SetInteger("punch", 0);
             isPunching = false;
@@ -476,7 +612,7 @@ public class PlayerGun : NetworkBehaviour {
     }
     public void punchWhenTold()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             if (!t.isDead && playerMotion.isOnFloor)
             {
@@ -504,7 +640,7 @@ public class PlayerGun : NetworkBehaviour {
     }
     private void Update()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             CameraTechnologies();
             if (gun != null)
@@ -610,7 +746,17 @@ public class PlayerGun : NetworkBehaviour {
                 {
                     if (gunDrop != null)
                     {
-                        changeGun(gunDrop);
+                        
+                        if (playerMultiDetails.isMultiPlayer)
+                        {
+                            GunDetails n = gunDrop.GetComponent<GunDetails>();
+                           
+                            CmdchangeGun(gunDrop, n.gunInt,n.gunID, netIdentity.netId);
+                        }
+                        else
+                        {
+                            changeGun(gunDrop);
+                        }
                         if (meleeMode)
                         {
                             fightingMode(false);
@@ -658,7 +804,7 @@ public class PlayerGun : NetworkBehaviour {
    
     private void CameraTechnologies()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             /*if (Input.GetMouseButtonDown(1))
         {
@@ -709,7 +855,7 @@ public class PlayerGun : NetworkBehaviour {
     }
     private void changeToFineAim()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             isFineAim = true;
 
@@ -739,7 +885,7 @@ public class PlayerGun : NetworkBehaviour {
     }
     private void changeToVeryFineAim()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             if (gunDetails.scopeCam == null)
             {
@@ -772,7 +918,7 @@ public class PlayerGun : NetworkBehaviour {
     }
     private void changeFromVeryFineAim()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             if (gunDetails.scopeCam == null)
             {
@@ -808,7 +954,7 @@ public class PlayerGun : NetworkBehaviour {
     }
     private void changeToTPP()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             isFineAim = false;
             isVeryFineAim = false;
@@ -833,7 +979,7 @@ public class PlayerGun : NetworkBehaviour {
     }
     private void startReloadAnimation()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             isReloading = true;
             setAnimatorWeight(1);
@@ -843,7 +989,7 @@ public class PlayerGun : NetworkBehaviour {
     }
     public void reload()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             if (gunDetails.ammoSpare >= ammoMax)
             {
@@ -874,10 +1020,10 @@ public class PlayerGun : NetworkBehaviour {
             isReloading = false;
         }
     }
-    [Client]
+    
     public void Shoot()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             if (!isReloading && !isSwitchingGun && playerMotion.joked)
             {
@@ -903,7 +1049,7 @@ public class PlayerGun : NetworkBehaviour {
                             if (playerMultiDetails.isMultiPlayer)
                             {
 
-                                requestShooting(bulletSpawnPos.position, bulletSpawnPos.rotation, playerMotion.cylinder.position, gunDetails.damage);
+                                CmdrequestShooting(bulletSpawnPos.position, bulletSpawnPos.rotation, playerMotion.cylinder.position, gunDetails.damage,false);
                             }
                             else
                             {
@@ -911,32 +1057,38 @@ public class PlayerGun : NetworkBehaviour {
                                 go = Instantiate(bullet, bulletSpawnPos.position, bulletSpawnPos.rotation);
                                 go.transform.LookAt(playerMotion.cylinder);
                                 go.GetComponent<Gunshot>().damage = gunDetails.damage;
+                                muzzleFlash.Play();
+                                Instantiate(smoke, bulletSpawnPos.position, bulletSpawnPos.rotation);
+                                gunDetails.ammoLoaded -= 1;
                             }
                             
                         }
 
-                        muzzleFlash.Play();
-                        Instantiate(smoke, bulletSpawnPos.position, bulletSpawnPos.rotation);
-                        gunDetails.ammoLoaded -= 1;
+                        
 
                     }
                     else
                     {
                         if (gunDetails.gunType.Equals("Bennelli M4"))
                         {
-                            gunDetails.gunSound.Play();
-                            GameObject go;
-                            go = Instantiate(shotGunBullet, bulletSpawnPos.position, bulletSpawnPos.rotation);
-                            go.transform.LookAt(playerMotion.cylinder);
+                           
 
 
                             if (playerMultiDetails.isMultiPlayer)
                             {
-                                NetworkServer.Spawn(go);
+                                CmdrequestShooting(bulletSpawnPos.position, bulletSpawnPos.rotation, playerMotion.cylinder.position, gunDetails.damage, false);
                             }
-                            muzzleFlash.Play();
-                            Instantiate(smoke, bulletSpawnPos.position, bulletSpawnPos.rotation);
-                            gunDetails.ammoLoaded -= 1;
+                            else
+                            {
+                                gunDetails.gunSound.Play();
+                                GameObject go;
+                                go = Instantiate(shotGunBullet, bulletSpawnPos.position, bulletSpawnPos.rotation);
+                                go.transform.LookAt(playerMotion.cylinder);
+                                muzzleFlash.Play();
+                                Instantiate(smoke, bulletSpawnPos.position, bulletSpawnPos.rotation);
+                                gunDetails.ammoLoaded -= 1;
+                            }
+                            
                         }
 
 
@@ -981,19 +1133,38 @@ public class PlayerGun : NetworkBehaviour {
        
     }
     [Command]
-    private void requestShooting(Vector3 pos,Quaternion rot,Vector3 lookat,float damage)
+    private void CmdrequestShooting(Vector3 pos,Quaternion rot,Vector3 lookat,float damage,bool shotGun)
     {
         //Validate logic 
         GameObject go;
-        go = Instantiate(bullet, pos, rot);
-        go.transform.LookAt(lookat);
-        go.GetComponent<Gunshot>().damage = damage;
-        NetworkServer.Spawn(go);
+        ParticleSystem smo;
+        if (!shotGun)
+        {
+            go = Instantiate(bullet, pos, rot);
+            go.transform.LookAt(lookat);
+            go.GetComponent<Gunshot>().damage = damage;
+            NetworkServer.Spawn(go);
+            muzzleFlash.Play();
+            smo = Instantiate(smoke, pos, rot);
+            gunDetails.ammoLoaded -= 1;
+            NetworkServer.Spawn(smo.gameObject);
+        }
+        else
+        {
+            go = Instantiate(shotGunBullet, pos, rot);
+            go.transform.LookAt(lookat);
+            go.GetComponent<Gunshot>().damage = damage;
+            NetworkServer.Spawn(go);
+            smo = Instantiate(smoke, pos, rot);
+            gunDetails.ammoLoaded -= 1;
+            NetworkServer.Spawn(smo.gameObject);
+        }
+        
     }
    
     public void pickupGrenade(GameObject grenadePickup)
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             if (grenade == null)
             {
@@ -1006,7 +1177,7 @@ public class PlayerGun : NetworkBehaviour {
                 grenade = GameObject.FindGameObjectWithTag("Grenade");
                 if (!playerMotion.isUsingKeyBoard)
                 {
-                    throwButton.SetActive(true);
+                    screenObjects.throwButton.SetActive(true);
                 }
                 if (grenadePickup.GetComponent<FresnelHighlight>().isFresnating)
                 {
@@ -1017,7 +1188,7 @@ public class PlayerGun : NetworkBehaviour {
     }
     public void throwGrenade()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             if (grenade != null)
             {
@@ -1032,7 +1203,7 @@ public class PlayerGun : NetworkBehaviour {
                 }
                 if (!playerMotion.isUsingKeyBoard)
                 {
-                    throwButton.SetActive(false);
+                    screenObjects.throwButton.SetActive(false);
                 }
             }
         }
@@ -1040,7 +1211,7 @@ public class PlayerGun : NetworkBehaviour {
     public void stopLoadingThrow()
     {
 
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             animator.SetInteger("throw", 2);
             if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit))
@@ -1055,7 +1226,7 @@ public class PlayerGun : NetworkBehaviour {
     }
     public void releaseGrenade()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             if (grenade != null)
             {
@@ -1070,7 +1241,7 @@ public class PlayerGun : NetworkBehaviour {
     }
     public void endThrow()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             isLoadingThrow = false;
             switch (animator.GetInteger("upperbody"))
@@ -1089,24 +1260,33 @@ public class PlayerGun : NetworkBehaviour {
     }
     public void changeGun(GameObject newGun)
     {
-        if (isLocalPlayer)
+        
+        if (newGun.GetComponent<FresnelHighlight>().isFresnating)
         {
-            if (newGun.GetComponent<FresnelHighlight>().isFresnating)
+            newGun.GetComponent<FresnelHighlight>().defresnate();
+        }
+        if (gun != null)
+        {
+            if (newGun.GetComponent<GunDetails>().gunType.Equals(gunDetails.gunType))
             {
-                newGun.GetComponent<FresnelHighlight>().defresnate();
+                ammoPreserve = gunDetails.ammoLoaded;
+                newAmmo = newGun.GetComponent<GunDetails>().ammoSpare + gunDetails.ammoSpare;
+                Destroy(gun);
             }
-            if (gun != null)
+            else
             {
-                if (newGun.GetComponent<GunDetails>().gunType.Equals(gunDetails.gunType))
+                ammoPreserve = newGun.GetComponent<GunDetails>().ammoLoaded;
+                newAmmo = newGun.GetComponent<GunDetails>().ammoSpare;
+                if (playerMultiDetails.isMultiPlayer)
                 {
-                    ammoPreserve = gunDetails.ammoLoaded;
-                    newAmmo = newGun.GetComponent<GunDetails>().ammoSpare + gunDetails.ammoSpare;
-                    Destroy(gun);
+                    int gunInt = gunDetails.gunInt;
+                    Vector3 pos = gun.transform.position;
+                    Quaternion rot = gun.transform.rotation;
+
+                    CmdDropGun(gunInt, pos, rot, netIdentity.netId);
                 }
                 else
                 {
-                    ammoPreserve = newGun.GetComponent<GunDetails>().ammoLoaded;
-                    newAmmo = newGun.GetComponent<GunDetails>().ammoSpare;
                     gun.GetComponent<Collider>().enabled = true;
                     gun.tag = "DroppedGun";
                     gun.transform.SetParent(null);
@@ -1120,141 +1300,245 @@ public class PlayerGun : NetworkBehaviour {
                         gun.GetComponent<Rigidbody>().useGravity = true;
                     }
                 }
-                EnemyGun en = newGun.GetComponent<EnemyGun>();
-                if (en != null)
-                {
-                    Destroy(en);
-                }
-                Rigidbody r = newGun.GetComponent<Rigidbody>();
-                if (r != null)
-                {
-                    Destroy(r);
-                }
+            }
+            EnemyGun en = newGun.GetComponent<EnemyGun>();
+            if (en != null)
+            {
+                Destroy(en);
+            }
+            Rigidbody r = newGun.GetComponent<Rigidbody>();
+            if (r != null)
+            {
+                Destroy(r);
+            }
 
-                ragdollSwitch.gun = newGun.GetComponent<Collider>();
-                Collider c = newGun.GetComponent<Collider>();
-                c.enabled = false;
-                newGun.tag = "Playergun";
-
-                newGun.transform.SetParent(rightElbow);
+            ragdollSwitch.gun = newGun.GetComponent<Collider>();
+            Collider c = newGun.GetComponent<Collider>();
+            c.enabled = false;
+            newGun.transform.SetParent(rightElbow);
+            newGun.tag = "Playergun";
+            if (!playerMultiDetails.isMultiPlayer)
+            {
                 setGun(false);
             }
             else
             {
-                EnemyGun en = newGun.GetComponent<EnemyGun>();
-                if (en != null)
-                {
-                    Destroy(en);
-                }
-                Rigidbody r = newGun.GetComponent<Rigidbody>();
-                if (r != null)
-                {
-                    Destroy(r);
-                }
-                ragdollSwitch.gun = newGun.GetComponent<Collider>();
-                Collider c = newGun.GetComponent<Collider>();
-                c.enabled = false;
-                newGun.tag = "Playergun";
-                newAmmo = newGun.GetComponent<GunDetails>().ammoSpare;
-                ammoPreserve = newGun.GetComponent<GunDetails>().ammoLoaded;
-
-                newGun.transform.SetParent(rightElbow);
+                gun = newGun;
+                setgun2(false);
+            }
+        }
+        else
+        {
+            EnemyGun en = newGun.GetComponent<EnemyGun>();
+            if (en != null)
+            {
+                Destroy(en);
+            }
+            Rigidbody r = newGun.GetComponent<Rigidbody>();
+            if (r != null)
+            {
+                Destroy(r);
+            }
+            ragdollSwitch.gun = newGun.GetComponent<Collider>();
+            Collider c = newGun.GetComponent<Collider>();
+            c.enabled = false;
+            newAmmo = newGun.GetComponent<GunDetails>().ammoSpare;
+            ammoPreserve = newGun.GetComponent<GunDetails>().ammoLoaded;
+            newGun.transform.SetParent(rightElbow);
+            newGun.tag = "Playergun";
+            if (!playerMultiDetails.isMultiPlayer)
+            {
                 setGun(false);
             }
-            hasChangedGun = true;
+            else
+            {
+                gun = newGun;
+                setgun2(false);
+            }
+            
+
+            
+            
         }
+        hasChangedGun = true;
+            
+        
+        
+    }
+   
+    [Command]
+    private void CmdchangeGun(GameObject gunObject,int gunInt,int gunID,uint NetID)
+    {
+        //Validate input
+        RpcChangeGun(gunInt, gunID, NetID);
+        NetworkServer.Destroy(gunObject);
+        //gameMechMulti.setDeleteGun(gunID);
+    }
+    [ClientRpc]
+    private void RpcChangeGun(int gunInt, int gunID, uint NetID)
+    {
+        if(NetID == netIdentity.netId)
+        {
+            GameObject go = Instantiate(gameMechMulti.guns[gunInt]);
+            changeGun(go);
+            //Destroy(gameMechMulti.gundrops[gunID].gameObject);
+            
+        }
+       
     }
     public void endSwitchGunAnim()
     {
-        if (isLocalPlayer)
+      
+        switch (animator.GetInteger("upperbody"))
         {
-            switch (animator.GetInteger("upperbody"))
-            {
-                case 0:
-                    animator.SetInteger("switch gun", 0);
-                    break;
-                case 1:
-                    animator.SetInteger("switch gun", 1);
-                    break;
-                case 2:
-                    animator.SetInteger("switch gun", 3);
-                    break;
-            }
-            isSwitchingGun = false;
+            case 0:
+                animator.SetInteger("switch gun", 0);
+                break;
+            case 1:
+                animator.SetInteger("switch gun", 1);
+                break;
+            case 2:
+                animator.SetInteger("switch gun", 3);
+                break;
         }
+        isSwitchingGun = false;
+        
     }
     public void startSwitchGunAnim()
     {
-        if (isLocalPlayer)
+       
+        if (!playerMotion.isBeingPunched)
         {
-            if (!playerMotion.isBeingPunched)
-            {
-                isSwitchingGun = true;
-                setAnimatorWeight(1);
+            isSwitchingGun = true;
+            setAnimatorWeight(1);
 
-                animator.SetInteger("switch gun", 2);
-            }
+            animator.SetInteger("switch gun", 2);
+        }
+       
+    }
+    [Command]
+    public void CmdSwitchGun(uint netID) => RpcSwitchGun(netID);
+    
+    [ClientRpc]
+    public void RpcSwitchGun(uint netID)
+    {
+        if(netID == netIdentity.netId)
+        {
+            switchingGun();
         }
     }
+
     public void switchGun()
     {
-        if (isLocalPlayer)
+        if (playerMultiDetails.isMultiPlayer)
         {
-            if (gun != null)
+            if (isLocalPlayer)
             {
-                gun.tag = "SecondaryGun";
-                gun.transform.SetParent(playerMiddleSpine);
-                gun.transform.localPosition = new Vector3(-0.001965688f, 0.004141954f, -0.01004855f);
-                gun.transform.localEulerAngles = new Vector3(-52.211f, -76.771f, 164.239f);
-                ragdollSwitch.SecondaryGun = gun.GetComponent<Collider>();
+                CmdSwitchGun(netIdentity.netId);
+            }
+        }
+        else
+        {
+            switchingGun();
+        }
+    }
+    private void switchingGun()
+    {
 
-                if (secondaryGun != null)
+        if (gun != null)
+        {
+            gun.tag = "SecondaryGun";
+            GameObject gunPlaceHolder = gun;
+            gun.transform.SetParent(playerMiddleSpine);
+            gun.transform.localPosition = new Vector3(-0.001965688f, 0.004141954f, -0.01004855f);
+            gun.transform.localEulerAngles = new Vector3(-52.211f, -76.771f, 164.239f);
+            ragdollSwitch.SecondaryGun = gun.GetComponent<Collider>();
+            if (playerMultiDetails.isMultiPlayer)
+            {
+                updateSecondaryGun(gun.GetComponent<GunDetails>().gunInt);
+            }
+            if (secondaryGun != null)
+            {
+                secondaryGun.tag = "Playergun";
+                secondaryGun.transform.SetParent(rightElbow);
+                ragdollSwitch.gun = secondaryGun.GetComponent<Collider>();
+                ammoPreserve = secondaryGun.GetComponent<GunDetails>().ammoLoaded;
+                newAmmo = secondaryGun.GetComponent<GunDetails>().ammoSpare;
+                if (playerMultiDetails.isMultiPlayer)
                 {
-                    secondaryGun.tag = "Playergun";
-                    secondaryGun.transform.SetParent(rightElbow);
-                    ragdollSwitch.gun = secondaryGun.GetComponent<Collider>();
-                    ammoPreserve = secondaryGun.GetComponent<GunDetails>().ammoLoaded;
-                    newAmmo = secondaryGun.GetComponent<GunDetails>().ammoSpare;
-                    setGun(false);
-
+                    gun = secondaryGun;
+                    setgun2(false);
                 }
                 else
-                {
-                    ragdollSwitch.gun = null;
-                    gun = null;
-                }
-                secondaryGun = GameObject.FindGameObjectWithTag("SecondaryGun");
-                gameMech.screentexts.changeSecondaryGunIcon();
+                    setGun(false);
 
             }
             else
             {
-
-                if (secondaryGun != null)
+                ragdollSwitch.gun = null;
+                gun = null;
+                if (playerMultiDetails.isMultiPlayer)
                 {
-                    secondaryGun.tag = "Playergun";
-                    secondaryGun.transform.SetParent(rightElbow);
-                    ragdollSwitch.gun = secondaryGun.GetComponent<Collider>();
-                    ammoPreserve = secondaryGun.GetComponent<GunDetails>().ammoLoaded;
-                    newAmmo = secondaryGun.GetComponent<GunDetails>().ammoSpare;
-                    setGun(false);
+                    updatePrimaryGun(-1);
                 }
-                else
-                {
-                    ragdollSwitch.gun = null;
-                    gun = null;
-                }
-                ragdollSwitch.SecondaryGun = null;
-                secondaryGun = null;
-                gameMech.screentexts.removeSecondaryGunIcon();
+            }
+            if (!playerMultiDetails.isMultiPlayer )
+            {
+                secondaryGun = GameObject.FindGameObjectWithTag("SecondaryGun");
+            }
+            else
+            {
+                secondaryGun = gunPlaceHolder;
+            }
+            if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
+            {
+                gameMech.screentexts.changeSecondaryGunIcon();
             }
 
         }
+        else
+        {
 
+            if (secondaryGun != null)
+            {
+                secondaryGun.tag = "Playergun";
+                secondaryGun.transform.SetParent(rightElbow);
+                ragdollSwitch.gun = secondaryGun.GetComponent<Collider>();
+                ammoPreserve = secondaryGun.GetComponent<GunDetails>().ammoLoaded;
+                newAmmo = secondaryGun.GetComponent<GunDetails>().ammoSpare;
+                if (playerMultiDetails.isMultiPlayer)
+                {
+                    gun = secondaryGun;
+                    setgun2(false);
+                }
+                else
+                    setGun(false);
+            }
+            else
+            {
+                ragdollSwitch.gun = null;
+                gun = null;
+                if (playerMultiDetails.isMultiPlayer)
+                {
+                    updatePrimaryGun(-1);
+                }
+            }
+            ragdollSwitch.SecondaryGun = null;
+            secondaryGun = null;
+            if (playerMultiDetails.isMultiPlayer)
+            {
+                updateSecondaryGun(-1);
+            }
+            if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
+            {
+                gameMech.screentexts.changeSecondaryGunIcon();
+            }
+        }
     }
     public void dropGun()
     {
-        if (isLocalPlayer)
+
+        if (!playerMultiDetails.isMultiPlayer)
         {
             if (gun != null)
             {
@@ -1272,6 +1556,43 @@ public class PlayerGun : NetworkBehaviour {
                 gun = null;
 
             }
+        }
+        else
+        {
+            int gunInt = gunDetails.gunInt;
+            Vector3 pos = gun.transform.position;
+            Quaternion rot = gun.transform.rotation;
+            updatePrimaryGun(-1);
+            CmdDropGun(gunInt,pos,rot,netIdentity.netId);
+        }
+        
+    }
+    public void dropSecondaryGun()
+    {
+
+        if(secondaryGun != null)
+        {
+            int gunInt = secondaryGun.GetComponent<GunDetails>().gunInt;
+            Vector3 pos = secondaryGun.transform.position;
+            Quaternion rot = secondaryGun.transform.rotation;
+            updateSecondaryGun(-1);
+            CmdDropGun(gunInt, pos, rot, netIdentity.netId);
+        }
+
+    }
+    [Command]
+    private void CmdDropGun(int gunInt,Vector3 pos,Quaternion rot,uint netID)
+    {
+        GameObject g = Instantiate(gameMechMulti.networkedGuns[gunInt], pos, rot);
+        NetworkServer.Spawn(g);
+        RpcDropGun(netID);
+    }
+    [ClientRpc]
+    private void RpcDropGun(uint netID)
+    {
+        if(netIdentity.netId == netID)
+        {
+            Destroy(gun);
         }
     }
     private GameObject gunDroppedNearby()
@@ -1321,22 +1642,21 @@ public class PlayerGun : NetworkBehaviour {
 
     private void updateGunPos()
     {
-        if (isLocalPlayer)
+       
+        if (!setGunPos)
         {
-            if (!setGunPos)
-            {
-                gun.transform.localPosition = gunDetails.localPos;
-                gun.transform.localEulerAngles = gunDetails.localRot;
-                gun.transform.localScale = gunDetails.localScale;
-                setGunPos = true;
+            gun.transform.localPosition = gunDetails.localPos;
+            gun.transform.localEulerAngles = gunDetails.localRot;
+            gun.transform.localScale = gunDetails.localScale;
+            setGunPos = true;
 
-            }
         }
+      
     }
     private void fineAim()
     {
 
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
             float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
@@ -1360,7 +1680,7 @@ public class PlayerGun : NetworkBehaviour {
     }
     private void StartRecoil()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             isRecoil = true;
             recoilTime = 0;
@@ -1369,7 +1689,7 @@ public class PlayerGun : NetworkBehaviour {
     //For fixedUpdate
     private void RecoilSciences(float recoilTimeFin)
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             if (isRecoil)
             {
@@ -1422,7 +1742,7 @@ public class PlayerGun : NetworkBehaviour {
     }
     private void LateUpdate()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             if (isFineAim)
             {

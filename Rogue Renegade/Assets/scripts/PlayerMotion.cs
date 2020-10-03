@@ -95,9 +95,10 @@ public class PlayerMotion : NetworkBehaviour {
 
     private void Start()
     {
-        
-        if (isLocalPlayer)
+        gameMech = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMech>();
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
+
             playerMultiDetails = GetComponent<PlayerMultiDetails>();
            
             if (playerMultiDetails.isMultiPlayer)
@@ -106,6 +107,10 @@ public class PlayerMotion : NetworkBehaviour {
                 GameMechMulti gameMechMulti = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMechMulti>();
                 cylinder = Instantiate(gameMechMulti.aimCylinder).transform;
                 cylinder.gameObject.SetActive(true);
+            }
+            else
+            {
+                cylinder = gameMech.cylinder;
             }
            
             screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
@@ -154,7 +159,7 @@ public class PlayerMotion : NetworkBehaviour {
     }
     private void FixedUpdate()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             movementTechnologies();
             slowMoTechnologies();
@@ -178,7 +183,7 @@ public class PlayerMotion : NetworkBehaviour {
 
     private void Update()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             MoveWhenTold(isUsingKeyBoard);
         }
@@ -186,7 +191,7 @@ public class PlayerMotion : NetworkBehaviour {
     }
     private void CoverTechnologies()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             if (!isTakingCover)
             {
@@ -226,7 +231,7 @@ public class PlayerMotion : NetworkBehaviour {
     private void Move()
     {
 
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             float horizontal = Input.GetAxisRaw("Horizontal");
             float vertical = Input.GetAxisRaw("Vertical");
@@ -385,7 +390,7 @@ public class PlayerMotion : NetworkBehaviour {
 
     private void movementTechnologies()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             if (!target.isDead)
             {
@@ -597,7 +602,7 @@ public class PlayerMotion : NetworkBehaviour {
     }
     private void coverAnim()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             if (!shouldStandCover)
             {
@@ -637,21 +642,12 @@ public class PlayerMotion : NetworkBehaviour {
             {
                 // Debug.Log(hit.collider.name);
                 
-                if (playerMultiDetails.isMultiPlayer)
-                {
-                    thisPlayersLookat = hit.point;
-                    //sendLookAt(thisPlayersLookat, netId);
-                }
+               
                 return hit.point;
             }
             else
             {
-                if (playerMultiDetails.isMultiPlayer)
-                {
-                    thisPlayersLookat = curPosition;
-                    //sendLookAt(thisPlayersLookat, netId);
-                }
-                    
+               
                 return curPosition;
             }
       
@@ -706,20 +702,7 @@ public class PlayerMotion : NetworkBehaviour {
 
 
     }
-    [Command]
-    private void sendLookAt(Vector3 lookAt, uint conn)
-    {
-        updateRotation(lookAt,conn);
-    }
-    [ClientRpc]
-    private void updateRotation(Vector3 lookAt, uint conn)
-    {
-        if (!isLocalPlayer && conn == netId)
-        {
-            Vector3 pos = lookAt + yBounds;
-            transform.LookAt(new Vector3(pos.x, transform.position.y, pos.z));
-        }
-    }
+    
     
     private void LateUpdate() 
     {
@@ -732,7 +715,7 @@ public class PlayerMotion : NetworkBehaviour {
     private void MoveWhenTold(bool isUsingKeys = true)
     {
 
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             if (isUsingKeys)
             {
@@ -825,7 +808,7 @@ public class PlayerMotion : NetworkBehaviour {
 
     private void startJump()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             if (!target.isDead && !playerGun.meleeMode)
             {
@@ -846,7 +829,7 @@ public class PlayerMotion : NetworkBehaviour {
 
     public void endRoll()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             isRolling = false;
             jumpAnim = false;
@@ -856,7 +839,7 @@ public class PlayerMotion : NetworkBehaviour {
 
     public void jump()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             if (!isCrouchJumping && !isJumping)
             {
@@ -887,7 +870,7 @@ public class PlayerMotion : NetworkBehaviour {
 
     public void endJump()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             if (!isCrouchJumping)
             {
@@ -899,7 +882,7 @@ public class PlayerMotion : NetworkBehaviour {
     }
     public void JokeTrue()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             if (joked)
             {
@@ -910,7 +893,7 @@ public class PlayerMotion : NetworkBehaviour {
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             if (isCrouchJumping)
             {
@@ -976,7 +959,7 @@ public class PlayerMotion : NetworkBehaviour {
     {
 
 
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             if (!isOnFloor || isJumping)
             {
@@ -1012,7 +995,7 @@ public class PlayerMotion : NetworkBehaviour {
 
     private void OnCollisionExit(Collision collision)
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             if (collision.collider.GetComponent<CoverAble>())
             {
@@ -1024,7 +1007,7 @@ public class PlayerMotion : NetworkBehaviour {
 
     public void stopPunchImpact()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             isBeingPunched = false;
         }
@@ -1033,7 +1016,7 @@ public class PlayerMotion : NetworkBehaviour {
 
     public void setAnimatorWeight(float weight)
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             animator.SetLayerWeight(2, weight);
         }

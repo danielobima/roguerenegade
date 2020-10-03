@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-public class LoadCharacter : MonoBehaviour
+public class LoadCharacter : NetworkBehaviour
 {
     
 
@@ -38,6 +39,112 @@ public class LoadCharacter : MonoBehaviour
         {
             SkinnedMeshRenderer[][] clothRendererArrays;
             
+            male = clothSave.male;
+            lipstick = clothSave.lipstick;
+            sleeves = clothSave.sleeves;
+            chain = clothSave.chain;
+
+            setSkinColor(new Color(clothSave.colors[0][0], clothSave.colors[0][1], clothSave.colors[0][2], clothSave.colors[0][3]));
+            if (lipstick)
+            {
+                randomLipstickColor(new Color(clothSave.colors[6][0], clothSave.colors[6][1], clothSave.colors[6][2], clothSave.colors[6][3]));
+            }
+            else
+            {
+                removeLipstick();
+            }
+            toggleChain(chain);
+
+            if (clothSave.male)
+            {
+                clothRendererArrays = new SkinnedMeshRenderer[][] { sunglasses, facialHairs, hairHats, maleTorso, eyebrows };
+            }
+            else
+            {
+                clothRendererArrays = new SkinnedMeshRenderer[][] { sunglasses, facialHairs, hairHats, femaleTorso, eyebrows };
+            }
+
+            for (int i = 0; i < clothRendererArrays.Length; i++)
+            {
+                foreach (SkinnedMeshRenderer s in clothRendererArrays[i])
+                {
+                    if (s != null)
+                    {
+                        s.gameObject.SetActive(false);
+                    }
+                }
+                if (clothRendererArrays[i][clothSave.clothItems[i].clothNo] != null)
+                {
+                    clothRendererArrays[i][clothSave.clothItems[i].clothNo].gameObject.SetActive(true);
+                    for (int z = 0; z < clothRendererArrays[i][clothSave.clothItems[i].clothNo].materials.Length; z++)
+                    {
+                        clothRendererArrays[i][clothSave.clothItems[i].clothNo].materials[z].SetColor("_BaseColor", new Color(clothSave.clothItems[i].colors[z][0],
+                            clothSave.clothItems[i].colors[z][1],
+                            clothSave.clothItems[i].colors[z][2],
+                            clothSave.clothItems[i].colors[z][3]));
+                    }
+                }
+
+
+
+
+
+
+                if (i == 3)
+                {
+                    if (male)
+                    {
+                        if (clothSave.clothItems[i].clothNo != 4)
+                        {
+                            if (clothSave.clothItems[i].clothNo != 1)
+                            {
+
+                                mainTorsoMat = clothRendererArrays[i][clothSave.clothItems[i].clothNo].materials[0];
+                                Sleeves(sleeves);
+                            }
+                            else
+                            {
+
+
+                                mainTorsoMat = clothRendererArrays[i][clothSave.clothItems[i].clothNo].materials[1];
+                                Sleeves(sleeves);
+                            }
+                        }
+                        else
+                        {
+                            mainTorsoMat = bodyMat;
+                            Sleeves(sleeves);
+                        }
+                    }
+                    else
+                    {
+                        mainTorsoMat = clothRendererArrays[i][clothSave.clothItems[i].clothNo].materials[0];
+                        Sleeves(sleeves);
+                    }
+                }
+
+
+            }
+            toggleBodyType2(!male);
+            meshRenderers[10].materials[0].SetColor("_BaseColor", new Color(clothSave.colors[3][0], clothSave.colors[3][1], clothSave.colors[3][2], clothSave.colors[3][3]));//eyes
+            meshRenderers[28].materials[0].SetColor("_BaseColor", new Color(clothSave.colors[5][0], clothSave.colors[5][1], clothSave.colors[5][2], clothSave.colors[5][3]));//legs
+            meshRenderers[2].materials[0].SetColor("_BaseColor", new Color(clothSave.colors[4][0], clothSave.colors[4][1], clothSave.colors[4][2], clothSave.colors[4][3]));//shoes
+        }
+        else
+        {
+            //RandomizeCharacter();
+            //Not found
+        }
+
+    }
+    public void LoadExternal(ClothSaveData clothSave)
+    {
+        
+
+        if (clothSave != null)
+        {
+            SkinnedMeshRenderer[][] clothRendererArrays;
+
             male = clothSave.male;
             lipstick = clothSave.lipstick;
             sleeves = clothSave.sleeves;

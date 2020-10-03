@@ -1,14 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-public class Gunshot : MonoBehaviour {
+public class Gunshot : NetworkBehaviour {
 
     public float speed = 50;
     private Rigidbody r;
     public float damage;
     public GameObject bloodParicleSystem;
     private float t;
+    private GameMechMulti gameMechMulti;
     
 
     private void Start()
@@ -45,29 +47,52 @@ public class Gunshot : MonoBehaviour {
         if (t >= 1)
         {
             Destroy(gameObject);
+            NetworkServer.Destroy(gameObject);
         }
 
     }
     private void OnCollisionEnter(Collision collision)
     {
-        BulletCollision(collision.GetContact(0).point, collision.collider, damage, bloodParicleSystem);
+        if (NetworkServer.active)
+        {
+            BulletCollision(collision.GetContact(0).point, collision.collider, damage, bloodParicleSystem);
+        }
+        else
+        {
+            BulletCollision2(collision.GetContact(0).point, collision.collider, damage, bloodParicleSystem);
+        }
 
         if (canDestroy(collision.collider))
         {
             Destroy(gameObject);
+            NetworkServer.Destroy(gameObject);
         }
         // Debug.Log(collision.collider.name);
        
     }
+    [Server]
     public static void BulletCollision(Vector3 collisionPoint, Collider collider,float damage,GameObject bloodParticleSystem)
     {
         if (collider.GetComponent<Target>())
         {
             Target t;
             t = collider.GetComponent<Target>();
+
             if (t.isPlayer)
             {
-                if (t.isLocalPlayer)
+                if (t.p.playerMultiDetails.isMultiPlayer)
+                {
+                    t = t.p.playerMultiDetails.gameMechMulti.playerTargets[t.netIdentity.netId];
+                    t.TakeDamage(damage);
+                    t.damagePoint(collisionPoint - collider.transform.position);
+                    if (collider.GetComponent<Bloody>())
+                    {
+                        GameObject g = Instantiate(bloodParticleSystem, collisionPoint, bloodParticleSystem.transform.rotation);
+                        NetworkServer.Spawn(g);
+                    }
+
+                }
+                else
                 {
                     t.TakeDamage(damage);
                     t.damagePoint(collisionPoint - collider.transform.position);
@@ -79,6 +104,7 @@ public class Gunshot : MonoBehaviour {
             }
             else
             {
+                
                 t.TakeDamage(damage);
                 t.damagePoint(collisionPoint - collider.transform.position);
                 if (collider.GetComponent<Bloody>())
@@ -107,6 +133,75 @@ public class Gunshot : MonoBehaviour {
                 b.mainBody.TakeDamage(damage);
             }
             
+        }
+        if (collider.GetComponent<Explosive>())
+        {
+            collider.GetComponent<Explosive>().Explode();
+        }
+    }
+
+    public static void BulletCollision2(Vector3 collisionPoint, Collider collider, float damage, GameObject bloodParticleSystem)
+    {
+        if (collider.GetComponent<Target>())
+        {
+            Target t;
+            t = collider.GetComponent<Target>();
+
+            if (t.isPlayer)
+            {
+                if (t.p.playerMultiDetails.isMultiPlayer)
+                {
+                    t = t.p.playerMultiDetails.gameMechMulti.playerTargets[t.netIdentity.netId];
+                    t.TakeDamage(damage);
+                    t.damagePoint(collisionPoint - collider.transform.position);
+                    if (collider.GetComponent<Bloody>())
+                    {
+                        GameObject g = Instantiate(bloodParticleSystem, collisionPoint, bloodParticleSystem.transform.rotation);
+                        NetworkServer.Spawn(g);
+                    }
+
+                }
+                else
+                {
+                    t.TakeDamage(damage);
+                    t.damagePoint(collisionPoint - collider.transform.position);
+                    if (collider.GetComponent<Bloody>())
+                    {
+                        Instantiate(bloodParticleSystem, collisionPoint, bloodParticleSystem.transform.rotation);
+                    }
+                }
+            }
+            else
+            {
+
+                t.TakeDamage(damage);
+                t.damagePoint(collisionPoint - collider.transform.position);
+                if (collider.GetComponent<Bloody>())
+                {
+                    Instantiate(bloodParticleSystem, collisionPoint, bloodParticleSystem.transform.rotation);
+                }
+            }
+
+
+        }
+        if (collider.GetComponent<BodyPart>())
+        {
+            BodyPart b = collider.GetComponent<BodyPart>();
+            if (collider.GetComponent<Bloody>())
+            {
+                Instantiate(bloodParticleSystem, collisionPoint, bloodParticleSystem.transform.rotation);
+            }
+            b.mainBody.damagePoint(collisionPoint - collider.transform.position);
+
+            if (b.isHead && !b.mainBody.isPlayer)
+            {
+                b.mainBody.health = 0;
+            }
+            else
+            {
+                b.mainBody.TakeDamage(damage);
+            }
+
         }
         if (collider.GetComponent<Explosive>())
         {

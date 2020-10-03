@@ -24,6 +24,11 @@ public class GameMech : MonoBehaviour
     public GameObject playerAsset;
     public bool playerSpawned = true;
     public bool canSpawnPlayer = true;
+    public bool multiplayer = true;
+
+    [Header("Only for Single player")]
+    public CinemachineFreeLook tpp;
+    public Transform cylinder;
    
 
     void Start()

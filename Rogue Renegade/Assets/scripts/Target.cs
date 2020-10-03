@@ -6,6 +6,7 @@ using Mirror;
 
 public class Target : NetworkBehaviour {
 
+    [SyncVar]
     public float health = 5;
     public float healthFull = 5;
     public bool isPlayer = false;
@@ -24,10 +25,11 @@ public class Target : NetworkBehaviour {
     private float damageTime = 0.3f;
     private float dt = 0;
     private Target t;
-    private PlayerMotion p;
+    public PlayerMotion p;
     private HealthBar healthBar;
     private float dc;
     public float damageCooldown = 4;
+    private GameMechMulti gameMechMulti;
 
 
     [Header("LEAVE EMPTY")]
@@ -35,27 +37,32 @@ public class Target : NetworkBehaviour {
 
     [Header("Only for player")]
     public GameObject damagePointer;
+    private PlayerMultiDetails playerMultiDetails;
 
     private void Start()
     {
-            ragdollSwitch = GetComponent<RagdollSwitch>();
-            r = GetComponent<Rigidbody>();
-            player = GameObject.FindGameObjectWithTag("Player");
-            t = player.GetComponent<Target>();
-            p = player.GetComponent<PlayerMotion>();
-            playerMiddleSpine = GameObject.FindGameObjectWithTag("PlayerMiddleSpine").transform;
-            if (isPlayer)
-            {
-                healthBar = GetComponent<HealthBar>();
-                playerGun = GetComponent<PlayerGun>();
-            }
+        ragdollSwitch = GetComponent<RagdollSwitch>();
+        r = GetComponent<Rigidbody>();
+        player = GameObject.FindGameObjectWithTag("Player");
+        t = player.GetComponent<Target>();
+        p = player.GetComponent<PlayerMotion>();
+        
+        gameMechMulti = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMechMulti>();
+        if (isPlayer)
+        {
+            //playerMiddleSpine = GameObject.FindGameObjectWithTag("PlayerMiddleSpine").transform;
+            healthBar = GetComponent<HealthBar>();
+            playerGun = GetComponent<PlayerGun>();
+            playerMultiDetails = GetComponent<PlayerMultiDetails>();
+        }
+        
         
         
     }
     public void damagePoint(Vector3 pos)
     {
         
-            if (isPlayer && isLocalPlayer)
+            if (isPlayer && isLocalPlayer || !playerMultiDetails.isMultiPlayer)
             {
 
                 float z = Camera.main.transform.eulerAngles.y - (Mathf.Atan2(pos.normalized.x, pos.normalized.z) * Mathf.Rad2Deg);
@@ -79,7 +86,7 @@ public class Target : NetworkBehaviour {
                 if (isPlayer)
                 {
                     health -= DamageAmount;
-                    healthBar.healthbarGlow();
+                    //healthBar.healthbarGlow();
                 }
                 else
                 {
@@ -129,7 +136,7 @@ public class Target : NetworkBehaviour {
         {
             timeForPunchForce = 0;
         }*/
-        if (isLocalPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
             r.AddForce(puncher.forward * force);
         }
@@ -154,12 +161,23 @@ public class Target : NetworkBehaviour {
                     hasSetJustKilledEnemy = true;
                 }
                 //myHealthBar.SetActive(false);
-            } 
+            }
+            else
+            {
+                if (playerGun.playerMultiDetails.isMultiPlayer)
+                {
+                    playerGun.dropGun();
+                    if (Input.GetKeyDown("p"))
+                    {
+                        //gameMechMulti.respawnPlayer(connectionToClient,gameObject);
+                    }
+                }
+               
+            }
             isDead = true;
             if (!hasSwitchedRagdoll)
             {
                 ragdollSwitch.SwitchRagdoll(isDead);
-                //ragdollSwitch.TellServerToSwitchRagdoll(isDead, netId);
             }
         }
         if (!isPlayer)
@@ -253,7 +271,7 @@ public class Target : NetworkBehaviour {
         
         
     }
-    private void LateUpdate()
+    /*private void LateUpdate()
     {
       
         
@@ -280,7 +298,7 @@ public class Target : NetworkBehaviour {
         {
             t.isAiming = false;
         }
-    }
+    }*/
     
     
 }

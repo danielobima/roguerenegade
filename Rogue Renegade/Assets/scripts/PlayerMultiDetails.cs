@@ -10,19 +10,28 @@ public class PlayerMultiDetails : NetworkBehaviour
     private PlayerGun playerGun;
     public GameMechMulti gameMechMulti;
 
-    [Client]
+   
     private void Start()
     {
+        gameMechMulti = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMechMulti>();
+        if (!isMultiPlayer)
+        {
+            gameObject.SetActive(true);
+        }
+        else
+        {
+            playerGun.bullet = gameMechMulti.spawnPrefabs.Find(prefab => prefab.name == "bullet");
+            playerGun.shotGunBullet = gameMechMulti.spawnPrefabs.Find(prefab => prefab.name == "shotgun bullet");
+        }
         target = GetComponent<Target>();
         playerGun = GetComponent<PlayerGun>();
-        gameMechMulti = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMechMulti>();
+        
 
-        playerGun.bullet = gameMechMulti.spawnPrefabs.Find(prefab => prefab.name == "bullet");
-        playerGun.shotGunBullet = gameMechMulti.spawnPrefabs.Find(prefab => prefab.name == "shotgun bullet");
+        
 
         configureCanvas();
+        
     }
-    [Client]
     public void configureCanvas()
     {
         target.damagePointer = GameObject.FindGameObjectWithTag("damagePointer");

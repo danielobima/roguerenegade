@@ -21,6 +21,8 @@ public class RagdollSwitch : NetworkBehaviour
 
     [Header("Only for players")]
     public PlayerMotion playerMotion;
+
+    private NetworkAnimator networkAnimator;
     
     
 
@@ -28,33 +30,21 @@ public class RagdollSwitch : NetworkBehaviour
     {
        
         navMeshAgent = GetComponent<NavMeshAgent>();
+        networkAnimator = GetComponent<NetworkAnimator>();
         SwitchRagdoll(false);
        
         
     }
-    [Command]
-    public void TellServerToSwitchRagdoll(bool value,uint netID)
-    {
-        if (playerMotion.playerMultiDetails.isMultiPlayer)
-        {
-            InstructionsFromServerToSwitchRagdoll(value, netID);
-        }
-        
-    }
-    [ClientRpc]
-    private void InstructionsFromServerToSwitchRagdoll(bool value,uint NetID)
-    {
-        Target t = gameObject.GetComponent<Target>();
-        if(t.netId == NetID)
-        {
-            SwitchRagdoll(value);
-        }
-    }
+    
     public void SwitchRagdoll(bool value)
     {
+
+        if (networkAnimator != null)
+        {
+            networkAnimator.enabled = !value;
+        }
         animator.enabled = !value;
-        
-        foreach(Collider c in colliders)
+        foreach (Collider c in colliders)
         {
             /*if (!isPlayer)
             {
@@ -80,47 +70,50 @@ public class RagdollSwitch : NetworkBehaviour
                 r.freezeRotation = !value;
             }
         }
-        if(gun != null)
+        if (!playerMotion.playerMultiDetails.isMultiPlayer)
         {
-            if (value)
+            if (gun != null)
             {
-                if (!gun.GetComponent<Rigidbody>() && !hasDoneRigidBody)
+                if (value)
                 {
-                    gun.gameObject.AddComponent<Rigidbody>().collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-                    hasDoneRigidBody = true;
-                }
-                else
-                {
-                    if (gun.GetComponent<Rigidbody>())
+                    if (!gun.GetComponent<Rigidbody>() && !hasDoneRigidBody)
                     {
-                        gun.GetComponent<Rigidbody>().useGravity = true;
+                        gun.gameObject.AddComponent<Rigidbody>().collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+                        hasDoneRigidBody = true;
+                    }
+                    else
+                    {
+                        if (gun.GetComponent<Rigidbody>())
+                        {
+                            gun.GetComponent<Rigidbody>().useGravity = true;
+                        }
+
                     }
 
                 }
-
+                gun.enabled = value;
             }
-            gun.enabled = value;
-        }
-        if (SecondaryGun != null)
-        {
-            if (value)
+            if (SecondaryGun != null)
             {
-                if (!SecondaryGun.GetComponent<Rigidbody>() && !hasDoneSRigidBody)
+                if (value)
                 {
-                    SecondaryGun.gameObject.AddComponent<Rigidbody>().collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-                    hasDoneSRigidBody = true;
-                }
-                else
-                {
-                    if (SecondaryGun.GetComponent<Rigidbody>())
+                    if (!SecondaryGun.GetComponent<Rigidbody>() && !hasDoneSRigidBody)
                     {
-                        SecondaryGun.GetComponent<Rigidbody>().useGravity = true;
+                        SecondaryGun.gameObject.AddComponent<Rigidbody>().collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+                        hasDoneSRigidBody = true;
+                    }
+                    else
+                    {
+                        if (SecondaryGun.GetComponent<Rigidbody>())
+                        {
+                            SecondaryGun.GetComponent<Rigidbody>().useGravity = true;
+                        }
+
                     }
 
                 }
-
+                SecondaryGun.enabled = value;
             }
-            SecondaryGun.enabled = value;
         }
         mainBody.enabled = !value;
         if (value)
@@ -139,7 +132,7 @@ public class RagdollSwitch : NetworkBehaviour
                 navMeshAgent.enabled = !value;
             }
         }
-        
+       
             
         
         

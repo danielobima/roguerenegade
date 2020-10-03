@@ -110,8 +110,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcc669cd4af553b448b92d4f1fa786b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   speed: 2500
-  damage: 0
+  damage: 1.7931
   bloodParicleSystem: {fileID: 5209554905794623516, guid: 8f08a9b059de55e4fa6c4a35c9d96b78,
     type: 3}
 --- !u!54 &3322894071129975064

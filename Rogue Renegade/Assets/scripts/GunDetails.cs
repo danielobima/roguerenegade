@@ -29,12 +29,14 @@ public class GunDetails : MonoBehaviour
     public float recoilUpSpeed = -10f;
     public float recoilDownSpeed = 10f;
     public CinemachineVirtualCamera scopeCam;
+    private GameMechMulti gameMechMulti;
+    public int gunID = 0;
 
     private void Start()
     {
         gunSound.volume = 1;
         gunSound.loop = false;
-        
+       
     }
     private void FixedUpdate()
     {
