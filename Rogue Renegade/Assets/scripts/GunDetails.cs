@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using Mirror;
 
-public class GunDetails : MonoBehaviour
+public class GunDetails : NetworkBehaviour
 {
     
     public string gunType = "AK47";
@@ -15,8 +16,10 @@ public class GunDetails : MonoBehaviour
     public float damage = 0;
     public float enemyDamage = 0;
     public int ammoMax = 30;
+    [SyncVar]
     public int ammoSpare = 170;
     public bool handgun = false;
+    [SyncVar]
     public int ammoLoaded = 0;
     public bool isContinuousShooting = true;
     public AudioSource gunSound;

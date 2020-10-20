@@ -1090,6 +1090,7 @@ GameObject:
   - component: {fileID: 5662510203650719291}
   - component: {fileID: 1143186760434896938}
   - component: {fileID: -6256094645550988962}
+  - component: {fileID: -2132980689617281273}
   m_Layer: 9
   m_Name: enemy ak74
   m_TagString: enemy
@@ -1181,6 +1182,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea1744ddfb9436941a67ee33a29a1b5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   health: 5
   healthFull: 5
   isPlayer: 0
@@ -1188,6 +1191,7 @@ MonoBehaviour:
   currentLookAt: {fileID: 0}
   isDead: 0
   isAiming: 0
+  p: {fileID: 0}
   damageCooldown: 4
   playerMiddleSpine: {fileID: 0}
   damagePointer: {fileID: 0}
@@ -1242,6 +1246,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: caff57033b72ef6439d0d74ab2311716, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   isPlayer: 0
   mainBody: {fileID: 5803597651245353221}
   gun: {fileID: 5003778208526561514}
@@ -1324,6 +1330,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4aef9c706a4be9540ac1ba1a4bf535d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-2132980689617281273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4395070916642109127}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 460b278511f80774ea2c3492ef5951ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isMultiPlayer: 0
 --- !u!1 &4660416153607825830
 GameObject:
   m_ObjectHideFlags: 0

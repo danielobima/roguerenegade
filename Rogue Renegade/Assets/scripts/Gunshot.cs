@@ -7,10 +7,14 @@ public class Gunshot : NetworkBehaviour {
 
     public float speed = 50;
     private Rigidbody r;
+    [SyncVar]
     public float damage;
     public GameObject bloodParicleSystem;
     private float t;
     private GameMechMulti gameMechMulti;
+    public bool isMultiplayer = true;
+    public uint shooterId = default;
+    
     
 
     private void Start()
@@ -53,86 +57,107 @@ public class Gunshot : NetworkBehaviour {
     }
     private void OnCollisionEnter(Collision collision)
     {
-        if (NetworkServer.active)
+        if (isMultiplayer)
         {
-            BulletCollision(collision.GetContact(0).point, collision.collider, damage, bloodParicleSystem);
+            BulletCollision(collision.GetContact(0).point, collision.collider, damage, bloodParicleSystem, shooterId);
         }
         else
         {
             BulletCollision2(collision.GetContact(0).point, collision.collider, damage, bloodParicleSystem);
         }
 
-        if (canDestroy(collision.collider))
+        if (isMultiplayer)
+        {
+            
+            NetworkServer.Destroy(gameObject);
+        }
+        else
         {
             Destroy(gameObject);
-            NetworkServer.Destroy(gameObject);
         }
         // Debug.Log(collision.collider.name);
        
     }
     [Server]
-    public static void BulletCollision(Vector3 collisionPoint, Collider collider,float damage,GameObject bloodParticleSystem)
+    public static void BulletCollision(Vector3 collisionPoint, Collider collider,float damage,GameObject bloodParticleSystem,uint shooterId = default)
     {
         if (collider.GetComponent<Target>())
         {
             Target t;
             t = collider.GetComponent<Target>();
 
-            if (t.isPlayer)
-            {
-                if (t.p.playerMultiDetails.isMultiPlayer)
-                {
-                    t = t.p.playerMultiDetails.gameMechMulti.playerTargets[t.netIdentity.netId];
-                    t.TakeDamage(damage);
-                    t.damagePoint(collisionPoint - collider.transform.position);
-                    if (collider.GetComponent<Bloody>())
-                    {
-                        GameObject g = Instantiate(bloodParticleSystem, collisionPoint, bloodParticleSystem.transform.rotation);
-                        NetworkServer.Spawn(g);
-                    }
+            /* if (t.isPlayer)
+             {
+                 //if (t.p.playerMultiDetails.isMultiPlayer)
+                // {
+                     t = t.p.playerMultiDetails.gameMechMulti.playerTargets[t.netIdentity.netId];
+                     t.TakeDamage(damage);
+                     t.damagePoint(collisionPoint - collider.transform.position);
+                     if (collider.GetComponent<Bloody>())
+                     {
+                         GameObject g = Instantiate(bloodParticleSystem, collisionPoint, bloodParticleSystem.transform.rotation);
+                         NetworkServer.Spawn(g);
+                     }
 
-                }
-                else
-                {
-                    t.TakeDamage(damage);
-                    t.damagePoint(collisionPoint - collider.transform.position);
-                    if (collider.GetComponent<Bloody>())
-                    {
-                        Instantiate(bloodParticleSystem, collisionPoint, bloodParticleSystem.transform.rotation);
-                    }
-                }
+                 //}
+                 /*else
+                 {
+                     t.TakeDamage(damage);
+                     t.damagePoint(collisionPoint - collider.transform.position);
+                     if (collider.GetComponent<Bloody>())
+                     {
+                         Instantiate(bloodParticleSystem, collisionPoint, bloodParticleSystem.transform.rotation);
+                     }
+                 }
+             }
+             else
+             {
+
+                 t.TakeDamage(damage);
+                 t.damagePoint(collisionPoint - collider.transform.position);
+                 if (collider.GetComponent<Bloody>())
+                 {
+                     GameObject g = Instantiate(bloodParticleSystem, collisionPoint, bloodParticleSystem.transform.rotation);
+                     NetworkServer.Spawn(g);
+                 }
+             }*/
+           
+            if(shooterId != default)
+            {
+                t.TakeDamage(damage, shooterId);
             }
             else
             {
-                
                 t.TakeDamage(damage);
-                t.damagePoint(collisionPoint - collider.transform.position);
-                if (collider.GetComponent<Bloody>())
-                {
-                    Instantiate(bloodParticleSystem, collisionPoint, bloodParticleSystem.transform.rotation);
-                }
             }
-            
-            
+            t.damagePoint(collisionPoint - collider.transform.position);
+            if (collider.GetComponent<Bloody>())
+            {
+                GameObject g = Instantiate(bloodParticleSystem, collisionPoint, bloodParticleSystem.transform.rotation);
+                NetworkServer.Spawn(g);
+            }
+
+
         }
         if (collider.GetComponent<BodyPart>())
         {
             BodyPart b = collider.GetComponent<BodyPart>();
             if (collider.GetComponent<Bloody>())
             {
-                Instantiate(bloodParticleSystem, collisionPoint, bloodParticleSystem.transform.rotation);
+                GameObject g = Instantiate(bloodParticleSystem, collisionPoint, bloodParticleSystem.transform.rotation);
+                NetworkServer.Spawn(g);
             }
             b.mainBody.damagePoint(collisionPoint - collider.transform.position);
-            
-            if (b.isHead && !b.mainBody.isPlayer)
+
+            if (shooterId != default)
             {
-                b.mainBody.health = 0;
+                b.mainBody.TakeDamage(damage, shooterId);
             }
             else
             {
                 b.mainBody.TakeDamage(damage);
             }
-            
+
         }
         if (collider.GetComponent<Explosive>())
         {

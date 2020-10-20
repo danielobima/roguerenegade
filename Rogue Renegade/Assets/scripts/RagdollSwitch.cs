@@ -70,51 +70,55 @@ public class RagdollSwitch : NetworkBehaviour
                 r.freezeRotation = !value;
             }
         }
-        if (!playerMotion.playerMultiDetails.isMultiPlayer)
+        if (isPlayer)
         {
-            if (gun != null)
+            if (!playerMotion.playerMultiDetails.isMultiPlayer)
             {
-                if (value)
+                if (gun != null)
                 {
-                    if (!gun.GetComponent<Rigidbody>() && !hasDoneRigidBody)
+                    if (value)
                     {
-                        gun.gameObject.AddComponent<Rigidbody>().collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-                        hasDoneRigidBody = true;
-                    }
-                    else
-                    {
-                        if (gun.GetComponent<Rigidbody>())
+                        if (!gun.GetComponent<Rigidbody>() && !hasDoneRigidBody)
                         {
-                            gun.GetComponent<Rigidbody>().useGravity = true;
+                            gun.gameObject.AddComponent<Rigidbody>().collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+                            hasDoneRigidBody = true;
+                        }
+                        else
+                        {
+                            if (gun.GetComponent<Rigidbody>())
+                            {
+                                gun.GetComponent<Rigidbody>().useGravity = true;
+                            }
+
                         }
 
                     }
-
+                    gun.enabled = value;
                 }
-                gun.enabled = value;
-            }
-            if (SecondaryGun != null)
-            {
-                if (value)
+                if (SecondaryGun != null)
                 {
-                    if (!SecondaryGun.GetComponent<Rigidbody>() && !hasDoneSRigidBody)
+                    if (value)
                     {
-                        SecondaryGun.gameObject.AddComponent<Rigidbody>().collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-                        hasDoneSRigidBody = true;
-                    }
-                    else
-                    {
-                        if (SecondaryGun.GetComponent<Rigidbody>())
+                        if (!SecondaryGun.GetComponent<Rigidbody>() && !hasDoneSRigidBody)
                         {
-                            SecondaryGun.GetComponent<Rigidbody>().useGravity = true;
+                            SecondaryGun.gameObject.AddComponent<Rigidbody>().collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+                            hasDoneSRigidBody = true;
+                        }
+                        else
+                        {
+                            if (SecondaryGun.GetComponent<Rigidbody>())
+                            {
+                                SecondaryGun.GetComponent<Rigidbody>().useGravity = true;
+                            }
+
                         }
 
                     }
-
+                    SecondaryGun.enabled = value;
                 }
-                SecondaryGun.enabled = value;
             }
         }
+       
         mainBody.enabled = !value;
         if (value)
         {

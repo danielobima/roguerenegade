@@ -1473,6 +1473,7 @@ GameObject:
   - component: {fileID: 4371511929651161949}
   - component: {fileID: 8574673651149550724}
   - component: {fileID: -6563414252597651145}
+  - component: {fileID: 5805624850846661909}
   m_Layer: 9
   m_Name: enemy M249
   m_TagString: enemy
@@ -1564,6 +1565,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea1744ddfb9436941a67ee33a29a1b5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   health: 5
   healthFull: 5
   isPlayer: 0
@@ -1571,6 +1574,7 @@ MonoBehaviour:
   currentLookAt: {fileID: 0}
   isDead: 0
   isAiming: 0
+  p: {fileID: 0}
   damageCooldown: 4
   playerMiddleSpine: {fileID: 0}
   damagePointer: {fileID: 0}
@@ -1625,6 +1629,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: caff57033b72ef6439d0d74ab2311716, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   isPlayer: 0
   mainBody: {fileID: 2501037829385624675}
   gun: {fileID: 8232577881741181101}
@@ -1707,6 +1713,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4aef9c706a4be9540ac1ba1a4bf535d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5805624850846661909
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5674975615762506657}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 460b278511f80774ea2c3492ef5951ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isMultiPlayer: 0
 --- !u!1 &5682677062875211743
 GameObject:
   m_ObjectHideFlags: 0
@@ -2890,15 +2909,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d189347ccbb6a924293c3856daa9dccd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &8228331044940386215 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6522425652561715316, guid: a7ffae1137f56414997f1361c358c3ce,
-    type: 3}
-  m_PrefabInstance: {fileID: 2933155004949442515}
-  m_PrefabAsset: {fileID: 0}
 --- !u!64 &8232577881741181101 stripped
 MeshCollider:
   m_CorrespondingSourceObject: {fileID: 6524402049424060286, guid: a7ffae1137f56414997f1361c358c3ce,
+    type: 3}
+  m_PrefabInstance: {fileID: 2933155004949442515}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8228331044940386215 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6522425652561715316, guid: a7ffae1137f56414997f1361c358c3ce,
     type: 3}
   m_PrefabInstance: {fileID: 2933155004949442515}
   m_PrefabAsset: {fileID: 0}

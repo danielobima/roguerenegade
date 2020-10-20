@@ -16,12 +16,15 @@ public class GameplayButtons : MonoBehaviour, IDragHandler, IPointerDownHandler,
     public bool isRealButton = false;
     private TextMeshProUGUI text;
     public string buttonFunction;
+    public static bool getPlayerFromScreenTexts;
+    private ScreenTexts screenTexts;
 
     private void Start()
     {
        
         
         gameMech = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMech>();
+        screenTexts = gameMech.screentexts;
         if (gameMech.playerSpawned)
         {
             getPlayer();
@@ -36,6 +39,11 @@ public class GameplayButtons : MonoBehaviour, IDragHandler, IPointerDownHandler,
     {
         playerGun = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerGun>();
         playerMotion = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMotion>();
+    }
+    public void setPlayer(GameObject go)
+    {
+        playerGun = go.GetComponent<PlayerGun>();
+        playerMotion = go.GetComponent<PlayerMotion>();
     }
     
     public virtual void OnDrag(PointerEventData ped)
@@ -190,7 +198,12 @@ public class GameplayButtons : MonoBehaviour, IDragHandler, IPointerDownHandler,
     private void Update()
     {
 
-        
+        if (getPlayerFromScreenTexts)
+        {
+            playerGun = screenTexts.playerGun;
+            playerMotion = screenTexts.playerGun.GetComponent<PlayerMotion>();
+            getPlayerFromScreenTexts = false;
+        }
         switch (buttonFunction)
         {
             case "shoot":

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ShotgunCatridge : MonoBehaviour
 {
+    public uint shooterId = default;
     private void FixedUpdate()
     {
 

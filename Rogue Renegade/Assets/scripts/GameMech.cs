@@ -18,13 +18,16 @@ public class GameMech : MonoBehaviour
     public ScreenTexts screentexts;
     public Slider quality;
     public Volume volume;
-    private Transform player;
+    [Header("Dont assign")]
+    public Transform player;
     private DepthOfField depthOfField;
     public GameObject[] playerSpawners;
     public GameObject playerAsset;
     public bool playerSpawned = true;
     public bool canSpawnPlayer = true;
     public bool multiplayer = true;
+    public delegate void EnemyDeathCallBack(Target g);
+    public EnemyDeathCallBack enemyDeathCallBack;
 
     [Header("Only for Single player")]
     public CinemachineFreeLook tpp;
@@ -87,19 +90,25 @@ public class GameMech : MonoBehaviour
         {
            go = Instantiate(playerAsset, playerSpawners[spawner].transform.position, playerSpawners[spawner].transform.rotation);
         }
-        extraSetup();
+        extraSetup(go);
         return go;
     }
-    public void extraSetup()
+    public void extraSetup(GameObject go = null)
     {
         playerSpawned = true;
-        player = GameObject.FindGameObjectWithTag("Player").transform;
-        GameplayButtons[] gameplayButtons = FindObjectsOfType<GameplayButtons>();
-        foreach (GameplayButtons g in gameplayButtons)
+        if (go == null)
         {
-            g.getPlayer();
+            player = GameObject.FindGameObjectWithTag("Player").transform;
+          
         }
-        screentexts.getPlayer();
+        else
+        {
+            player = go.transform;
+            
+        }
+        
+     
+       
     }
     public void setQuality()
     {

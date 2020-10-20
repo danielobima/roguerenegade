@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Rendering.Universal;
 using UnityEngine;
+using Mirror;
 
-public class HealthBar : MonoBehaviour {
+public class HealthBar : NetworkBehaviour {
 
     private Target target;
     [Header("PLEASE LEAVE THE HEALTHBAR SPACE EMPTY")]
@@ -16,10 +17,12 @@ public class HealthBar : MonoBehaviour {
     public Animator glowAnim;
     private GameMech gameMech;
     private ColorAdjustments colorAdjustments;
+    private PlayerMultiDetails playerMultiDetails;
 
     private void Start()
     {
         target = GetComponent<Target>();
+        playerMultiDetails = GetComponent<PlayerMultiDetails>();
         if(gameObject.tag == "Player")
         {
             healthBar = GameObject.FindGameObjectWithTag("healthBar");
@@ -42,19 +45,23 @@ public class HealthBar : MonoBehaviour {
     }
     private void FixedUpdate()
     {
+
         ratio = (target.health / target.healthFull);
-        if(gameObject.tag == "Player")
+        if (gameObject.tag == "Player")
         {
-            if (colorAdjustments != null)
+            if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
             {
-                colorAdjustments.saturation.value = (100 - (ratio * 100)) * -1;
-            }
-            else
-            {
-                ColorAdjustments co;
-                if (gameMech.volume.profile.TryGet(out co))
+                if (colorAdjustments != null)
                 {
-                    colorAdjustments = co;
+                    colorAdjustments.saturation.value = (100 - (ratio * 100)) * -1;
+                }
+                else
+                {
+                    ColorAdjustments co;
+                    if (gameMech.volume.profile.TryGet(out co))
+                    {
+                        colorAdjustments = co;
+                    }
                 }
             }
         }
@@ -80,7 +87,7 @@ public class HealthBar : MonoBehaviour {
                 //Debug.LogError(e);
             }
         }*/
-           
-        
+
+
     }
 }

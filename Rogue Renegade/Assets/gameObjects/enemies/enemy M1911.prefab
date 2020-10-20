@@ -2515,6 +2515,7 @@ GameObject:
   - component: {fileID: 1005632137170096526}
   - component: {fileID: 7693807389373459576}
   - component: {fileID: -5100106607674837114}
+  - component: {fileID: 8529520290807431455}
   m_Layer: 9
   m_Name: enemy M1911
   m_TagString: enemy
@@ -2606,6 +2607,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea1744ddfb9436941a67ee33a29a1b5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   health: 5
   healthFull: 5
   isPlayer: 0
@@ -2613,6 +2616,7 @@ MonoBehaviour:
   currentLookAt: {fileID: 0}
   isDead: 0
   isAiming: 0
+  p: {fileID: 0}
   damageCooldown: 4
   playerMiddleSpine: {fileID: 0}
   damagePointer: {fileID: 0}
@@ -2667,6 +2671,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: caff57033b72ef6439d0d74ab2311716, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   isPlayer: 0
   mainBody: {fileID: 1435376481367287472}
   gun: {fileID: 16233556289564447}
@@ -2749,6 +2755,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4aef9c706a4be9540ac1ba1a4bf535d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8529520290807431455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9196231317132925298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 460b278511f80774ea2c3492ef5951ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isMultiPlayer: 0
 --- !u!1001 &9204751705137072911
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2878,12 +2897,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cd1bb3641fa93304b87a45ff51d583f1, type: 3}
---- !u!4 &6919601950552523075 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2286286716766865996, guid: cd1bb3641fa93304b87a45ff51d583f1,
-    type: 3}
-  m_PrefabInstance: {fileID: 9204751705137072911}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &3390280379944413574 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5814546117803500169, guid: cd1bb3641fa93304b87a45ff51d583f1,
@@ -2899,6 +2912,12 @@ MonoBehaviour:
 --- !u!64 &16233556289564447 stripped
 MeshCollider:
   m_CorrespondingSourceObject: {fileID: 9188597496757707792, guid: cd1bb3641fa93304b87a45ff51d583f1,
+    type: 3}
+  m_PrefabInstance: {fileID: 9204751705137072911}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &6919601950552523075 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2286286716766865996, guid: cd1bb3641fa93304b87a45ff51d583f1,
     type: 3}
   m_PrefabInstance: {fileID: 9204751705137072911}
   m_PrefabAsset: {fileID: 0}

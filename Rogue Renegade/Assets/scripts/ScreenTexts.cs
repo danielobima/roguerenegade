@@ -7,7 +7,7 @@ public class ScreenTexts : MonoBehaviour
 {
     public Text AmmoText;
     public GameObject AmmoTextP;
-    private PlayerGun playerGun;
+    public PlayerGun playerGun;
     private GameMech gameMech;
     public GameObject pickupGunButton;
     private bool hasSetOff = false;
@@ -41,7 +41,12 @@ public class ScreenTexts : MonoBehaviour
     {
         playerGun = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerGun>();
     }
+    public void setPlayer(GameObject go)
+    {
+        playerGun = go.GetComponent<PlayerGun>();
+    }
     public void changeGunIcon(){
+        
         if (primaryGun != null)
         {
             Destroy(primaryGun);
@@ -60,24 +65,29 @@ public class ScreenTexts : MonoBehaviour
     }
     public void changeSecondaryGunIcon()
     {
+        
         if (secondaryGun != null)
         {
             Destroy(secondaryGun);
         }
-        secondaryGun = Instantiate(guns[playerGun.secondaryGun.GetComponent<GunDetails>().gunInt], AmmoTextP.transform);
-        secondaryGun.transform.localPosition = new Vector3(100, 50, 0);
-        secondaryGun.transform.localEulerAngles = new Vector3(0, 90, 0);
-        if (playerGun.secondaryGun.GetComponent<GunDetails>().gunType.Equals("RPG7"))
+        if(playerGun.secondaryGun != null)
         {
-            secondaryGun.transform.localScale = new Vector3(40, 40, 40);
-        }
-        else
-        {
-            secondaryGun.transform.localScale = new Vector3(50, 50, 50);
+            secondaryGun = Instantiate(guns[playerGun.secondaryGun.GetComponent<GunDetails>().gunInt], AmmoTextP.transform);
+            secondaryGun.transform.localPosition = new Vector3(100, 50, 0);
+            secondaryGun.transform.localEulerAngles = new Vector3(0, 90, 0);
+            if (playerGun.secondaryGun.GetComponent<GunDetails>().gunType.Equals("RPG7"))
+            {
+                secondaryGun.transform.localScale = new Vector3(40, 40, 40);
+            }
+            else
+            {
+                secondaryGun.transform.localScale = new Vector3(50, 50, 50);
+            }
         }
     }
     public void removeSecondaryGunIcon()
     {
+        
         if (secondaryGun != null)
         {
             Destroy(secondaryGun);
@@ -85,7 +95,8 @@ public class ScreenTexts : MonoBehaviour
     }
     private void changeGunDropIcon()
     {
-        if(gunDrop != null)
+        
+        if (gunDrop != null)
         {
             Destroy(gunDrop);
             if (playerGun.gunDrop != null)
@@ -161,7 +172,7 @@ public class ScreenTexts : MonoBehaviour
     {
 
 
-        if (gameMech.playerSpawned)
+        if (playerGun != null)
         {
             if (playerGun.gun != null)
             {
@@ -243,6 +254,7 @@ public class ScreenTexts : MonoBehaviour
                 }
             }
         }
+
 
         if (gameMech.GetComponent<SurvivalMech>() != null)
         {

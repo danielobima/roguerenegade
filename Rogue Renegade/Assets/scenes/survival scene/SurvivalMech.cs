@@ -78,16 +78,9 @@ public class SurvivalMech : MonoBehaviour
             if (a >= 1)
             {
                 int i = Random.Range(0, spawnerGOs.Length - 1);
-                
-                
-                if (waveNo == 1)
-                {
-                    spawnedEnemies.Add(spawnerGOs[i].GetComponent<Spawner>().SpawnEnemy(0));
-                }
-                else
-                {
-                    spawnedEnemies.Add(spawnerGOs[i].GetComponent<Spawner>().SpawnEnemy(randomEnemy(calculateDifficulty(waveNo,floor), calculateBias(waveNo, floor)), floor));
-                }
+
+
+                spawnedEnemies.Add(spawnerGOs[i].GetComponent<Spawner>().SpawnEnemy(randomEnemy(calculateDifficulty(waveNo, floor), calculateBias(waveNo, floor)), floor));
                 a = 0;
             }
         }

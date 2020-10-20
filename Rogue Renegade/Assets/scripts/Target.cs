@@ -30,7 +30,7 @@ public class Target : NetworkBehaviour {
     private float dc;
     public float damageCooldown = 4;
     private GameMechMulti gameMechMulti;
-
+    public List<uint> attackers;
 
     [Header("LEAVE EMPTY")]
     public Transform playerMiddleSpine;
@@ -55,14 +55,16 @@ public class Target : NetworkBehaviour {
             playerGun = GetComponent<PlayerGun>();
             playerMultiDetails = GetComponent<PlayerMultiDetails>();
         }
-        
+        attackers = new List<uint>();
         
         
     }
     public void damagePoint(Vector3 pos)
     {
-        
-            if (isPlayer && isLocalPlayer || !playerMultiDetails.isMultiPlayer)
+
+        if (isPlayer)
+        {
+            if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
             {
 
                 float z = Camera.main.transform.eulerAngles.y - (Mathf.Atan2(pos.normalized.x, pos.normalized.z) * Mathf.Rad2Deg);
@@ -75,12 +77,15 @@ public class Target : NetworkBehaviour {
                     an.SetTrigger("slow-glow");
                 }
             }
+        }
         
         
     }
-    public void TakeDamage(float DamageAmount)
+    public void TakeDamage(float DamageAmount,uint attackerId = default)
     {
-        
+
+        if (!isDead)
+        {
             if (health - DamageAmount >= 0)
             {
                 if (isPlayer)
@@ -92,6 +97,7 @@ public class Target : NetworkBehaviour {
                 {
                     health -= DamageAmount;
                 }
+
             }
             else
             {
@@ -104,10 +110,12 @@ public class Target : NetworkBehaviour {
                 image.color = new Color(1, 0, 0);
             }
             dc = 0;
-        
-        
-       
-        
+            if (attackerId != default)
+            {
+                attackers.Add(attackerId);
+            }
+        }
+
     }
     public void addHealth(float HealthAmount)
     {
@@ -136,7 +144,14 @@ public class Target : NetworkBehaviour {
         {
             timeForPunchForce = 0;
         }*/
-        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
+        if (isPlayer)
+        {
+            if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
+            {
+                r.AddForce(puncher.forward * force);
+            }
+        }
+        else
         {
             r.AddForce(puncher.forward * force);
         }
@@ -149,6 +164,7 @@ public class Target : NetworkBehaviour {
         {
             if (!isPlayer)
             {
+                //Debug.Log("YEET");
                 EnemyMech e = gameObject.GetComponent<EnemyMech>();
                 if (e != null)
                 {

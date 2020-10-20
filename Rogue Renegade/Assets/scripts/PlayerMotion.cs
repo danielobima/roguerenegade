@@ -6,6 +6,7 @@ using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 using Cinemachine;
 using Mirror;
+using Mirror.Experimental;
 
 public class PlayerMotion : NetworkBehaviour {
 
@@ -92,6 +93,8 @@ public class PlayerMotion : NetworkBehaviour {
     public Vector3 thisPlayersLookat;
     private Vector3 yBounds = new Vector3(0, 0.6f, 0);
     public GameObject virtualMiddleSpine;
+    private NetworkRigidbody networkRigidbody;
+
 
     private void Start()
     {
@@ -105,6 +108,8 @@ public class PlayerMotion : NetworkBehaviour {
             {
                 
                 GameMechMulti gameMechMulti = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMechMulti>();
+                networkRigidbody = GetComponent<NetworkRigidbody>();
+                networkRigidbody.enabled = false;
                 cylinder = Instantiate(gameMechMulti.aimCylinder).transform;
                 cylinder.gameObject.SetActive(true);
             }
@@ -852,6 +857,10 @@ public class PlayerMotion : NetworkBehaviour {
                     {
                         rigidBody.AddForce(transform.forward * jumpForce);
                     }
+                    if (playerMultiDetails.isMultiPlayer)
+                    {
+                        networkRigidbody.enabled = true;
+                    }
 
                 }
                 else
@@ -878,6 +887,7 @@ public class PlayerMotion : NetworkBehaviour {
             }
             //isRolling = false;
             diveInterruptable = true;
+            
         }
     }
     public void JokeTrue()
@@ -913,6 +923,10 @@ public class PlayerMotion : NetworkBehaviour {
             {
                 isOnFloor = true;
                 isJumping = false;
+                if (playerMultiDetails.isMultiPlayer)
+                {
+                    networkRigidbody.enabled = false;
+                }
                 if (Input.GetKey(KeyCode.LeftControl))
                 {
                     isRolling = true;

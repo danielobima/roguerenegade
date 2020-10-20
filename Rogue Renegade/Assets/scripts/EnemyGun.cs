@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-public class EnemyGun : MonoBehaviour {
+public class EnemyGun : NetworkBehaviour {
 
     private ParticleSystem muzzleFlash;
     public ParticleSystem smoke;
@@ -12,12 +13,18 @@ public class EnemyGun : MonoBehaviour {
     private Transform bulletSpawnPos;
     private float f = 0;
     private float aimVariationAmount;
-
+    private GameMechMulti gameMechMulti;
 
     private void Start()
     {
         muzzleFlash = gameObject.transform.GetChild(0).GetComponent<ParticleSystem>();
         bulletSpawnPos = gameObject.transform.GetChild(1);
+        gameMechMulti = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMechMulti>();
+        if(gameMechMulti != null)
+        {
+            bullet = gameMechMulti.spawnPrefabs.Find(prefab => prefab.name == "bullet");
+            shotgunBullet = gameMechMulti.spawnPrefabs.Find(prefab => prefab.name == "shotgun bullet");
+        }
     }
     private void FixedUpdate()
     {
@@ -26,7 +33,7 @@ public class EnemyGun : MonoBehaviour {
             f += 1 * Time.deltaTime;
         }
     }
-    public void Shoot()
+    public void Shoot(bool isMultiPlayer)
     {
         
         if (f >= gunDetails.timeToNextShot)
@@ -37,15 +44,27 @@ public class EnemyGun : MonoBehaviour {
                 GameObject go;
                 go = Instantiate(bullet, bulletSpawnPos.position, bulletSpawnPos.rotation);
                 go.GetComponent<Gunshot>().damage = gunDetails.damage;
+                
                 muzzleFlash.Play();
-                Instantiate(smoke, bulletSpawnPos.position, bulletSpawnPos.rotation);
+                ParticleSystem smo = Instantiate(smoke, bulletSpawnPos.position, bulletSpawnPos.rotation);
+                if (isMultiPlayer)
+                {
+                    NetworkServer.Spawn(go);
+                    NetworkServer.Spawn(smo.gameObject);
+                }
             }
             else
             {
                 GameObject go;
                 go = Instantiate(shotgunBullet, bulletSpawnPos.position, bulletSpawnPos.rotation);
+                
                 muzzleFlash.Play();
-                Instantiate(smoke, bulletSpawnPos.position, bulletSpawnPos.rotation);
+                ParticleSystem smo =  Instantiate(smoke, bulletSpawnPos.position, bulletSpawnPos.rotation);
+                if (isMultiPlayer)
+                {
+                    NetworkServer.Spawn(go);
+                    NetworkServer.Spawn(smo.gameObject);
+                }
             }
             if (!gunDetails.gunSound.isPlaying)
             {
@@ -65,7 +84,7 @@ public class EnemyGun : MonoBehaviour {
 
 
             }*/
-            Debug.Log("Pew!!!");
+            //Debug.Log("Pew!!!");
             f = 0;
         }
         

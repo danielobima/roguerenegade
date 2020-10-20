@@ -1655,6 +1655,7 @@ GameObject:
   - component: {fileID: 4223505061872218816}
   - component: {fileID: 478899147844629272}
   - component: {fileID: 2637834318741843515}
+  - component: {fileID: -3778356658244094866}
   m_Layer: 9
   m_Name: enemy melee
   m_TagString: enemy
@@ -1746,6 +1747,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea1744ddfb9436941a67ee33a29a1b5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   health: 5
   healthFull: 5
   isPlayer: 0
@@ -1753,6 +1756,7 @@ MonoBehaviour:
   currentLookAt: {fileID: 0}
   isDead: 0
   isAiming: 0
+  p: {fileID: 0}
   damageCooldown: 4
   playerMiddleSpine: {fileID: 0}
   damagePointer: {fileID: 0}
@@ -1807,6 +1811,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: caff57033b72ef6439d0d74ab2311716, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   isPlayer: 0
   mainBody: {fileID: 2630987485933487614}
   gun: {fileID: 0}
@@ -1824,6 +1830,7 @@ MonoBehaviour:
   - {fileID: 6397692337128376776}
   - {fileID: 2107945139819535095}
   animator: {fileID: 2630987485933487603}
+  playerMotion: {fileID: 0}
 --- !u!195 &3859592447247527200
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1888,6 +1895,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4aef9c706a4be9540ac1ba1a4bf535d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-3778356658244094866
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5257897361795938876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 460b278511f80774ea2c3492ef5951ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isMultiPlayer: 0
 --- !u!1 &5773226416839826674
 GameObject:
   m_ObjectHideFlags: 0

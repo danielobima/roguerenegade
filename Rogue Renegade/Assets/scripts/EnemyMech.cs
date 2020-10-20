@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using Mirror;
 
-public class EnemyMech : MonoBehaviour {
+public class EnemyMech : NetworkBehaviour {
     
     private Transform playerTransform;
     public bool timeToAttack = false;
@@ -39,6 +40,11 @@ public class EnemyMech : MonoBehaviour {
     public Transform myMiddleSpine;
     private float weight;
     private int prevPunch;
+    private EnemyMultiDetails enemyMultiDetails;
+    private GameMechMulti gameMechMulti;
+    private GameMech gameMech;
+
+
 
     private void Start()
     {
@@ -50,9 +56,17 @@ public class EnemyMech : MonoBehaviour {
         }
         navAgent = GetComponent<NavAgent>();
         t = GetComponent<Target>();
-        setPlayerInstance();
         
+        enemyMultiDetails = GetComponent<EnemyMultiDetails>();
+        gameMech = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMech>();
+        if (enemyMultiDetails.isMultiPlayer)
+        {
+            gameMechMulti = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMechMulti>();
+        }
+        setPlayerInstance();
+
     }
+    [Server]
     private void FixedUpdate()
     {
         
@@ -84,7 +98,10 @@ public class EnemyMech : MonoBehaviour {
         {
             if (playerTarget.isDead)
             {
-                timeToAttack = false;
+                if (!setPlayerInstance())
+                {
+                    timeToAttack = false;
+                }
             }
         }
 
@@ -170,18 +187,47 @@ public class EnemyMech : MonoBehaviour {
     {
         if (!t.isDead)
         {
+            //Debug.Log("Am ded");
+            Rigidbody r = GetComponent<Rigidbody>();
+            r.isKinematic = false;
             canAttack = false;
             
             if(enemyGun != null)
             {
-                enemyGun.transform.parent = null;
-                enemyGun.tag = "DroppedGun";
+                if (enemyMultiDetails.isMultiPlayer)
+                {
+                    int gunInt = gunDetails.gunInt;
+                    Vector3 pos = enemyGun.transform.position;
+                    Quaternion rot = enemyGun.transform.rotation;
+                    if (isServer)
+                    {
+                        RpcDestroyGun();
+                        gameMech.enemyDeathCallBack(t);
+                        GameObject g = Instantiate(gameMechMulti.networkedGuns[gunInt], pos, rot);
+                        NetworkServer.Spawn(g);
+                    }
+                    
+                    
+                }
+                else
+                {
+                    enemyGun.transform.parent = null;
+                    enemyGun.tag = "DroppedGun";
+                    gameMech.enemyDeathCallBack(t);
+                }
             }
+            
             Destroy(gameObject, 10);
             
             
         }
         
+    }
+
+    [ClientRpc]
+    private void RpcDestroyGun()
+    {
+        Destroy(enemyGun.gameObject);
     }
     private void WeaponAttack()
     {
@@ -198,7 +244,7 @@ public class EnemyMech : MonoBehaviour {
                 if (a <= shootSeconds && !gunDetails.gunSound.isPlaying)
                 {
                     animator.SetInteger("state", GameMech.Difficulty + 1);
-                    enemyGun.Shoot();
+                    enemyGun.Shoot(enemyMultiDetails.isMultiPlayer);
 
                 }
                 else
@@ -256,10 +302,10 @@ public class EnemyMech : MonoBehaviour {
     }
     private void LateUpdate()
     {
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("idle with gun") && !t.isDead)
+        /*if (animator.GetCurrentAnimatorStateInfo(0).IsName("idle with gun") && !t.isDead)
         {
             myMiddleSpine.LookAt(new Vector3(playerTransform.position.x, playerTransform.position.y, playerTransform.position.z));
-        }
+        }*/
     }
     private void Attack(int AttackType)
     {
@@ -392,11 +438,39 @@ public class EnemyMech : MonoBehaviour {
             fightingMode(false);
         }
     }
-    
-    public void setPlayerInstance()
+
+
+    [ServerCallback]
+    public bool setPlayerInstance()
     {
-        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-        playerTarget = GameObject.FindGameObjectWithTag("Player").GetComponent<Target>();
+        if (!enemyMultiDetails.isMultiPlayer)
+        {
+            playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+            playerTarget = GameObject.FindGameObjectWithTag("Player").GetComponent<Target>();
+            if (playerTarget != null && playerTransform != null)
+            {
+                return !playerTarget.isDead;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            int i = Random.Range(0, gameMechMulti.playerTargets.Count);
+            List<uint> ids = new List<uint>(gameMechMulti.playerTargets.Keys);
+            playerTransform = gameMechMulti.playerTargets[ids[i]].transform;
+            playerTarget = gameMechMulti.playerTargets[ids[i]];
+            if (playerTarget != null && playerTransform != null)
+            {
+                return !playerTarget.isDead;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 
 

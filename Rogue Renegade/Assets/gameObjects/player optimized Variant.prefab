@@ -107,6 +107,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: caff57033b72ef6439d0d74ab2311716, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   isPlayer: 1
   mainBody: {fileID: 1822636863}
   gun: {fileID: 0}
@@ -161,6 +163,7 @@ MonoBehaviour:
   currentLookAt: {fileID: 0}
   isDead: 0
   isAiming: 0
+  p: {fileID: 0}
   damageCooldown: 4
   playerMiddleSpine: {fileID: 0}
   damagePointer: {fileID: 0}
@@ -199,12 +202,16 @@ MonoBehaviour:
   isPunching: 0
   meleeMode: 0
   weight: 0
-  throwForceConstant: 25
+  throwForceConstant: 35
+  throwForceConstantUp: 300
   bloodParticleSystem: {fileID: 5209554905794623516, guid: 8f08a9b059de55e4fa6c4a35c9d96b78,
     type: 3}
   ammoText: 
   thirdPersonCam: {fileID: 0}
   isRecoil: 0
+  playerMultiDetails: {fileID: 0}
+  primaryGunInt: -1
+  secondaryGunInt: -1
   gunDrop: {fileID: 0}
   grenadeDrop: {fileID: 0}
 --- !u!114 &1822636861
@@ -266,6 +273,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 931d469315dc9ac468016aa394f33a53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   meshRenderers:
   - {fileID: 3106747947460367225}
   - {fileID: 8331839635699376004}

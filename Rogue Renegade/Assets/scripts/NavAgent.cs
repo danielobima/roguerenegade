@@ -8,30 +8,43 @@ public class NavAgent : MonoBehaviour
     private NavMeshAgent agent;
     public delegate void NavCallBack();
     private NavCallBack collisionCallBack;
+    Rigidbody r;
+
     // Start is called before the first frame update
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+        r = GetComponent<Rigidbody>();
     }
 
    
     public void NavToTransform(Transform destination)
     {
-        agent.enabled = true;
-        agent.destination = destination.position;
-        agent.isStopped = false;
+        
+        if (agent.isOnNavMesh)
+        {
+            agent.destination = destination.position;
+            agent.isStopped = false;
+            if (!r.isKinematic)
+            {
+                r.isKinematic = true;
+            }
+        }
     }
     
 
     public void navToThenStop(Vector3 destination, NavCallBack callBack)
     {
        
-        if (!agent.enabled)
+        if (agent.isStopped)
         {
-            agent.enabled = true;
             agent.isStopped = false;
             agent.destination = destination;
             collisionCallBack = callBack;
+            if (!r.isKinematic)
+            {
+                r.isKinematic = true;
+            }
         }
         
         if (!agent.pathPending)
@@ -49,11 +62,13 @@ public class NavAgent : MonoBehaviour
     }
     public void StopNav()
     {
-        if (agent.enabled)
+       
+        agent.isStopped = true;
+        if (!r.isKinematic)
         {
-            agent.isStopped = true;
-            agent.enabled = false;
+            r.isKinematic = false;
         }
+
     }
     private void OnCollisionEnter(Collision collision)
     {

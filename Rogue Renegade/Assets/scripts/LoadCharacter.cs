@@ -27,27 +27,65 @@ public class LoadCharacter : NetworkBehaviour
     private bool chain;
     private bool male;
 
+
+    private PlayerMultiDetails playerMultiDetails;
+    [SyncVar]
+    public ClothSaveData clothData;
+    private ClothSaveData SaveData;
+    private GameMechMulti gameMechMulti;
+
     private void Start()
     {
-        Load();
+        playerMultiDetails = GetComponent<PlayerMultiDetails>();
+        if (playerMultiDetails.isMultiPlayer)
+        {
+            if (isLocalPlayer)
+            {
+                Load();
+            }
+            gameMechMulti = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMechMulti>();
+            GameObject[] playerObjs = GameObject.FindGameObjectsWithTag("Player");
+            foreach(GameObject g in playerObjs)
+            {
+                if (!isLocalPlayer)
+                {
+                    LoadCharacter loadChara = g.GetComponent<LoadCharacter>();
+                    loadChara.LoadExternal(loadChara.clothData);
+                }
+            }
+           
+        }
+        else
+            Load();
+        
+        
     }
     public void Load()
     {
         ClothSaveData clothSave = SaveSystem.loadClothes();
+        
 
         if (clothSave != null)
         {
+
+            SaveData = clothSave;
+            if (playerMultiDetails.isMultiPlayer)
+            {
+                CmdLoad(SaveData, netId,gameObject);
+            }
+
             SkinnedMeshRenderer[][] clothRendererArrays;
             
+
             male = clothSave.male;
             lipstick = clothSave.lipstick;
             sleeves = clothSave.sleeves;
             chain = clothSave.chain;
 
-            setSkinColor(new Color(clothSave.colors[0][0], clothSave.colors[0][1], clothSave.colors[0][2], clothSave.colors[0][3]));
+            setSkinColor(new Color(clothSave.body[0], clothSave.body[1], clothSave.body[2], clothSave.body[3]));
             if (lipstick)
             {
-                randomLipstickColor(new Color(clothSave.colors[6][0], clothSave.colors[6][1], clothSave.colors[6][2], clothSave.colors[6][3]));
+                randomLipstickColor(new Color(clothSave.lipstickColor[0], clothSave.lipstickColor[1], clothSave.lipstickColor[2], clothSave.lipstickColor[3]));
             }
             else
             {
@@ -126,9 +164,9 @@ public class LoadCharacter : NetworkBehaviour
 
             }
             toggleBodyType2(!male);
-            meshRenderers[10].materials[0].SetColor("_BaseColor", new Color(clothSave.colors[3][0], clothSave.colors[3][1], clothSave.colors[3][2], clothSave.colors[3][3]));//eyes
-            meshRenderers[28].materials[0].SetColor("_BaseColor", new Color(clothSave.colors[5][0], clothSave.colors[5][1], clothSave.colors[5][2], clothSave.colors[5][3]));//legs
-            meshRenderers[2].materials[0].SetColor("_BaseColor", new Color(clothSave.colors[4][0], clothSave.colors[4][1], clothSave.colors[4][2], clothSave.colors[4][3]));//shoes
+            meshRenderers[10].materials[0].SetColor("_BaseColor", new Color(clothSave.eyes[0], clothSave.eyes[1], clothSave.eyes[2], clothSave.eyes[3]));//eyes
+            meshRenderers[28].materials[0].SetColor("_BaseColor", new Color(clothSave.trousers[0], clothSave.trousers[1], clothSave.trousers[2], clothSave.trousers[3]));//legs
+            meshRenderers[2].materials[0].SetColor("_BaseColor", new Color(clothSave.shoes[0], clothSave.shoes[1], clothSave.shoes[2], clothSave.shoes[3]));//shoes
         }
         else
         {
@@ -139,21 +177,22 @@ public class LoadCharacter : NetworkBehaviour
     }
     public void LoadExternal(ClothSaveData clothSave)
     {
-        
+
 
         if (clothSave != null)
         {
             SkinnedMeshRenderer[][] clothRendererArrays;
+
 
             male = clothSave.male;
             lipstick = clothSave.lipstick;
             sleeves = clothSave.sleeves;
             chain = clothSave.chain;
 
-            setSkinColor(new Color(clothSave.colors[0][0], clothSave.colors[0][1], clothSave.colors[0][2], clothSave.colors[0][3]));
+            setSkinColor(new Color(clothSave.body[0], clothSave.body[1], clothSave.body[2], clothSave.body[3]));
             if (lipstick)
             {
-                randomLipstickColor(new Color(clothSave.colors[6][0], clothSave.colors[6][1], clothSave.colors[6][2], clothSave.colors[6][3]));
+                randomLipstickColor(new Color(clothSave.lipstickColor[0], clothSave.lipstickColor[1], clothSave.lipstickColor[2], clothSave.lipstickColor[3]));
             }
             else
             {
@@ -232,9 +271,9 @@ public class LoadCharacter : NetworkBehaviour
 
             }
             toggleBodyType2(!male);
-            meshRenderers[10].materials[0].SetColor("_BaseColor", new Color(clothSave.colors[3][0], clothSave.colors[3][1], clothSave.colors[3][2], clothSave.colors[3][3]));//eyes
-            meshRenderers[28].materials[0].SetColor("_BaseColor", new Color(clothSave.colors[5][0], clothSave.colors[5][1], clothSave.colors[5][2], clothSave.colors[5][3]));//legs
-            meshRenderers[2].materials[0].SetColor("_BaseColor", new Color(clothSave.colors[4][0], clothSave.colors[4][1], clothSave.colors[4][2], clothSave.colors[4][3]));//shoes
+            meshRenderers[10].materials[0].SetColor("_BaseColor", new Color(clothSave.eyes[0], clothSave.eyes[1], clothSave.eyes[2], clothSave.eyes[3]));//eyes
+            meshRenderers[28].materials[0].SetColor("_BaseColor", new Color(clothSave.trousers[0], clothSave.trousers[1], clothSave.trousers[2], clothSave.trousers[3]));//legs
+            meshRenderers[2].materials[0].SetColor("_BaseColor", new Color(clothSave.shoes[0], clothSave.shoes[1], clothSave.shoes[2], clothSave.shoes[3]));//shoes
         }
         else
         {
@@ -243,6 +282,22 @@ public class LoadCharacter : NetworkBehaviour
         }
 
     }
+
+    [Command]
+    private void CmdLoad(ClothSaveData clothSave, uint net,GameObject me)
+    {
+        RpcLoad(clothSave,  net);
+        clothData = clothSave;
+    }
+    [ClientRpc]
+    private void RpcLoad(ClothSaveData clothSave,uint net)
+    {
+        if(net == netId)
+        {
+            LoadExternal(clothSave);
+        }
+    }
+
     private void removeLipstick()
     {
         lipstick = false;
@@ -283,7 +338,6 @@ public class LoadCharacter : NetworkBehaviour
 
             meshRenderers[0].material = mainTorsoMat;
             meshRenderers[1].material = mainTorsoMat;
-
 
         }
         else
@@ -327,7 +381,7 @@ public class LoadCharacter : NetworkBehaviour
         meshRenderers[29].material.SetColor("_BaseColor", color); //male
         meshRenderers[9].material.SetColor("_BaseColor", color); //hands
         meshRenderers[10].materials[3].SetColor("_BaseColor", color); //kichwa
-        bodyMat = meshRenderers[10].materials[0];
+        bodyMat = meshRenderers[10].materials[3];
 
 
         if (!sleeves)

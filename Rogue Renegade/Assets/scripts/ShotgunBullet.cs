@@ -8,11 +8,14 @@ public class ShotgunBullet : MonoBehaviour
     private Rigidbody r;
     public float damage = 1;
     public GameObject bloodParicleSystem;
+    public bool isMultiplayer = true;
+    public uint shooterId = default;
 
     private void Start()
     {
         r = GetComponent<Rigidbody>();
         r.velocity = transform.forward * Time.deltaTime * speed;
+      
     }
     private void FixedUpdate()
     {
@@ -31,6 +34,15 @@ public class ShotgunBullet : MonoBehaviour
             if (collision.collider.GetComponent<Bloody>())
             {
                 Instantiate(bloodParicleSystem, collision.GetContact(0).point, bloodParicleSystem.transform.rotation);
+            }
+            shooterId = transform.parent.GetComponent<ShotgunCatridge>().shooterId;
+            if (shooterId != default)
+            {
+                t.TakeDamage(damage, shooterId);
+            }
+            else
+            {
+                t.TakeDamage(damage);
             }
         }
         Destroy(gameObject);
