@@ -34,6 +34,8 @@ namespace Mirror
 
         internal static ConnectState connectState = ConnectState.None;
 
+        
+
         /// <summary>
         /// The IP address of the server that this client is connected to.
         /// <para>This will be empty if the client has not connected yet.</para>

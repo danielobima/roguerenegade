@@ -11,26 +11,24 @@ public class Target : NetworkBehaviour {
     public float healthFull = 5;
     public bool isPlayer = false;
     //public GameObject myHealthBar;
-    private GameObject player;
+    public GameObject player;
     public GameObject myRing;
     public GameObject currentLookAt;
     private RagdollSwitch ragdollSwitch;
-    private Rigidbody r;
+    private Rigidbody r; 
     private PlayerGun playerGun;
     public bool isDead = false;
     public bool isAiming = false;
-    private bool hasSetJustKilledEnemy = false;
     private bool hasSwitchedRagdoll = false;
     private bool isTakingDamage = false;
     private float damageTime = 0.3f;
     private float dt = 0;
-    private Target t;
-    public PlayerMotion p;
     private HealthBar healthBar;
     private float dc;
     public float damageCooldown = 4;
     private GameMechMulti gameMechMulti;
     public List<uint> attackers;
+    private bool hasDroppedGun = false;
 
     [Header("LEAVE EMPTY")]
     public Transform playerMiddleSpine;
@@ -43,9 +41,8 @@ public class Target : NetworkBehaviour {
     {
         ragdollSwitch = GetComponent<RagdollSwitch>();
         r = GetComponent<Rigidbody>();
-        player = GameObject.FindGameObjectWithTag("Player");
-        t = player.GetComponent<Target>();
-        p = player.GetComponent<PlayerMotion>();
+        
+        
         
         gameMechMulti = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMechMulti>();
         if (isPlayer)
@@ -171,18 +168,19 @@ public class Target : NetworkBehaviour {
                     e.Die();
                     //e.myCanvas.SetActive(false);
                 }
-                if (!hasSetJustKilledEnemy)
-                {
-                    p.justKilledEnemy = true;
-                    hasSetJustKilledEnemy = true;
-                }
+               
                 //myHealthBar.SetActive(false);
             }
             else
             {
                 if (playerGun.playerMultiDetails.isMultiPlayer)
                 {
-                    playerGun.dropGun();
+                    if (isLocalPlayer && !hasDroppedGun)
+                    {
+                        playerGun.dropGun();
+                        playerGun.dropSecondaryGun();
+                        hasDroppedGun = true;
+                    }
                     if (Input.GetKeyDown("p"))
                     {
                         //gameMechMulti.respawnPlayer(connectionToClient,gameObject);
@@ -243,16 +241,13 @@ public class Target : NetworkBehaviour {
                 //myHealthBar.SetActive(false);
             }
 
-            if (t.currentLookAt != gameObject || !t.isAiming)
-            {
-                myRing.SetActive(false);
-            }
+            
         }
         else
         {
             if (!isDead)
             {
-                if (health < healthFull)
+                /*if (health < healthFull)
                 {
                     if (dc < damageCooldown)
                     {
@@ -267,8 +262,23 @@ public class Target : NetworkBehaviour {
                 else
                 {
                     dc = 0;
+                }*/
+                if(gameMechMulti != null)
+                {
+                    if(gameMechMulti.survivalMechMulti != null)
+                    {
+                        if (gameMechMulti.survivalMechMulti.isOnCooldown)
+                        {
+                            if (health < healthFull)
+                            {
+                                health += 1 * Time.deltaTime;
+
+                            }
+                        }
+                    }
                 }
             }
+            
         }
         if (isTakingDamage && !isPlayer)
         {

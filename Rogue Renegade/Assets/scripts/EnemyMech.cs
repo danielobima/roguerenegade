@@ -458,7 +458,8 @@ public class EnemyMech : NetworkBehaviour {
         }
         else
         {
-            int i = Random.Range(0, gameMechMulti.playerTargets.Count);
+            int i = Random.Range(0, gameMechMulti.playerTargets.Count );
+            Debug.Log(i + ", count is " + gameMechMulti.playerTargets.Count);
             List<uint> ids = new List<uint>(gameMechMulti.playerTargets.Keys);
             playerTransform = gameMechMulti.playerTargets[ids[i]].transform;
             playerTarget = gameMechMulti.playerTargets[ids[i]];

@@ -164,23 +164,26 @@ public class PlayerMotion : NetworkBehaviour {
     }
     private void FixedUpdate()
     {
-        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
+        if ((isLocalPlayer || !playerMultiDetails.isMultiPlayer)  )
         {
             movementTechnologies();
-            slowMoTechnologies();
-            cylinder.position = MoveCylinder() + yBounds;
+            if (!GameMech.gameIsPaused && !playerMultiDetails.isTyping) {
+                //slowMoTechnologies();
+                cylinder.position = MoveCylinder() + yBounds;
 
-            cylinder.LookAt(new Vector3(transform.position.x, cylinder.position.y, transform.position.z));
-            if (!isRolling && joked)
-            {
-                //virtualMiddleSpine.transform.LookAt(cylinder);
-                Vector3 lTargetDir = cylinder.position - transform.position;
-                //lTargetDir.y = 0.0f;
-                Quaternion targetRotation = Quaternion.LookRotation(lTargetDir);
+                cylinder.LookAt(new Vector3(transform.position.x, cylinder.position.y, transform.position.z));
+                if (!isRolling && joked)
+                {
+                    //virtualMiddleSpine.transform.LookAt(cylinder);
+                    Vector3 lTargetDir = cylinder.position - transform.position;
+                    //lTargetDir.y = 0.0f;
+                    Quaternion targetRotation = Quaternion.LookRotation(lTargetDir);
 
-                virtualMiddleSpine.transform.rotation = Quaternion.Slerp(virtualMiddleSpine.transform.rotation, targetRotation, 10 * Time.deltaTime);
+                    virtualMiddleSpine.transform.rotation = Quaternion.Slerp(virtualMiddleSpine.transform.rotation, targetRotation, 10 * Time.deltaTime);
 
+                }
             }
+           
         }
        
     }
@@ -188,9 +191,10 @@ public class PlayerMotion : NetworkBehaviour {
 
     private void Update()
     {
-        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer  )
         {
-            MoveWhenTold(isUsingKeyBoard);
+            if (!GameMech.gameIsPaused && !playerMultiDetails.isTyping)
+                MoveWhenTold(isUsingKeyBoard);
         }
 
     }
@@ -246,7 +250,7 @@ public class PlayerMotion : NetworkBehaviour {
             {
                 if (!isBeingPunched)
                 {
-                    if (direction.magnitude >= .1f)
+                    if (direction.magnitude >= .1f && !GameMech.gameIsPaused && !playerMultiDetails.isTyping)
                     {
                         float target = targetAngle + cam.transform.eulerAngles.y;
 
@@ -257,7 +261,7 @@ public class PlayerMotion : NetworkBehaviour {
                         {
                             transform.rotation = Quaternion.Euler(0, angle, 0);
                         }
-                        if (!playerGun.meleeMode)
+                        if (!playerGun.meleeMode )
                         {
                             if (!PlayerGun.isFineAim)
                             {
@@ -727,6 +731,7 @@ public class PlayerMotion : NetworkBehaviour {
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
                     startJump();
+                    Debug.Log("WOOOWW!!");
                 }
                 /*if (Input.GetKeyDown("f"))
                 {
@@ -767,10 +772,10 @@ public class PlayerMotion : NetworkBehaviour {
                 {
                     //CoverTechnologies();
                 }
-                if (Input.GetKeyDown("u"))
+                /*if (Input.GetKeyDown("u"))
                 {
                     joked = ragdoll.ragdollJokes(joked);
-                }
+                }*/
             }
             if (isTakingCover)
             {
@@ -903,7 +908,7 @@ public class PlayerMotion : NetworkBehaviour {
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer )
         {
             if (isCrouchJumping)
             {

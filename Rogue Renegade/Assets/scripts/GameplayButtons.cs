@@ -19,6 +19,8 @@ public class GameplayButtons : MonoBehaviour, IDragHandler, IPointerDownHandler,
     public static bool getPlayerFromScreenTexts;
     private ScreenTexts screenTexts;
 
+    
+
     private void Start()
     {
        

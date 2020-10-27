@@ -27,6 +27,7 @@ public class ScreenTexts : MonoBehaviour
     public Text WaveText;
     public Text FloorText;
     public Text Kills;
+    public Text WaveCountdown;
 
     private void Start()
     {

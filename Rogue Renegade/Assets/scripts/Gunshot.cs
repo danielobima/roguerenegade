@@ -174,26 +174,11 @@ public class Gunshot : NetworkBehaviour {
 
             if (t.isPlayer)
             {
-                if (t.p.playerMultiDetails.isMultiPlayer)
+                t.TakeDamage(damage);
+                t.damagePoint(collisionPoint - collider.transform.position);
+                if (collider.GetComponent<Bloody>())
                 {
-                    t = t.p.playerMultiDetails.gameMechMulti.playerTargets[t.netIdentity.netId];
-                    t.TakeDamage(damage);
-                    t.damagePoint(collisionPoint - collider.transform.position);
-                    if (collider.GetComponent<Bloody>())
-                    {
-                        GameObject g = Instantiate(bloodParticleSystem, collisionPoint, bloodParticleSystem.transform.rotation);
-                        NetworkServer.Spawn(g);
-                    }
-
-                }
-                else
-                {
-                    t.TakeDamage(damage);
-                    t.damagePoint(collisionPoint - collider.transform.position);
-                    if (collider.GetComponent<Bloody>())
-                    {
-                        Instantiate(bloodParticleSystem, collisionPoint, bloodParticleSystem.transform.rotation);
-                    }
+                    Instantiate(bloodParticleSystem, collisionPoint, bloodParticleSystem.transform.rotation);
                 }
             }
             else

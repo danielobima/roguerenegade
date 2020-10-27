@@ -39,7 +39,7 @@ public class GameMech : MonoBehaviour
         //updateDifficulty();
         //Application.targetFrameRate = 60;
         //QualitySettings.SetQualityLevel(5);
-        quality.value = QualitySettings.GetQualityLevel();
+        //quality.value = QualitySettings.GetQualityLevel();
 #if (UNITY_IPHONE || UNITY_ANDROID)
        screenButtons.SetActive(true);
 #endif
@@ -173,7 +173,10 @@ public class GameMech : MonoBehaviour
             g.SetActive(false);
         }
         gameIsPaused = true;
-        Time.timeScale = 0;
+        if (!multiplayer)
+        {
+            Time.timeScale = 0;
+        }
 
 
         Cursor.visible = true;
@@ -190,7 +193,10 @@ public class GameMech : MonoBehaviour
             g.SetActive(true);
         }
         gameIsPaused = false;
-        Time.timeScale = 1;
+        if (!multiplayer)
+        {
+            Time.timeScale = 1;
+        }
 
         Cursor.visible = false;
     }

@@ -8,4 +8,7 @@ public class ScreenObjects : MonoBehaviour
     public GameObject switchGunButton;
     public GameObject dropGunButton;
     public GameObject throwButton;
+    public GameObject startButton;
+    public GameObject chatbar;
+    public GameObject chatMessager;
 }

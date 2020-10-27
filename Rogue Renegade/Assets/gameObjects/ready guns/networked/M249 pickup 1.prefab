@@ -5033,7 +5033,8 @@ GameObject:
   - component: {fileID: 4584701274241427138}
   - component: {fileID: 1934175956446333783}
   - component: {fileID: 7019098751904597566}
-  - component: {fileID: 4415415129305931113}
+  - component: {fileID: -2199922641852984486}
+  - component: {fileID: -5262255517119490706}
   m_Layer: 0
   m_Name: M249 pickup 1
   m_TagString: DroppedGun
@@ -5135,6 +5136,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bf92bd7936912740ad7e5d142c5195b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   gunType: M249
   gunInt: 4
   timeToNextShot: 0.1
@@ -5208,7 +5211,29 @@ MonoBehaviour:
   serverOnly: 0
   m_AssetId: 
   hasSpawned: 0
---- !u!114 &4415415129305931113
+--- !u!114 &-2199922641852984486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7426571647576100648}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83392ae5c1b731446909f252fd494ae4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  target: {fileID: 4584701274241427138}
+  clientAuthority: 0
+  syncVelocity: 1
+  clearVelocity: 0
+  velocitySensitivity: 0.1
+  syncAngularVelocity: 1
+  clearAngularVelocity: 0
+  angularVelocitySensitivity: 0.1
+--- !u!114 &-5262255517119490706
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

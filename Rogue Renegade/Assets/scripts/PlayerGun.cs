@@ -608,7 +608,7 @@ public class PlayerGun : NetworkBehaviour {
     }
     private void Update()
     {
-        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
+        if ((isLocalPlayer || !playerMultiDetails.isMultiPlayer) && !GameMech.gameIsPaused && !playerMultiDetails.isTyping)
         {
             CameraTechnologies();
             if (gun != null)
@@ -681,9 +681,12 @@ public class PlayerGun : NetworkBehaviour {
                 }
                 if (Input.GetKeyDown("r"))
                 {
-                    if (gunDetails.ammoSpare > 0)
+                    if(gun != null)
                     {
-                        startReloadAnimation();
+                        if (gunDetails.ammoSpare > 0)
+                        {
+                            startReloadAnimation();
+                        }
                     }
 
                 }
@@ -1000,7 +1003,7 @@ public class PlayerGun : NetworkBehaviour {
     
     public void Shoot()
     {
-        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
+        if (isLocalPlayer || !playerMultiDetails.isMultiPlayer )
         {
             if (!isReloading && !isSwitchingGun && playerMotion.joked)
             {
@@ -1726,7 +1729,7 @@ public class PlayerGun : NetworkBehaviour {
                 gun = null;
 
             }
-        }
+        } 
         else
         {
             if(gun!= null)

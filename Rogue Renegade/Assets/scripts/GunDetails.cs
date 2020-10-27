@@ -34,6 +34,7 @@ public class GunDetails : NetworkBehaviour
     public CinemachineVirtualCamera scopeCam;
     private GameMechMulti gameMechMulti;
     public int gunID = 0;
+    public bool canDestroy = true;
 
     private void Start()
     {
@@ -46,7 +47,7 @@ public class GunDetails : NetworkBehaviour
         if (gameObject.CompareTag("DroppedGun"))
         {
             d += 1 * Time.deltaTime;
-            if(d >= 60)
+            if(d >= 60 && canDestroy)
             {
                 Destroy(gameObject);
             }

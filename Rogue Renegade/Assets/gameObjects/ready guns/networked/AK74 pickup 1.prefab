@@ -5086,7 +5086,8 @@ GameObject:
   - component: {fileID: 6661348384222473171}
   - component: {fileID: 2306354100025150612}
   - component: {fileID: 588608466971403489}
-  - component: {fileID: -7139975020329252520}
+  - component: {fileID: -2478903180901465752}
+  - component: {fileID: -2731476549572727288}
   m_Layer: 0
   m_Name: AK74 pickup 1
   m_TagString: DroppedGun
@@ -5187,6 +5188,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bf92bd7936912740ad7e5d142c5195b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   gunType: AK74
   gunInt: 0
   timeToNextShot: 0.25
@@ -5260,7 +5263,29 @@ MonoBehaviour:
   serverOnly: 0
   m_AssetId: 
   hasSpawned: 0
---- !u!114 &-7139975020329252520
+--- !u!114 &-2478903180901465752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1725410734552463070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83392ae5c1b731446909f252fd494ae4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  target: {fileID: 6661348384222473171}
+  clientAuthority: 0
+  syncVelocity: 1
+  clearVelocity: 0
+  velocitySensitivity: 0.1
+  syncAngularVelocity: 1
+  clearAngularVelocity: 0
+  angularVelocitySensitivity: 0.1
+--- !u!114 &-2731476549572727288
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

@@ -5033,7 +5033,8 @@ GameObject:
   - component: {fileID: 5081462856640352496}
   - component: {fileID: 649255029713580907}
   - component: {fileID: -1169719064341025473}
-  - component: {fileID: -6153252521955037509}
+  - component: {fileID: -7106137056620046048}
+  - component: {fileID: 7801669540138271845}
   m_Layer: 0
   m_Name: Uzi pickup 1
   m_TagString: DroppedGun
@@ -5121,6 +5122,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bf92bd7936912740ad7e5d142c5195b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   gunType: Uzi
   gunInt: 7
   timeToNextShot: 0.05
@@ -5208,7 +5211,29 @@ MonoBehaviour:
   serverOnly: 0
   m_AssetId: 
   hasSpawned: 0
---- !u!114 &-6153252521955037509
+--- !u!114 &-7106137056620046048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7503281648770330312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83392ae5c1b731446909f252fd494ae4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  target: {fileID: 5081462856640352496}
+  clientAuthority: 0
+  syncVelocity: 1
+  clearVelocity: 0
+  velocitySensitivity: 0.1
+  syncAngularVelocity: 1
+  clearAngularVelocity: 0
+  angularVelocitySensitivity: 0.1
+--- !u!114 &7801669540138271845
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

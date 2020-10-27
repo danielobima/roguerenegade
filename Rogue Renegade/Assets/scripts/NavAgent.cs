@@ -21,6 +21,10 @@ public class NavAgent : MonoBehaviour
     public void NavToTransform(Transform destination)
     {
         
+        if(agent == null)
+        {
+            agent = GetComponent<NavMeshAgent>();
+        }
         if (agent.isOnNavMesh)
         {
             agent.destination = destination.position;
