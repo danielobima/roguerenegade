@@ -61,7 +61,7 @@ public class EnemyMech : NetworkBehaviour {
         gameMech = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMech>();
         if (enemyMultiDetails.isMultiPlayer)
         {
-            gameMechMulti = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMechMulti>();
+            gameMechMulti = GameObject.FindGameObjectWithTag("GameMechMulti").GetComponent<GameMechMulti>();
         }
         setPlayerInstance();
 
@@ -459,7 +459,6 @@ public class EnemyMech : NetworkBehaviour {
         else
         {
             int i = Random.Range(0, gameMechMulti.playerTargets.Count );
-            Debug.Log(i + ", count is " + gameMechMulti.playerTargets.Count);
             List<uint> ids = new List<uint>(gameMechMulti.playerTargets.Keys);
             playerTransform = gameMechMulti.playerTargets[ids[i]].transform;
             playerTarget = gameMechMulti.playerTargets[ids[i]];

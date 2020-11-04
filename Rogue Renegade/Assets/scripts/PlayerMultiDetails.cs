@@ -31,7 +31,7 @@ public class PlayerMultiDetails : NetworkBehaviour
         target = GetComponent<Target>();
         playerGun = GetComponent<PlayerGun>();
         playerMotion = GetComponent<PlayerMotion>();
-        gameMechMulti = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMechMulti>();
+        gameMechMulti = GameObject.FindGameObjectWithTag("GameMechMulti").GetComponent<GameMechMulti>();
         screenObjects = GameObject.FindGameObjectWithTag("screen objects").GetComponent<ScreenObjects>();
         TMP_InputField tMP_InputField = screenObjects.chatMessager.GetComponent<TMP_InputField>();
         tMP_InputField.onEndEdit.AddListener(sendchatMsg);
@@ -150,14 +150,18 @@ public class PlayerMultiDetails : NetworkBehaviour
     public override void OnStartClient()
     {
         base.OnStartClient();
-        Debug.Log(netId);
         if (isLocalPlayer)
         {
             playerName = new PlayerDetails().getUserName();
             CmdSetNameOnServer(playerName);
+            GameMechMulti.SendUsername sendUsername = new GameMechMulti.SendUsername()
+            {
+                username = playerName
+            };
+            NetworkClient.Send(sendUsername);
         }
         nameDisplay.text = playerName;
-     
+        
     }
    
     private void UpdateUsername(string oldValue,string newValue)
@@ -200,9 +204,9 @@ public class PlayerMultiDetails : NetworkBehaviour
     [Command]
     public void CmdStartGame(NetworkConnectionToClient conn = null)
     {
-        if (canStartGame && !gameMechMulti.gameStarted)
+        if (canStartGame && !gameMechMulti.survivalMechMulti.gameStarted)
         {
-            gameMechMulti.gameStarted = true;
+            gameMechMulti.survivalMechMulti.gameStarted = true;
             
         }
         TargetRemoveStartGameButton(conn);
@@ -239,6 +243,7 @@ public class PlayerMultiDetails : NetworkBehaviour
         gameMechMulti.survivalMechMulti.playerscores.Clear();
         gameMechMulti.survivalMechMulti.spawnedEnemies.Clear();
         gameMechMulti.survivalMechMulti.hasSpawned = false;
+        gameMechMulti.survivalMechMulti.gameStarted = false;
         gameMechMulti.survivalMechMulti.waveNo = 1;
 
         RpcRespawn();
@@ -247,6 +252,15 @@ public class PlayerMultiDetails : NetworkBehaviour
     public void RpcRespawn()
     {
         respawn();
+        screenObjects.survivalScoresPanel.SetActive(false);
+        if (gameMechMulti == null)
+        {
+            gameMechMulti = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMechMulti>();
+        }
+        if (GameMechMulti.isHost && !gameMechMulti.survivalMechMulti.gameStarted)
+        {
+            screenObjects.startButton.SetActive(true);
+        }
     }
     
     private void Update()
@@ -262,7 +276,7 @@ public class PlayerMultiDetails : NetworkBehaviour
             {
                 if (target.isDead)
                 {
-                    if (GameMechMulti.isHost)
+                    if (GameMechMulti.isHost && !gameMechMulti.survivalMechMulti.gameStarted)
                     {
                         CmdRestartGame();
                     }

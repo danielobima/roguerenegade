@@ -32,7 +32,7 @@ public class ScreenTexts : MonoBehaviour
     private void Start()
     {
 
-        gameMech = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMech>();
+        gameMech = GameObject.FindGameObjectWithTag("Mech").transform.GetChild(0).GetComponent<GameMech>();
         if (gameMech.playerSpawned)
         {
             getPlayer();
@@ -256,7 +256,7 @@ public class ScreenTexts : MonoBehaviour
             }
         }
 
-
+        if(gameMech != null)
         if (gameMech.GetComponent<SurvivalMech>() != null)
         {
             if (SurvivalMech.survivalOngoing)

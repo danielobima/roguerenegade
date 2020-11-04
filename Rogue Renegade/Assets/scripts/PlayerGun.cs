@@ -111,7 +111,7 @@ public class PlayerGun : NetworkBehaviour {
 
     private void Start()
     {
-        gameMechMulti = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMechMulti>();
+        gameMechMulti = GameObject.FindGameObjectWithTag("GameMechMulti").GetComponent<GameMechMulti>();
         gameMech = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMech>();
         ragdollSwitch = GetComponent<RagdollSwitch>();
         playerMotion = GetComponent<PlayerMotion>();
@@ -1122,7 +1122,6 @@ public class PlayerGun : NetworkBehaviour {
         gunDetails.ammoLoaded -= 1;
         gunDetails.gunSound.Play();
         muzzleFlash.Play();
-        Debug.Log("YES");
     }
     [ClientRpc(excludeOwner =true)]
     private void RpcFlashMuzzle(uint Id)

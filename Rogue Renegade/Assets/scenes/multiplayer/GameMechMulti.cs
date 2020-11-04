@@ -22,10 +22,7 @@ public class GameMechMulti : NetworkManager
     public static bool isHost = false;
     public static ushort port = 7777;
     private GameMech gameMech;
-    public GameObject mainCamera;
-    public GameObject uiCamera;
     public GameObject aimCylinder;
-    public GameObject Canvas;
     public GameObject tpp; 
     public Dictionary<uint, GameObject> playerDictionary;
     public Dictionary<uint, Target> playerTargets;
@@ -33,14 +30,20 @@ public class GameMechMulti : NetworkManager
     public Dictionary<int, GameObject> networkedGuns;
     public Dictionary<GameObject, ClothSaveData> clothSaves;
     public GameMode gameMode;
+    [Scene]
+    public string gameScene;
     public EnemyMech[] enemies;
     public GameObject[] enemySpawners;
     public SurvivalMechMulti survivalMechMulti;
-    public bool gameStarted = false;
-    public GameObject ScorePanel;
-    public GameObject scorePreset;
-    
-    
+
+    private delegate void GameLogic();
+    private GameLogic gameLogic;
+
+
+    [Header("For the lobby scene only")]
+    public Transform lobbyListView;
+    public LobbyManager lobbyManager;
+    public bool isLobby = false;
     
 
     [Header("Not networked")]
@@ -49,14 +52,14 @@ public class GameMechMulti : NetworkManager
     [Header("Not networked")]
     public GunDetails[] gunDetailss;
 
-
-
+    
+    
 
 
     public override void Start()
     {
         base.Start();
-        gameMech = GetComponent<GameMech>();
+        
         clothSaves = new Dictionary<GameObject, ClothSaveData>();
         playerDictionary = new Dictionary<uint, GameObject>();
         playerTargets = new Dictionary<uint, Target>();
@@ -75,12 +78,7 @@ public class GameMechMulti : NetworkManager
         {
             guns.Add(g.gunInt, g.gameObject);
         }
-        switch (gameMode)
-        {
-            case GameMode.Survival:
-                gameMech.enemyDeathCallBack = survivalMechMulti.enemyKilled;
-                break;
-        }
+        
         if (isHost)
         {
             StartHost();
@@ -92,8 +90,9 @@ public class GameMechMulti : NetworkManager
             telepathyTransport.port = port;
             StartClient();
         }
-       
-        
+
+
+
     }
     public void Exit()
     {
@@ -110,7 +109,7 @@ public class GameMechMulti : NetworkManager
     public override void OnServerConnect(NetworkConnection conn)
     {
         base.OnServerConnect(conn);
-        survivalMechMulti.TargetConnected(conn);
+        //survivalMechMulti.TargetConnected(conn);
     }
 
 
@@ -129,7 +128,7 @@ public class GameMechMulti : NetworkManager
         //SceneManager.LoadScene(0, LoadSceneMode.Single);
     }
 
-
+   
 
 
     public override void OnStartServer()
@@ -138,17 +137,7 @@ public class GameMechMulti : NetworkManager
         NetworkServer.RegisterHandler<SendUsername>(OnUsernameReceived);
     }
    
-    private void OnUsernameReceived(NetworkConnection conn, SendUsername sendUsername)
-    {
-       
-        switch (gameMode)
-        {
-            case GameMode.Survival:
-                
-                SurvivalSetup(conn,sendUsername.username);
-                break;
-        }
-    }
+    
     
     public override void OnClientError(NetworkConnection conn, int errorCode)
     {
@@ -162,25 +151,41 @@ public class GameMechMulti : NetworkManager
     }
     public override void OnServerDisconnect(NetworkConnection conn)
     {
-        
-        switch (gameMode)
-        {
-            case GameMode.Survival:
 
-               
-                GameMessage gameMessage = new GameMessage
-                {
-                    theMessage = survivalMechMulti.playerscores[conn.identity.netId].name + " left"
-                };
-                NetworkServer.SendToAll(gameMessage);
-                survivalMechMulti.playerscores.Remove(conn.identity.netId);
-                break;
+        if (!isLobby)
+        {
+            switch (gameMode)
+            {
+                case GameMode.Survival:
+
+
+                    GameMessage gameMessage = new GameMessage
+                    {
+                        theMessage = survivalMechMulti.playerscores[conn.identity.netId].name + " left"
+                    };
+                    NetworkServer.SendToAll(gameMessage);
+                    survivalMechMulti.playerscores.Remove(conn.identity.netId);
+                    break;
+            }
         }
         base.OnServerDisconnect(conn);
         
     }
+    private void OnUsernameReceived(NetworkConnection conn, SendUsername sendUsername)
+    {
 
-    private class SendUsername : MessageBase
+        if (!isLobby)
+        {
+            switch (gameMode)
+            {
+                case GameMode.Survival:
+
+                    SurvivalSetup(conn, sendUsername.username);
+                    break;
+            }
+        }
+    }
+    public  class SendUsername : MessageBase
     {
         public string username;
     }
@@ -217,10 +222,10 @@ public class GameMechMulti : NetworkManager
        
         NetworkClient.Send(sendUsername);
     }
-
+    
     public override void OnServerAddPlayer(NetworkConnection conn)
     {
-        
+
         /*Instantiate(mainCamera);
         mainCamera.SetActive(true);
         Instantiate(uiCamera);
@@ -231,7 +236,7 @@ public class GameMechMulti : NetworkManager
         aimCylinder.SetActive(true);
         Instantiate(tpp);
         tpp.SetActive(true);*/
-        GameObject player = gameMech.spawnAndReturnPlayer(true);
+        /*GameObject player = gameMech.spawnAndReturnPlayer(true);
         PlayerMotion playerMotion = player.GetComponent<PlayerMotion>();
         PlayerGun playerGun = player.GetComponent<PlayerGun>();
         
@@ -240,21 +245,61 @@ public class GameMechMulti : NetworkManager
         NetworkServer.AddPlayerForConnection(conn, player);
         playerDictionary.Add(playerMotion.netId, player);
         playerTargets.Add(playerMotion.netId, player.GetComponent<Target>());
-        PlayerMultiDetails playerMultiDetails = player.GetComponent<PlayerMultiDetails>();
+        PlayerMultiDetails playerMultiDetails = player.GetComponent<PlayerMultiDetails>();*/
+
         
+        GameObject playerNameObj = Instantiate(spawnPrefabs.Find(prefab => prefab.name == "playerNameObj"), lobbyListView);
+        lobbyManager.lobbyPlayers.Add(playerNameObj.GetComponent<LobbyPlayer>());
+        if(NetworkServer.connections.Count <= 1)
+        {
+            playerNameObj.GetComponent<LobbyPlayer>().isLeader = true;
+        }
+        NetworkServer.AddPlayerForConnection(conn, playerNameObj);
         
-        //gameStarted = true;
-        
+        Debug.Log("YES");
+
+    }
+    public void AddPlayersInNewScene()
+    {
+     
+        gameMech = GameObject.FindGameObjectWithTag("Mech").transform.GetChild(0).GetComponent<GameMech>();
         switch (gameMode)
         {
             case GameMode.Survival:
-                
-                //SurvivalSetup(conn);
+                survivalMechMulti = GameObject.FindGameObjectWithTag("Mech").transform.GetChild(0).GetComponent<SurvivalMechMulti>();
+                gameMech.enemyDeathCallBack = survivalMechMulti.enemyKilled;
+                gameLogic = survivalMechMulti.GameLogic;
                 break;
         }
-       
+        foreach (NetworkConnection conn in NetworkServer.connections.Values)
+        {
+            
+            GameObject player = gameMech.spawnAndReturnPlayer(true);
+            
+            PlayerMotion playerMotion = player.GetComponent<PlayerMotion>();
+            PlayerGun playerGun = player.GetComponent<PlayerGun>();
+            
+            if(conn.identity == null)
+            {
+                NetworkServer.AddPlayerForConnection(conn, player);
+            }
+            else
+            {
+                NetworkServer.ReplacePlayerForConnection(conn, player);
+            }
+            playerDictionary.Add(playerMotion.netId, player);
+            playerTargets.Add(playerMotion.netId, player.GetComponent<Target>());
+            PlayerMultiDetails playerMultiDetails = player.GetComponent<PlayerMultiDetails>();
 
+        }
+        isLobby = false;
     }
+    public void MoveToGameScene()
+    {
+        ServerChangeScene(gameScene);
+        
+    }
+    
 
     private void SurvivalSetup(NetworkConnection conn,string userName = "No namaewa")
     {
@@ -302,6 +347,7 @@ public class GameMechMulti : NetworkManager
             };
             NetworkServer.SendToAll(gameMessage);
         }
+      
 
 
 
@@ -316,9 +362,12 @@ public class GameMechMulti : NetworkManager
     {
         
     }
-    private void Update()
+    private void FixedUpdate()
     {
-        
+        if (!isLobby)
+        {
+            gameLogic();
+        }
     }
     
     public void respawnPlayer(NetworkConnection conn,GameObject prevPlayer,string name)
@@ -346,6 +395,7 @@ public class GameMechMulti : NetworkManager
                 SurvivalSetup(conn,name);
                 break;
         }
+       
     }
     
 }

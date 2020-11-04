@@ -99,7 +99,7 @@ LightmapSettings:
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 112000000, guid: 66462856019a5954ea34f3615eea7b31,
     type: 2}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -21958,7 +21958,7 @@ MonoBehaviour:
   nameInputField: {fileID: 1554119}
   IPAddressInputField: {fileID: 1173237112}
   PortInputField: {fileID: 2054953753}
-  gameScene: Assets/scenes/multiplayer/Beta test/Beta.unity
+  gameScene: Assets/scenes/multiplayer/Lobby/Lobby.unity
   cameraAnimator: {fileID: 525973677}
 --- !u!1 &1566432362
 GameObject:

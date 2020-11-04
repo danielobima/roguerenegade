@@ -17,6 +17,8 @@ public class Target : NetworkBehaviour {
     private RagdollSwitch ragdollSwitch;
     private Rigidbody r; 
     private PlayerGun playerGun;
+
+    
     public bool isDead = false;
     public bool isAiming = false;
     private bool hasSwitchedRagdoll = false;
@@ -153,6 +155,15 @@ public class Target : NetworkBehaviour {
             r.AddForce(puncher.forward * force);
         }
     }
+    [Command]
+    private void CmdDie()
+    {
+        if(gameMechMulti == null)
+        {
+            gameMechMulti = GameObject.FindGameObjectWithTag("GameMechMulti").GetComponent<GameMechMulti>();
+        }
+        gameMechMulti.survivalMechMulti.playerDied();
+    }
     private void Update()
     {
         
@@ -179,7 +190,12 @@ public class Target : NetworkBehaviour {
                     {
                         playerGun.dropGun();
                         playerGun.dropSecondaryGun();
+                        if (isClient)
+                        {
+                            CmdDie();
+                        }
                         hasDroppedGun = true;
+                        
                     }
                     if (Input.GetKeyDown("p"))
                     {
@@ -232,14 +248,14 @@ public class Target : NetworkBehaviour {
 
 
             
-            if (health < healthFull && health >0)
+            /*if (health < healthFull && health >0)
             {
-                //myHealthBar.SetActive(true);
+                myHealthBar.SetActive(true);
             }
             else
             {
-                //myHealthBar.SetActive(false);
-            }
+                myHealthBar.SetActive(false);
+            }*/
 
             
         }

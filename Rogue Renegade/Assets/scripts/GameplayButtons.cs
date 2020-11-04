@@ -25,7 +25,7 @@ public class GameplayButtons : MonoBehaviour, IDragHandler, IPointerDownHandler,
     {
        
         
-        gameMech = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMech>();
+        gameMech = GameObject.FindGameObjectWithTag("Mech").transform.GetChild(0).GetComponent<GameMech>();
         screenTexts = gameMech.screentexts;
         if (gameMech.playerSpawned)
         {

@@ -31,6 +31,13 @@ TagManager:
   - AimCylinder
   - damagePointer
   - screen objects
+  - crossHair
+  - SlowMoBar
+  - dropGun
+  - throw
+  - switchGun
+  - GameMechMulti
+  - Mech
   layers:
   - Default
   - TransparentFX

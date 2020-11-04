@@ -107,9 +107,8 @@ public class PlayerMotion : NetworkBehaviour {
             if (playerMultiDetails.isMultiPlayer)
             {
                 
-                GameMechMulti gameMechMulti = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMechMulti>();
-                networkRigidbody = GetComponent<NetworkRigidbody>();
-                networkRigidbody.enabled = false;
+                GameMechMulti gameMechMulti = GameObject.FindGameObjectWithTag("GameMechMulti").GetComponent<GameMechMulti>();
+               
                 cylinder = Instantiate(gameMechMulti.aimCylinder).transform;
                 cylinder.gameObject.SetActive(true);
             }
@@ -731,7 +730,7 @@ public class PlayerMotion : NetworkBehaviour {
                 if (Input.GetKeyDown(KeyCode.Space))
                 {
                     startJump();
-                    Debug.Log("WOOOWW!!");
+                    //Debug.Log("WOOOWW!!");
                 }
                 /*if (Input.GetKeyDown("f"))
                 {
@@ -862,10 +861,7 @@ public class PlayerMotion : NetworkBehaviour {
                     {
                         rigidBody.AddForce(transform.forward * jumpForce);
                     }
-                    if (playerMultiDetails.isMultiPlayer)
-                    {
-                        networkRigidbody.enabled = true;
-                    }
+                  
 
                 }
                 else
@@ -928,10 +924,7 @@ public class PlayerMotion : NetworkBehaviour {
             {
                 isOnFloor = true;
                 isJumping = false;
-                if (playerMultiDetails.isMultiPlayer)
-                {
-                    networkRigidbody.enabled = false;
-                }
+                
                 if (Input.GetKey(KeyCode.LeftControl))
                 {
                     isRolling = true;

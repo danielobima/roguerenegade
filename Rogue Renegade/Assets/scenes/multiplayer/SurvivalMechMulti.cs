@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 
 public class SurvivalMechMulti : NetworkBehaviour
@@ -16,8 +17,8 @@ public class SurvivalMechMulti : NetworkBehaviour
     public List<GameObject> spawnedEnemies;
     public int floor;
     private int easyWeapons = 50;
-    public GameMech gameMech;
-    public GameMechMulti gameMechMulti;
+    private GameMech gameMech;
+    private GameMechMulti gameMechMulti;
     private int meduimWeapons = 80;
     private bool goingToNextWave = false;
     private bool spawning = false;
@@ -27,12 +28,20 @@ public class SurvivalMechMulti : NetworkBehaviour
     private bool hasStartedSpawningHealth;
     [SyncVar]
     public bool isOnCooldown;
+    [SyncVar]
+    public bool gameStarted = false;
+
 
     public ScreenTexts ScreenTexts;
+    public ScreenObjects ScreenObjects;
+    public int deadPlayers = 0;
     //private int hardWeapons = 100;
    
     public Scores playerscores = new Scores();
-    
+
+    public GameObject scorePreset;
+    public GameObject ScorePanel;
+
 
 
 
@@ -46,8 +55,21 @@ public class SurvivalMechMulti : NetworkBehaviour
        
         
         noOfEnemies = spawnerGOs[0].GetComponent<Spawner>().Enemies.Length;
-        
 
+        gameMech = GetComponent<GameMech>();
+        gameMechMulti = GameObject.FindGameObjectWithTag("GameMechMulti").GetComponent<GameMechMulti>();
+
+
+        TellManagerToSpawnPlayers();
+        //SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(0));
+        
+    }
+    [ServerCallback]
+    private void TellManagerToSpawnPlayers()
+    {
+        //SceneManager.MoveGameObjectToScene(gameMechMulti.gameObject, SceneManager.GetSceneByName(gameMechMulti.gameScene));
+        gameMechMulti.AddPlayersInNewScene();
+       
     }
    
 
@@ -69,6 +91,7 @@ public class SurvivalMechMulti : NetworkBehaviour
     {
         base.OnStartClient();
         playerscores.Callback += scoresUpdated;
+
     }
     [TargetRpc]
     public void TargetConnected(NetworkConnection connection)
@@ -78,10 +101,10 @@ public class SurvivalMechMulti : NetworkBehaviour
     [TargetRpc]
     public void TargetSetUpScores(NetworkConnection target,  uint id,NameAndScore nameAndScore)
     {
-        GameObject g = getChildGameObject(gameMechMulti.ScorePanel, id.ToString());
+        GameObject g = getChildGameObject(ScorePanel, id.ToString());
         if(g == null)
         {
-            GameObject go = Instantiate(gameMechMulti.scorePreset, gameMechMulti.ScorePanel.transform);
+            GameObject go = Instantiate(scorePreset, ScorePanel.transform);
             go.name = id.ToString();
             go.SetActive(true);
             TextMeshProUGUI name = go.GetComponent<TextMeshProUGUI>();
@@ -92,6 +115,44 @@ public class SurvivalMechMulti : NetworkBehaviour
             score.SetText(nameAndScore.score.ToString());
         }
         
+    }
+    //Assigned as a delegate void in OnServerAddPlayer(). Called in Target script;
+    public void playerDied()
+    {
+        deadPlayers++;
+        Debug.Log("PLayer died");
+        if(deadPlayers >= gameMechMulti.playerTargets.Count)
+        {
+            EndGame();
+        }
+        else
+        {
+            Debug.Log(gameMechMulti.playerTargets.Count);
+        }
+    }
+    private void EndGame()
+    {
+        gameStarted = false;
+        foreach(NameAndScore nameAndScore in playerscores.Values)
+        {
+            RpcAddPlayerToScoreList(nameAndScore.name, nameAndScore.score);
+        }
+        RpcShowScores(waveNo);
+    }
+    [ClientRpc]
+    private void RpcShowScores(int waveNumber)
+    {
+        
+        ScreenObjects.survivalScoresPanel.SetActive(true);
+        ScreenObjects.survivalWaveText.GetComponent<TextMeshProUGUI>().SetText("Wave "+ waveNumber);
+    }
+    [ClientRpc]
+    private void RpcAddPlayerToScoreList(string playersName, int kills)
+    {
+        TextMeshProUGUI nameText = Instantiate(ScreenObjects.survivalScoreItem, ScreenObjects.survivalScoresList.transform).GetComponent<TextMeshProUGUI>();
+        nameText.gameObject.SetActive(true);
+        nameText.SetText(playersName);
+        nameText.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(kills.ToString());
     }
 
     //Called using a delegate void in enemy mech called enemydeathcallback
@@ -121,42 +182,48 @@ public class SurvivalMechMulti : NetworkBehaviour
     {
         //Debug.Log(id + ": " + score);
         //Put the scores in a list
-        if(op == SyncIDictionary<uint, NameAndScore>.Operation.OP_REMOVE)
+        
+        if (op == SyncIDictionary<uint, NameAndScore>.Operation.OP_REMOVE)
         {
-            GameObject g = getChildGameObject(gameMechMulti.ScorePanel, id.ToString());
+            GameObject g = getChildGameObject(ScorePanel, id.ToString());
             if (g != null)
             {
                 Destroy(g);
-                Debug.Log("DEstrtroyed");
             }
         }
+
         if (op == SyncIDictionary<uint, NameAndScore>.Operation.OP_ADD || op == SyncIDictionary<uint, NameAndScore>.Operation.OP_SET)
         {
-            GameObject g = getChildGameObject(gameMechMulti.ScorePanel, id.ToString());
+            
+            GameObject g = getChildGameObject(ScorePanel, id.ToString());
             if (g != null)
             {
                 TextMeshProUGUI scoreText = g.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
                 scoreText.SetText(score.score.ToString());
+                
             }
             else
             {
-                GameObject go = Instantiate(gameMechMulti.scorePreset, gameMechMulti.ScorePanel.transform);
+                
+                GameObject go = Instantiate(scorePreset, ScorePanel.transform);
                 go.SetActive(true);
                 go.name = id.ToString();
+                
                 TextMeshProUGUI name = go.GetComponent<TextMeshProUGUI>();
                 TextMeshProUGUI scoreText = go.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
                 name.SetText(score.name);
                 scoreText.SetText(score.score.ToString());
+
             }
         }
         if (op == SyncIDictionary<uint, NameAndScore>.Operation.OP_CLEAR)
         {
-            for (int i = 0; i < gameMechMulti.ScorePanel.transform.childCount; i++)
+            for (int i = 0; i < ScorePanel.transform.childCount; i++)
             {
-                if(gameMechMulti.ScorePanel.transform.GetChild(i).gameObject.name != "Kills" &&
-                    gameMechMulti.ScorePanel.transform.GetChild(i).gameObject.name != "Item preset")
+                if(ScorePanel.transform.GetChild(i).gameObject.name != "Kills" &&
+                    ScorePanel.transform.GetChild(i).gameObject.name != "Item preset")
                 {
-                    Destroy(gameMechMulti.ScorePanel.transform.GetChild(i).gameObject);
+                    Destroy(ScorePanel.transform.GetChild(i).gameObject);
                 }
             }
         }
@@ -247,14 +314,15 @@ public class SurvivalMechMulti : NetworkBehaviour
         ScreenTexts.WaveText.gameObject.SetActive(active);
         ScreenTexts.WaveText.text = "Wave " + waveNo;
     }
+    
 
-
-    [ServerCallback]
-    void FixedUpdate()
+    //called on gameMechMulti through a delegate void
+    [Server]
+    public void GameLogic()
     {
-
-        if (gameMechMulti.gameStarted && gameMechMulti.gameMode == GameMechMulti.GameMode.Survival)
+        if (gameStarted)
         {
+
             if (!hasSpawned)
             {
                 spawnEnemies();
@@ -265,17 +333,13 @@ public class SurvivalMechMulti : NetworkBehaviour
                 {
                     GoToNextWave();
                 }
-                
+
             }
-            /*if (playerTarget.isDead)
-            {
-                restartButton.SetActive(true);
-                survivalOngoing = false;
-
-            }*/
+            
+          
         }
-
     }
+    
     
 
 }
