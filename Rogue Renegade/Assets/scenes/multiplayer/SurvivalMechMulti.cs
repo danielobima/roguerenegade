@@ -99,7 +99,7 @@ public class SurvivalMechMulti : NetworkBehaviour
         HomeScreen.clientStarted = true;
     }
     [TargetRpc]
-    public void TargetSetUpScores(NetworkConnection target,  uint id,NameAndScore nameAndScore)
+    public void TargetSetUpScores(NetworkConnection target,  int id,NameAndScore nameAndScore)
     {
         GameObject g = getChildGameObject(ScorePanel, id.ToString());
         if(g == null)
@@ -116,7 +116,7 @@ public class SurvivalMechMulti : NetworkBehaviour
         }
         
     }
-    //Assigned as a delegate void in OnServerAddPlayer(). Called in Target script;
+  
     public void playerDied()
     {
         deadPlayers++;
@@ -158,7 +158,7 @@ public class SurvivalMechMulti : NetworkBehaviour
     //Called using a delegate void in enemy mech called enemydeathcallback
     public void enemyKilled(Target g)
     {
-        uint killer = g.attackers[g.attackers.Count - 1];
+        int killer = g.attackers[g.attackers.Count - 1];
         spawnedEnemies.Remove(g.gameObject);
         int score = playerscores[killer].score;
         string name = playerscores[killer].name;
@@ -178,12 +178,12 @@ public class SurvivalMechMulti : NetworkBehaviour
         } 
         return null;
     }
-    private void scoresUpdated(Scores.Operation op, uint id, NameAndScore score)
+    private void scoresUpdated(Scores.Operation op, int id, NameAndScore score)
     {
         //Debug.Log(id + ": " + score);
         //Put the scores in a list
         
-        if (op == SyncIDictionary<uint, NameAndScore>.Operation.OP_REMOVE)
+        if (op == SyncIDictionary<int, NameAndScore>.Operation.OP_REMOVE)
         {
             GameObject g = getChildGameObject(ScorePanel, id.ToString());
             if (g != null)
@@ -192,7 +192,7 @@ public class SurvivalMechMulti : NetworkBehaviour
             }
         }
 
-        if (op == SyncIDictionary<uint, NameAndScore>.Operation.OP_ADD || op == SyncIDictionary<uint, NameAndScore>.Operation.OP_SET)
+        if (op == SyncIDictionary<int, NameAndScore>.Operation.OP_ADD || op == SyncIDictionary<int, NameAndScore>.Operation.OP_SET)
         {
             
             GameObject g = getChildGameObject(ScorePanel, id.ToString());
@@ -216,7 +216,7 @@ public class SurvivalMechMulti : NetworkBehaviour
 
             }
         }
-        if (op == SyncIDictionary<uint, NameAndScore>.Operation.OP_CLEAR)
+        if (op == SyncIDictionary<int, NameAndScore>.Operation.OP_CLEAR)
         {
             for (int i = 0; i < ScorePanel.transform.childCount; i++)
             {

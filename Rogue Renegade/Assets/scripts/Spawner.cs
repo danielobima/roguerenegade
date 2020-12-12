@@ -29,8 +29,8 @@ public class Spawner : MonoBehaviour
     {
         
         theSpawned = Instantiate(Enemies[EnemyType], gameObject.transform.position, Enemies[EnemyType].transform.rotation);
-        theSpawned.GetComponent<EnemyMech>().timeToAttack = true;
-        theSpawned.GetComponent<FresnelEffect>().fresnate();
+        //theSpawned.GetComponent<EnemyMech>().timeToAttack = true;
+        theSpawned.GetComponent<FresnelEffect>().fresnate(3);
         Instantiate(enemyParticleSystem, gameObject.transform.position, enemyParticleSystem.transform.rotation);
         if (distanceToAttackMultiplier == 1)
         {

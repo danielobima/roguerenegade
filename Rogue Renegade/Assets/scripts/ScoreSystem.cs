@@ -9,4 +9,4 @@ public struct NameAndScore
     public string name;
     public int score;
 }
-public class Scores : SyncDictionary<uint, NameAndScore> { }
+public class Scores : SyncDictionary<int, NameAndScore> { }

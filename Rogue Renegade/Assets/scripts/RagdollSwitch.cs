@@ -118,6 +118,34 @@ public class RagdollSwitch : NetworkBehaviour
                 }
             }
         }
+        else
+        {
+            EnemyMultiDetails enemyMultiDetails = GetComponent<EnemyMultiDetails>();
+            if (!enemyMultiDetails.isMultiPlayer)
+            {
+                if (gun != null)
+                {
+                    if (value)
+                    {
+                        if (!gun.GetComponent<Rigidbody>() && !hasDoneRigidBody)
+                        {
+                            gun.gameObject.AddComponent<Rigidbody>().collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+                            hasDoneRigidBody = true;
+                        }
+                        else
+                        {
+                            if (gun.GetComponent<Rigidbody>())
+                            {
+                                gun.GetComponent<Rigidbody>().useGravity = true;
+                            }
+
+                        }
+
+                    }
+                    gun.enabled = value;
+                }
+            }
+        }
        
         mainBody.enabled = !value;
         if (value)

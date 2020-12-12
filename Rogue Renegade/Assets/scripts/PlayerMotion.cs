@@ -21,6 +21,9 @@ public class PlayerMotion : NetworkBehaviour {
     private Vector3 cameraBackForth;
     public float motion;
     public float speed = 10;
+    private float normSpeed;
+    private float gunSpeed;
+    private float handGunSpeed;
     private float initSpeed;
     private float halfSpeed;
     private float startSpeed;
@@ -94,7 +97,17 @@ public class PlayerMotion : NetworkBehaviour {
     private Vector3 yBounds = new Vector3(0, 0.6f, 0);
     public GameObject virtualMiddleSpine;
     private NetworkRigidbody networkRigidbody;
-
+    private GameObject possibleCarryAble;
+    private GameObject currentCarryAble;
+    private CarryAble currCarryAble;
+    public Transform carryPos;
+    private Material cylinderMat;
+    [SyncVar]
+    public bool isCarrying = false;
+    private float yCarryLock = 0;
+    private GameObject handContainerReal;
+    private float handContainerSmoothRef;
+   
 
     private void Start()
     {
@@ -111,12 +124,13 @@ public class PlayerMotion : NetworkBehaviour {
                
                 cylinder = Instantiate(gameMechMulti.aimCylinder).transform;
                 cylinder.gameObject.SetActive(true);
+               
             }
             else
             {
                 cylinder = gameMech.cylinder;
             }
-           
+            cylinderMat = cylinder.GetChild(1).GetComponent<Renderer>().material;
             screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
             offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
             rigidBody = GetComponent<Rigidbody>();
@@ -129,7 +143,6 @@ public class PlayerMotion : NetworkBehaviour {
             fresnelEffect = GetComponent<FresnelEffect>();
             capsuleCollider = GetComponent<CapsuleCollider>();
             defaultFresnelColor = fresnelEffect.fresnelColor;
-            defaultFresnelDuration = fresnelEffect.duration;
             initSpeed = speed;
             startSpeed = speed;
             halfSpeed = speed;
@@ -147,6 +160,9 @@ public class PlayerMotion : NetworkBehaviour {
             slowMoMeter = 2;
             
         }
+        normSpeed = speed;
+        handGunSpeed = speed * 4.5f / 5;
+        gunSpeed = speed * 4 / 5;
         playerGun = GetComponent<PlayerGun>();
         setVirtualMiddleSpine();
 
@@ -160,31 +176,82 @@ public class PlayerMotion : NetworkBehaviour {
         virtualMiddleSpine.transform.rotation = playerGun.playerMiddleSpine.rotation;
         playerGun.playerMiddleSpine.SetParent(virtualMiddleSpine.transform);
 
+        handContainerReal = Instantiate(new GameObject("handContainer"), playerGun.playerMiddleSpine);
+        handContainerReal.transform.localPosition = new Vector3();
+        handContainerReal.transform.localEulerAngles = new Vector3();
+        playerGun.playerMiddleSpine.GetChild(2).SetParent(handContainerReal.transform);
+        playerGun.playerMiddleSpine.GetChild(1).SetParent(handContainerReal.transform);
+        //carryPos.SetParent(virtualMiddleSpine.transform);
+
     }
     private void FixedUpdate()
     {
         if ((isLocalPlayer || !playerMultiDetails.isMultiPlayer)  )
         {
+
             movementTechnologies();
             if (!GameMech.gameIsPaused && !playerMultiDetails.isTyping) {
                 //slowMoTechnologies();
                 cylinder.position = MoveCylinder() + yBounds;
 
                 cylinder.LookAt(new Vector3(transform.position.x, cylinder.position.y, transform.position.z));
+                
+                
                 if (!isRolling && joked)
                 {
                     //virtualMiddleSpine.transform.LookAt(cylinder);
-                    Vector3 lTargetDir = cylinder.position - transform.position;
-                    //lTargetDir.y = 0.0f;
-                    Quaternion targetRotation = Quaternion.LookRotation(lTargetDir);
-
-                    virtualMiddleSpine.transform.rotation = Quaternion.Slerp(virtualMiddleSpine.transform.rotation, targetRotation, 10 * Time.deltaTime);
+                    aimTechnologies();
 
                 }
             }
+            
            
         }
        
+    }
+    private void aimTechnologies()
+    {
+        if (!target.isDead)
+        {
+            
+            Vector3 lTargetDir = cylinder.position - transform.position;
+            //lTargetDir.y = 0.0f;
+            Quaternion targetRotation = Quaternion.LookRotation(lTargetDir);
+            Vector3 lTargetDirNoY = lTargetDir;
+            lTargetDirNoY.y = 0.0f;
+            Quaternion targetRotationNoY = Quaternion.LookRotation(lTargetDirNoY);
+
+
+            if (!isCarrying)
+            {
+                virtualMiddleSpine.transform.rotation = Quaternion.Slerp(virtualMiddleSpine.transform.rotation, targetRotation, 10 * Time.deltaTime);
+            }
+            else
+            {
+                virtualMiddleSpine.transform.rotation = Quaternion.Slerp(virtualMiddleSpine.transform.rotation, targetRotationNoY, 10 * Time.deltaTime);
+                
+            }
+            if (!isMoving)
+            {
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotationNoY, 10 * Time.deltaTime);
+
+            }
+            //carryPos.eulerAngles = new Vector3(0, virtualMiddleSpine.transform.eulerAngles.y, 0);
+
+            if (playerGun.gun != null)
+            {
+                if (isCrouching && !isJumping && isOnFloor)
+                {
+                    float x = Mathf.SmoothDampAngle(handContainerReal.transform.localEulerAngles.x, isMoving ? -55 : -26, ref handContainerSmoothRef, 0.1f);
+                    handContainerReal.transform.localEulerAngles = new Vector3(x, 0, 0);
+                }
+                else
+                {
+                    float x = Mathf.SmoothDampAngle(handContainerReal.transform.localEulerAngles.x, 0, ref handContainerSmoothRef, 0.1f);
+                    handContainerReal.transform.localEulerAngles = new Vector3(x, 0, 0);
+                }
+            }
+        }
     }
 
 
@@ -193,7 +260,11 @@ public class PlayerMotion : NetworkBehaviour {
         if (isLocalPlayer || !playerMultiDetails.isMultiPlayer  )
         {
             if (!GameMech.gameIsPaused && !playerMultiDetails.isTyping)
+            {
                 MoveWhenTold(isUsingKeyBoard);
+                CarryTechnologies();
+            }
+               
         }
 
     }
@@ -245,7 +316,7 @@ public class PlayerMotion : NetworkBehaviour {
             float vertical = Input.GetAxisRaw("Vertical");
             direction = new Vector3(horizontal, 0, vertical).normalized;
             targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
-            if (!obstaculated && isOnFloor && !isJumping && !isTakingCover && !isRolling && !playerGun.isPunching)
+            if (!obstaculated   && !isTakingCover && !isRolling && !playerGun.isPunching)
             {
                 if (!isBeingPunched)
                 {
@@ -264,8 +335,16 @@ public class PlayerMotion : NetworkBehaviour {
                         {
                             if (!PlayerGun.isFineAim)
                             {
-                                if (!isCrouching)
+                                if (isCrouching && isOnFloor  && !isJumping)
                                 {
+
+
+                                    //rigidBody.velocity = transform.forward * speed;
+                                    myTransform.Translate(Vector3.forward * Time.deltaTime * speed * 0.5f);
+                                }
+                                else
+                                {
+                                   
                                     if (!isGoingBack)
                                     {
                                         myTransform.Translate(Vector3.forward * Time.deltaTime * speed);
@@ -274,12 +353,6 @@ public class PlayerMotion : NetworkBehaviour {
                                     {
                                         myTransform.Translate(Vector3.back * Time.deltaTime * speed);
                                     }
-
-                                    //rigidBody.velocity = transform.forward * speed;
-                                }
-                                else
-                                {
-                                    myTransform.Translate(Vector3.forward * Time.deltaTime * speed * 0.5f);
 
                                 }
                                 lastMagnitude = direction.magnitude;
@@ -394,12 +467,32 @@ public class PlayerMotion : NetworkBehaviour {
 
     }
 
+    
+    public void Setspeed()
+    {
+       
+        if (playerGun.gun == null)
+        {
+            speed = normSpeed;
+        }
+        else
+        {
+            if (playerGun.hasHandgun)
+            {
+                speed = handGunSpeed;
 
-
+            }
+            else
+            {
+                speed = gunSpeed;
+            }
+        }
+    }
     private void movementTechnologies()
     {
         if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
         {
+            Setspeed();
             if (!target.isDead)
             {
                 if (isUsingKeyBoard)
@@ -581,14 +674,15 @@ public class PlayerMotion : NetworkBehaviour {
                 }
                 if (jumpAnim)
                 {
-                    if (!isCrouching && !isCrouchJumping && !animator.GetCurrentAnimatorStateInfo(0).IsName("dive"))
+                    animator.SetInteger("motion", 3);
+                    /*if (!isCrouching && !isCrouchJumping && !animator.GetCurrentAnimatorStateInfo(0).IsName("dive"))
                     {
                         animator.SetInteger("motion", 3);
                     }
                     else
                     {
                         animator.SetInteger("motion", 8);
-                    }
+                    }*/
                 }
                 if (isRolling)
                 {
@@ -636,29 +730,253 @@ public class PlayerMotion : NetworkBehaviour {
             }
         }
     }
-    private Vector3 MoveCylinder()
+    [Command]
+    private void CmdCarry(GameObject CarryAble,NetworkConnectionToClient conn = null)
     {
-        
-            Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
-            Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint) + offset;
+        CarryAble carryAble = CarryAble.GetComponent<CarryAble>();
+        if (!carryAble.isBeingCarried)
+        {
+            carryAble.isBeingCarried = true;
+            carryAble.hasSlerped = false;
+            carryAble.carryPos = carryPos;
+            TargetCarry(conn, CarryAble);
+            isCarrying = true;
+        }
+    }
+    [TargetRpc]
+    private void TargetCarry(NetworkConnection conn, GameObject CarryAble)
+    {
+        CarryAble carryAble = CarryAble.GetComponent<CarryAble>();
+        carryAble.carryPos = carryPos;
+        currentCarryAble = CarryAble;
+        possibleCoverAble = null;
+    }
 
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            string[] layers = { "Player", "Enemies", "Armature bones", "bullets" };
-            int mask = LayerMask.GetMask(layers);
-            mask = ~mask;
-            if (Physics.Raycast(ray, out RaycastHit hit, 1000, mask))
+    [Command]
+    private void CmdPlace(GameObject CarryAble,Vector3 pos,NetworkConnectionToClient conn = null)
+    {
+        CarryAble carryAble = CarryAble.GetComponent<CarryAble>();
+        Collider c = CarryAble.GetComponent<Collider>();
+        if (carryAble.isBeingCarried)
+        {
+            carryAble.isBeingCarried = false;
+            carryAble.carryPos = null;
+            carryAble.placePos = pos;
+            carryAble.isPlacing = true;
+            TargetPlace(conn, CarryAble);
+            isCarrying = false;
+        }
+
+    }
+    [TargetRpc]
+    private void TargetPlace(NetworkConnection conn,GameObject CarryAble)
+    {
+        CarryAble carryAble = CarryAble.GetComponent<CarryAble>();
+        carryAble.carryPos = null;
+        cylinderMat.SetColor("cylinderColor", Color.white);
+        currentCarryAble = null;
+        animator.SetInteger("hold", 0);
+    }
+
+    private void Place(CarryAble carryAble)
+    {
+        Collider c = carryAble.GetComponent<Collider>();
+        if (carryAble.isBeingCarried)
+        {
+            carryAble.isBeingCarried = false;
+            carryAble.carryPos = null;
+            carryAble.isPlacing = true;
+            isCarrying = false;
+            cylinderMat.SetColor("cylinderColor", Color.white);
+            currentCarryAble = null;
+            animator.SetInteger("hold", 0);
+            cylinder.gameObject.SetActive(true);
+        }
+    }
+    private void Carry(CarryAble carryAble)
+    {
+        if (!carryAble.isBeingCarried)
+        {
+            carryAble.isBeingCarried = true;
+            carryAble.hasSlerped = false;
+            carryAble.carryPos = carryPos;
+            isCarrying = true;
+            currentCarryAble = carryAble.gameObject;
+            currCarryAble = carryAble;
+            possibleCoverAble = null;
+            carryAble.carrier = this;
+            cylinder.gameObject.SetActive(false);
+        }
+    }
+
+
+    private void CarryTechnologies()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        string[] layers = { "Player", "Enemies", "Armature bones", "bullets" };
+        int mask = LayerMask.GetMask(layers);
+        mask = ~mask;
+        if (Physics.Raycast(ray, out RaycastHit hit, 1000, mask))
+        {
+            // Debug.Log(hit.collider.name);
+            CarryAble carryAble = hit.collider.GetComponent<CarryAble>();
+            if (carryAble == null)
             {
-                // Debug.Log(hit.collider.name);
-                
-               
-                return hit.point;
+
+                if (possibleCarryAble != null)
+                {
+                    FresnelEffect effect = possibleCarryAble.GetComponent<FresnelEffect>();
+                    FresnelHighlight highlight = possibleCarryAble.GetComponent<FresnelHighlight>();
+                    if (effect != null)
+                    {
+                        effect.defresnate();
+                    }
+                    if (highlight != null)
+                    {
+                        highlight.defresnate();
+                    }
+                    possibleCoverAble = null;
+                }
+                if (currentCarryAble != null)
+                {
+                    if (currCarryAble != null)
+                    {
+                        float dist = Vector3.Distance(currCarryAble.transform.position, hit.point);
+                        
+                        if (dist <= 5)
+                        {
+                            Vector3 pos = hit.point + new Vector3(0, currCarryAble.extents.y, 0);
+                            currCarryAble.placePos = pos;
+                            //currCarryAble.placePos = Vector3.Lerp(currCarryAble.placePos, pos, 20 * Time.deltaTime);
+                            yCarryLock = currCarryAble.placePos.y;
+                        }
+                        else
+                        {
+                            float ratio = dist / 5;
+                            Vector3 direction = (-currCarryAble.transform.position +cylinder.position);
+                            Vector3 pos = currCarryAble.transform.position + direction / ratio;
+
+                            if (Physics.Raycast(pos,Vector3.down,out RaycastHit floor))
+                            {
+                                float x = pos.y;
+                                pos.y = x - floor.distance + currCarryAble.extents.y;
+                            }
+                            else
+                            {
+                                pos.y = yCarryLock;
+                            }
+                            currCarryAble.placePos = pos;
+                            
+                            //currCarryAble.placePos = Vector3.Lerp(currCarryAble.placePos, pos, 20 * Time.deltaTime);
+                        }
+                        
+                    }
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        if (playerMultiDetails.isMultiPlayer)
+                        {
+                            if (isLocalPlayer)
+                            {
+                                CmdPlace(currentCarryAble, hit.point);
+                            }
+                        }
+                        else
+                        {
+                            Place(currentCarryAble.GetComponent<CarryAble>());
+                        }
+                    }
+                }
+
             }
             else
             {
-               
-                return curPosition;
+                if (Vector3.Distance(transform.position, carryAble.transform.position) <= 5)
+                {
+                    possibleCarryAble = carryAble.gameObject;
+                    FresnelEffect effect = possibleCarryAble.GetComponent<FresnelEffect>();
+                    FresnelHighlight highlight = possibleCarryAble.GetComponent<FresnelHighlight>();
+                    if (effect != null)
+                    {
+                        effect.fresnate();
+                    }
+                    if (highlight != null)
+                    {
+                        highlight.fresnate();
+                    }
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        if (currentCarryAble == null)
+                        {
+
+                            if (playerMultiDetails.isMultiPlayer)
+                            {
+                                if (isLocalPlayer)
+                                {
+                                    CmdCarry(possibleCarryAble);
+                                }
+                            }
+                            else
+                            {
+                                Carry(carryAble);
+                            }
+
+                        }
+
+
+                    }
+                }
             }
+        }
+        else
+        {
+            if (possibleCarryAble != null)
+            {
+                FresnelEffect effect = possibleCarryAble.GetComponent<FresnelEffect>();
+                FresnelHighlight highlight = possibleCarryAble.GetComponent<FresnelHighlight>();
+                if (effect != null)
+                {
+                    effect.defresnate();
+                }
+                if (highlight != null)
+                {
+                    highlight.defresnate();
+                }
+                possibleCoverAble = null;
+            }
+        }
+        if (isCarrying)
+        {
+            animator.SetInteger("hold", 1);
+        }
+        else
+        {
+            animator.SetInteger("hold", 0);
+        }
       
+    }
+   
+    private Vector3 MoveCylinder()
+    {
+
+        Vector3 curScreenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
+        Vector3 curPosition = Camera.main.ScreenToWorldPoint(curScreenPoint) + offset;
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        string[] layers = { "Player", "Enemies", "Armature bones", "bullets","Ignore Raycast" };
+        int mask = LayerMask.GetMask(layers);
+        mask = ~mask;
+        if (Physics.Raycast(ray, out RaycastHit hit, 1000, mask))
+        {
+            // Debug.Log(hit.collider.name);
+           
+            return hit.point;
+        }
+        else
+        {
+            
+            return curPosition;
+        }
+
 
     }
     private void lookAtMouse()
@@ -745,13 +1063,16 @@ public class PlayerMotion : NetworkBehaviour {
                     }
                 }*/
 
-                /*if (Input.GetKey(KeyCode.LeftControl))
+                if (Input.GetKey(KeyCode.LeftControl))
                 {
-                    isCrouching = true;
-                    if (!isTakingCover)
+                    if (!isCarrying)
                     {
-                        capsuleCollider.center = new Vector3(0, -0.82f, 0.54f);
-                        capsuleCollider.height = 4.6f;
+                        isCrouching = true;
+                        if (!isTakingCover)
+                        {
+                            capsuleCollider.center = new Vector3(0, -0.82f, 0.54f);
+                            capsuleCollider.height = 4.6f;
+                        }
                     }
 
                 }
@@ -766,7 +1087,7 @@ public class PlayerMotion : NetworkBehaviour {
                             capsuleCollider.height = 6;
                         }
                     }
-                }*/
+                }
                 if (Input.GetKeyDown("g"))
                 {
                     //CoverTechnologies();
@@ -853,14 +1174,11 @@ public class PlayerMotion : NetworkBehaviour {
             if (!isCrouchJumping && !isJumping)
             {
                 isJumping = true;
-
-                if (!isCrouching)
+                rigidBody.AddForce(transform.up * jumpHeight);
+                /*if (!isCrouching)
                 {
                     rigidBody.AddForce(transform.up * jumpHeight);
-                    if (isMoving)
-                    {
-                        rigidBody.AddForce(transform.forward * jumpForce);
-                    }
+                    
                   
 
                 }
@@ -869,7 +1187,7 @@ public class PlayerMotion : NetworkBehaviour {
                     isCrouchJumping = true;
                     rigidBody.AddForce(transform.up * jumpHeight * 0.5f);
                     rigidBody.AddForce(transform.forward * jumpForce);
-                }
+                }*/
             }
         }
 
@@ -908,7 +1226,10 @@ public class PlayerMotion : NetworkBehaviour {
         {
             if (isCrouchJumping)
             {
-                isRolling = true;
+                if (!isCarrying)
+                {
+                    isRolling = true;
+                }
                 isCrouchJumping = false;
                 isJumping = false;
                 if (!collision.collider.CompareTag("floor"))
@@ -927,7 +1248,10 @@ public class PlayerMotion : NetworkBehaviour {
                 
                 if (Input.GetKey(KeyCode.LeftControl))
                 {
-                    isRolling = true;
+                    if (!isCarrying)
+                    {
+                        isRolling = true;
+                    }
                     isCrouchJumping = false;
                     isJumping = false;
                 }

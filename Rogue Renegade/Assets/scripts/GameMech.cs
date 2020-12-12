@@ -32,6 +32,9 @@ public class GameMech : MonoBehaviour
     [Header("Only for Single player")]
     public CinemachineFreeLook tpp;
     public Transform cylinder;
+
+
+    public GameObject teammate;
    
 
     void Start()
@@ -70,12 +73,14 @@ public class GameMech : MonoBehaviour
         if (randomPoint)
         {
             spawner = Random.Range(0, playerSpawners.Length);
-            Instantiate(playerAsset, playerSpawners[spawner].transform.position, playerSpawners[spawner].transform.rotation);
+            
         }
-        else
-        {
-            Instantiate(playerAsset, playerSpawners[spawner].transform.position, playerSpawners[spawner].transform.rotation);
-        }
+        GameObject Go = Instantiate(playerAsset, playerSpawners[spawner].transform.position, playerSpawners[spawner].transform.rotation);
+        /*TeammateMech team = Instantiate(teammate, playerSpawners[spawner].transform.position, playerSpawners[spawner].transform.rotation).GetComponent<TeammateMech>();
+        team.gameObject.SetActive(true);
+        team.playerTransform = Go.transform;
+        team.notifyBoss();*/
+
         extraSetup();
     }
     public GameObject spawnAndReturnPlayer(bool randomPoint, int spawner = 0)

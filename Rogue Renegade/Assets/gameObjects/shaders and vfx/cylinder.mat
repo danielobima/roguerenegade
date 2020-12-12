@@ -22,4 +22,5 @@ Material:
     m_TexEnvs: []
     m_Floats:
     - Vector1_88755118: 2
-    m_Colors: []
+    m_Colors:
+    - cylinderColor: {r: 1, g: 1, b: 1, a: 0}

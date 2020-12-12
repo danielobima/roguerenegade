@@ -84,7 +84,7 @@ public class CustomizeCharacter : MonoBehaviour
             torso.colors = new List<float[]>();
             foreach (Material m in maleTorso[torso.clothNo].materials)
             {
-                torso.colors.Add(new float[] { m.GetColor("_BaseColor").r, m.GetColor("_BaseColor").g, m.GetColor("_BaseColor").b, m.GetColor("_BaseColor").a });
+                torso.colors.Add(new float[] { m.GetColor("Color_3D7C8326").r, m.GetColor("Color_3D7C8326").g, m.GetColor("Color_3D7C8326").b, m.GetColor("Color_3D7C8326").a });
             }
         }
         else
@@ -92,7 +92,7 @@ public class CustomizeCharacter : MonoBehaviour
             torso.colors = new List<float[]>();
             foreach (Material m in femaleTorso[torso.clothNo].materials)
             {
-                torso.colors.Add(new float[] { m.GetColor("_BaseColor").r, m.GetColor("_BaseColor").g, m.GetColor("_BaseColor").b, m.GetColor("_BaseColor").a });
+                torso.colors.Add(new float[] { m.GetColor("Color_3D7C8326").r, m.GetColor("Color_3D7C8326").g, m.GetColor("Color_3D7C8326").b, m.GetColor("Color_3D7C8326").a });
             }
         }
         SaveSystem.SaveClothes(new ClothSaveData(new ClothItem[] { glasses, facialHair, hairHat, torso, eyebrow },
@@ -152,7 +152,7 @@ public class CustomizeCharacter : MonoBehaviour
                     clothRendererArrays[i][clothSave.clothItems[i].clothNo].gameObject.SetActive(true);
                     for (int z = 0; z < clothRendererArrays[i][clothSave.clothItems[i].clothNo].materials.Length; z++)
                     {
-                        clothRendererArrays[i][clothSave.clothItems[i].clothNo].materials[z].SetColor("_BaseColor", new Color(clothSave.clothItems[i].colors[z][0],
+                        clothRendererArrays[i][clothSave.clothItems[i].clothNo].materials[z].SetColor("Color_3D7C8326", new Color(clothSave.clothItems[i].colors[z][0],
                             clothSave.clothItems[i].colors[z][1],
                             clothSave.clothItems[i].colors[z][2],
                             clothSave.clothItems[i].colors[z][3]));
@@ -200,11 +200,11 @@ public class CustomizeCharacter : MonoBehaviour
 
             }
             toggleBodyType2(!male);
-            meshRenderers[10].materials[3].SetColor("_BaseColor", new Color(clothSave.eyes[0], clothSave.eyes[1], clothSave.eyes[2], clothSave.eyes[3]));//eyes
+            meshRenderers[10].materials[3].SetColor("Color_3D7C8326", new Color(clothSave.eyes[0], clothSave.eyes[1], clothSave.eyes[2], clothSave.eyes[3]));//eyes
             eyes = new Color(clothSave.eyes[0], clothSave.eyes[1], clothSave.eyes[2], clothSave.eyes[3]);
-            meshRenderers[28].materials[0].SetColor("_BaseColor", new Color(clothSave.trousers[0], clothSave.trousers[1], clothSave.trousers[2], clothSave.trousers[3]));//legs
+            meshRenderers[28].materials[0].SetColor("Color_3D7C8326", new Color(clothSave.trousers[0], clothSave.trousers[1], clothSave.trousers[2], clothSave.trousers[3]));//legs
             trousers = new Color(clothSave.trousers[0], clothSave.trousers[1], clothSave.trousers[2], clothSave.trousers[3]);
-            meshRenderers[2].materials[0].SetColor("_BaseColor", new Color(clothSave.shoes[0], clothSave.shoes[1], clothSave.shoes[2], clothSave.shoes[3]));//shoes
+            meshRenderers[2].materials[0].SetColor("Color_3D7C8326", new Color(clothSave.shoes[0], clothSave.shoes[1], clothSave.shoes[2], clothSave.shoes[3]));//shoes
             shoes = new Color(clothSave.shoes[0], clothSave.shoes[1], clothSave.shoes[2], clothSave.shoes[3]);
 
             setUpTexts();
@@ -287,14 +287,14 @@ public class CustomizeCharacter : MonoBehaviour
             trousers = RandomColor();
         else
             trousers = RandomColorDark();
-        meshRenderers[28].materials[0].SetColor("_BaseColor", trousers);
+        meshRenderers[28].materials[0].SetColor("Color_3D7C8326", trousers);
 
         //random shoes
         if (Random.Range(0, 2) == 0)
             shoes = RandomColor();
         else
             shoes = RandomColorDark();
-        meshRenderers[2].materials[0].SetColor("_BaseColor", shoes);
+        meshRenderers[2].materials[0].SetColor("Color_3D7C8326", shoes);
 
         if (Random.Range(0, 2) == 0)
         {
@@ -347,18 +347,18 @@ public class CustomizeCharacter : MonoBehaviour
     {
         body = color;
        
-        meshRenderers[3].material.SetColor("_BaseColor", color); //female
-        meshRenderers[29].material.SetColor("_BaseColor", color); //male
-        meshRenderers[9].material.SetColor("_BaseColor", color); //hands
-        meshRenderers[10].materials[0].SetColor("_BaseColor", color); //kichwa
+        meshRenderers[3].material.SetColor("Color_3D7C8326", color); //female
+        meshRenderers[29].material.SetColor("Color_3D7C8326", color); //male
+        meshRenderers[9].material.SetColor("Color_3D7C8326", color); //hands
+        meshRenderers[10].materials[0].SetColor("Color_3D7C8326", color); //kichwa
         bodyMat = meshRenderers[10].materials[0];
 
         
         if (!sleeves)
         {
-            meshRenderers[0].material.SetColor("_BaseColor", color);
+            meshRenderers[0].material.SetColor("Color_3D7C8326", color);
             upperArms = color;
-            meshRenderers[1].material.SetColor("_BaseColor", color);
+            meshRenderers[1].material.SetColor("Color_3D7C8326", color);
             lowerArms = color;
         }
         if (!lipstick)
@@ -377,8 +377,8 @@ public class CustomizeCharacter : MonoBehaviour
             
             meshRenderers[0].material = mainTorsoMat;
             meshRenderers[1].material = mainTorsoMat;
-            upperArms = mainTorsoMat.GetColor("_BaseColor");
-            lowerArms = mainTorsoMat.GetColor("_BaseColor");
+            upperArms = mainTorsoMat.GetColor("Color_3D7C8326");
+            lowerArms = mainTorsoMat.GetColor("Color_3D7C8326");
             
              
         }
@@ -386,8 +386,8 @@ public class CustomizeCharacter : MonoBehaviour
         {
             meshRenderers[0].material = bodyMat;
             meshRenderers[1].material = bodyMat;
-            upperArms = bodyMat.GetColor("_BaseColor");
-            lowerArms = bodyMat.GetColor("_BaseColor");
+            upperArms = bodyMat.GetColor("Color_3D7C8326");
+            lowerArms = bodyMat.GetColor("Color_3D7C8326");
         }
     }
     public void toggleSleeves(bool sleeve)
@@ -397,15 +397,15 @@ public class CustomizeCharacter : MonoBehaviour
         {
             meshRenderers[0].material = mainTorsoMat;
             meshRenderers[1].material = mainTorsoMat;
-            upperArms = mainTorsoMat.GetColor("_BaseColor");
-            lowerArms = mainTorsoMat.GetColor("_BaseColor");
+            upperArms = mainTorsoMat.GetColor("Color_3D7C8326");
+            lowerArms = mainTorsoMat.GetColor("Color_3D7C8326");
         }
         else
         {
             meshRenderers[0].material = bodyMat;
             meshRenderers[1].material = bodyMat;
-            upperArms = bodyMat.GetColor("_BaseColor");
-            lowerArms = bodyMat.GetColor("_BaseColor");
+            upperArms = bodyMat.GetColor("Color_3D7C8326");
+            lowerArms = bodyMat.GetColor("Color_3D7C8326");
         }
     }
     public void closeColorPicker()
@@ -428,7 +428,7 @@ public class CustomizeCharacter : MonoBehaviour
                 Material[] mats = meshRenderers[10].materials;
                 mats[4] = lipstickMat;
                 meshRenderers[10].materials = mats;
-                meshRenderers[10].materials[4].SetColor("_BaseColor", lipstickColor);
+                meshRenderers[10].materials[4].SetColor("Color_3D7C8326", lipstickColor);
                 colorPickerWidget.Show();
                 colorToChange = "lipstick";
                 colorPicker.color = lipstickColor;
@@ -460,7 +460,7 @@ public class CustomizeCharacter : MonoBehaviour
         Material[] mats = meshRenderers[10].materials;
         mats[4] = lipstickMat;
         meshRenderers[10].materials = mats;
-        meshRenderers[10].materials[4].SetColor("_BaseColor", lipstickColor);
+        meshRenderers[10].materials[4].SetColor("Color_3D7C8326", lipstickColor);
         //lipstickColor = colorPicker.color;
         //colorButtons["lipstick"].updateMyColor(lipstickColor);
     }
@@ -475,7 +475,7 @@ public class CustomizeCharacter : MonoBehaviour
                 item.colors = new List<float[]>();
                 foreach(Material m in clothes[item.clothNo].materials)
                 {
-                    item.colors.Add(new float[] { m.GetColor("_BaseColor").r, m.GetColor("_BaseColor").g, m.GetColor("_BaseColor").b, m.GetColor("_BaseColor").a });
+                    item.colors.Add(new float[] { m.GetColor("Color_3D7C8326").r, m.GetColor("Color_3D7C8326").g, m.GetColor("Color_3D7C8326").b, m.GetColor("Color_3D7C8326").a });
                 }
                 
             }
@@ -494,7 +494,7 @@ public class CustomizeCharacter : MonoBehaviour
                 item.colors = new List<float[]>();
                 foreach (Material m in clothes[item.clothNo].materials)
                 {
-                    item.colors.Add(new float[] { m.GetColor("_BaseColor").r, m.GetColor("_BaseColor").g, m.GetColor("_BaseColor").b, m.GetColor("_BaseColor").a });
+                    item.colors.Add(new float[] { m.GetColor("Color_3D7C8326").r, m.GetColor("Color_3D7C8326").g, m.GetColor("Color_3D7C8326").b, m.GetColor("Color_3D7C8326").a });
                 }
             }
             if (clothes[clothes.Length - 1] != null)
@@ -524,20 +524,20 @@ public class CustomizeCharacter : MonoBehaviour
                 {
                     foreach (Material m in clothes[item.clothNo].materials)
                     {
-                        m.SetColor("_BaseColor", RandomColor());
+                        m.SetColor("Color_3D7C8326", RandomColor());
                     }
                 }
                 if(item.clothName == "hairHat")
                 {
                     if(item.clothNo != 7)
                     {
-                        clothes[item.clothNo].material.SetColor("_BaseColor", randomHairColors[Random.Range(0,randomHairColors.Length)]);
+                        clothes[item.clothNo].material.SetColor("Color_3D7C8326", randomHairColors[Random.Range(0,randomHairColors.Length)]);
                     }
                 }
                 item.colors = new List<float[]>();
                 foreach (Material m in clothes[item.clothNo].materials)
                 {
-                    item.colors.Add(new float[] { m.GetColor("_BaseColor").r, m.GetColor("_BaseColor").g, m.GetColor("_BaseColor").b, m.GetColor("_BaseColor").a });
+                    item.colors.Add(new float[] { m.GetColor("Color_3D7C8326").r, m.GetColor("Color_3D7C8326").g, m.GetColor("Color_3D7C8326").b, m.GetColor("Color_3D7C8326").a });
                 }
 
             }
@@ -559,7 +559,7 @@ public class CustomizeCharacter : MonoBehaviour
                 item.colors = new List<float[]>();
                 foreach (Material m in clothes[item.clothNo].materials)
                 {
-                    item.colors.Add(new float[] { m.GetColor("_BaseColor").r, m.GetColor("_BaseColor").g, m.GetColor("_BaseColor").b, m.GetColor("_BaseColor").a });
+                    item.colors.Add(new float[] { m.GetColor("Color_3D7C8326").r, m.GetColor("Color_3D7C8326").g, m.GetColor("Color_3D7C8326").b, m.GetColor("Color_3D7C8326").a });
                 }
             }
             if (clothes[item.clothNo + 1] != null)
@@ -577,7 +577,7 @@ public class CustomizeCharacter : MonoBehaviour
                 item.colors = new List<float[]>();
                 foreach (Material m in clothes[item.clothNo].materials)
                 {
-                    item.colors.Add(new float[] { m.GetColor("_BaseColor").r, m.GetColor("_BaseColor").g, m.GetColor("_BaseColor").b, m.GetColor("_BaseColor").a });
+                    item.colors.Add(new float[] { m.GetColor("Color_3D7C8326").r, m.GetColor("Color_3D7C8326").g, m.GetColor("Color_3D7C8326").b, m.GetColor("Color_3D7C8326").a });
                 }
             }
             if (clothes[0] != null)
@@ -1114,13 +1114,13 @@ public class CustomizeCharacter : MonoBehaviour
                 if (lipstick)
                 {
                     lipstickColor = colorPicker.color;
-                    meshRenderers[10].materials[4].SetColor("_BaseColor", colorPicker.color);
+                    meshRenderers[10].materials[4].SetColor("Color_3D7C8326", colorPicker.color);
                     currentColorButton.color = colorPicker.color;
                 }
                 break;
             case "eyes":
                 eyes = colorPicker.color;
-                meshRenderers[10].materials[3].SetColor("_BaseColor", colorPicker.color);
+                meshRenderers[10].materials[3].SetColor("Color_3D7C8326", colorPicker.color);
                 currentColorButton.color = colorPicker.color;
                 break;
             case "skin":
@@ -1130,90 +1130,90 @@ public class CustomizeCharacter : MonoBehaviour
             case "hairHat1":
                 hairHat.colors[0] = new float[] { colorPicker.color.r, colorPicker.color.g , colorPicker.color.b , colorPicker.color.a };
                 
-                hairHats[hairHat.clothNo].materials[0].SetColor("_BaseColor", colorPicker.color);
+                hairHats[hairHat.clothNo].materials[0].SetColor("Color_3D7C8326", colorPicker.color);
                 currentColorButton.color = colorPicker.color;
                 break;
             case "hat2":
                 hairHat.colors[1] = new float[] { colorPicker.color.r, colorPicker.color.g, colorPicker.color.b, colorPicker.color.a };
-                hairHats[hairHat.clothNo].materials[1].SetColor("_BaseColor", colorPicker.color);
+                hairHats[hairHat.clothNo].materials[1].SetColor("Color_3D7C8326", colorPicker.color);
                 currentColorButton.color = colorPicker.color;
                 break;
             case "tshirt female":
-                femaleTorso[2].material.SetColor("_BaseColor", colorPicker.color);
+                femaleTorso[2].material.SetColor("Color_3D7C8326", colorPicker.color);
                 //we'll set the colors in the cloth item when we are saving the character.
                 currentColorButton.color = colorPicker.color;
                 mainTorsoMat = femaleTorso[2].material;
                 Sleeves(sleeves);
                 break;
             case "tshirt male":
-                maleTorso[2].material.SetColor("_BaseColor", colorPicker.color);
+                maleTorso[2].material.SetColor("Color_3D7C8326", colorPicker.color);
                 //we'll set the colors in the cloth item when we are saving the character.
                 currentColorButton.color = colorPicker.color;
                 mainTorsoMat = maleTorso[2].material;
                 Sleeves(sleeves);
                 break;
             case "shirt female":
-                femaleTorso[1].materials[0].SetColor("_BaseColor", colorPicker.color);
+                femaleTorso[1].materials[0].SetColor("Color_3D7C8326", colorPicker.color);
                 //we'll set the colors in the cloth item when we are saving the character.
                 currentColorButton.color = colorPicker.color;
                 mainTorsoMat = femaleTorso[1].materials[0];
                 Sleeves(sleeves);
                 break;
             case "shirt male":
-                maleTorso[1].materials[1].SetColor("_BaseColor", colorPicker.color);
+                maleTorso[1].materials[1].SetColor("Color_3D7C8326", colorPicker.color);
                 //we'll set the colors in the cloth item when we are saving the character.
                 currentColorButton.color = colorPicker.color;
                 mainTorsoMat = maleTorso[1].materials[1];
                 Sleeves(sleeves);
                 break;
             case "shirt buttons female":
-                femaleTorso[1].materials[1].SetColor("_BaseColor", colorPicker.color);
+                femaleTorso[1].materials[1].SetColor("Color_3D7C8326", colorPicker.color);
                 //we'll set the colors in the cloth item when we are saving the character.
                 currentColorButton.color = colorPicker.color;
                 break;
             case "shirt buttons male":
-                maleTorso[1].materials[0].SetColor("_BaseColor", colorPicker.color);
+                maleTorso[1].materials[0].SetColor("Color_3D7C8326", colorPicker.color);
                 //we'll set the colors in the cloth item when we are saving the character.
                 currentColorButton.color = colorPicker.color;
                 break;
             case "coat female":
-                femaleTorso[0].materials[0].SetColor("_BaseColor", colorPicker.color);
+                femaleTorso[0].materials[0].SetColor("Color_3D7C8326", colorPicker.color);
                 //we'll set the colors in the cloth item when we are saving the character.
                 currentColorButton.color = colorPicker.color;
                 mainTorsoMat = femaleTorso[0].materials[0];
                 Sleeves(sleeves);
                 break;
             case "coat buttons female":
-                femaleTorso[0].materials[3].SetColor("_BaseColor", colorPicker.color);
+                femaleTorso[0].materials[3].SetColor("Color_3D7C8326", colorPicker.color);
                 //we'll set the colors in the cloth item when we are saving the character.
                 currentColorButton.color = colorPicker.color;
                 break;
             case "coat belt":
-                femaleTorso[0].materials[2].SetColor("_BaseColor", colorPicker.color);
+                femaleTorso[0].materials[2].SetColor("Color_3D7C8326", colorPicker.color);
                 //we'll set the colors in the cloth item when we are saving the character.
                 currentColorButton.color = colorPicker.color;
                 break;
             case "coat male":
-                maleTorso[0].materials[0].SetColor("_BaseColor", colorPicker.color);
+                maleTorso[0].materials[0].SetColor("Color_3D7C8326", colorPicker.color);
                 //we'll set the colors in the cloth item when we are saving the character.
                 currentColorButton.color = colorPicker.color;
                 mainTorsoMat = maleTorso[0].materials[0];
                 Sleeves(sleeves);
                 break;
             case "coat buttons male":
-                maleTorso[0].materials[3].SetColor("_BaseColor", colorPicker.color);
+                maleTorso[0].materials[3].SetColor("Color_3D7C8326", colorPicker.color);
                 //we'll set the colors in the cloth item when we are saving the character.
                 currentColorButton.color = colorPicker.color;
                 break;
             case "vest female":
-                femaleTorso[3].material.SetColor("_BaseColor", colorPicker.color);
+                femaleTorso[3].material.SetColor("Color_3D7C8326", colorPicker.color);
                 //we'll set the colors in the cloth item when we are saving the character.
                 currentColorButton.color = colorPicker.color;
                 mainTorsoMat = femaleTorso[3].material;
                 Sleeves(sleeves);
                 break;
             case "vest male":
-                maleTorso[3].material.SetColor("_BaseColor", colorPicker.color);
+                maleTorso[3].material.SetColor("Color_3D7C8326", colorPicker.color);
                 //we'll set the colors in the cloth item when we are saving the character.
                 currentColorButton.color = colorPicker.color;
                 mainTorsoMat = maleTorso[3].material;
@@ -1221,32 +1221,32 @@ public class CustomizeCharacter : MonoBehaviour
                 break;
             case "legs":
                 trousers = colorPicker.color;
-                meshRenderers[28].materials[0].SetColor("_BaseColor", colorPicker.color);
+                meshRenderers[28].materials[0].SetColor("Color_3D7C8326", colorPicker.color);
                 currentColorButton.color = colorPicker.color;
                 break;
             case "shoes":
                 shoes = colorPicker.color;
-                meshRenderers[2].materials[0].SetColor("_BaseColor", colorPicker.color);
+                meshRenderers[2].materials[0].SetColor("Color_3D7C8326", colorPicker.color);
                 currentColorButton.color = colorPicker.color;
                 break;
             case "facial hair":
                 facialHair.colors[0] = new float[] { colorPicker.color.r, colorPicker.color.g, colorPicker.color.b, colorPicker.color.a };
-                facialHairs[facialHair.clothNo].materials[0].SetColor("_BaseColor", colorPicker.color);
+                facialHairs[facialHair.clothNo].materials[0].SetColor("Color_3D7C8326", colorPicker.color);
                 currentColorButton.color = colorPicker.color;
                 break;
             case "eyebrows":
                 eyebrow.colors[0] = new float[] { colorPicker.color.r, colorPicker.color.g, colorPicker.color.b, colorPicker.color.a };
-                eyebrows[eyebrow.clothNo].materials[0].SetColor("_BaseColor", colorPicker.color);
+                eyebrows[eyebrow.clothNo].materials[0].SetColor("Color_3D7C8326", colorPicker.color);
                 currentColorButton.color = colorPicker.color;
                 break;
             case "glassesGlass":
                 glasses.colors[0] = new float[] { colorPicker.color.r, colorPicker.color.g, colorPicker.color.b, 0.7f };
-                sunglasses[glasses.clothNo].materials[0].SetColor("_BaseColor", new Color(colorPicker.color.r, colorPicker.color.g, colorPicker.color.b, 0.7f));
+                sunglasses[glasses.clothNo].materials[0].SetColor("Color_3D7C8326", new Color(colorPicker.color.r, colorPicker.color.g, colorPicker.color.b, 0.7f));
                 currentColorButton.color = colorPicker.color;
                 break;
             case "glassesRim":
                 glasses.colors[1] = new float[] { colorPicker.color.r, colorPicker.color.g, colorPicker.color.b, 0.7f };
-                sunglasses[glasses.clothNo].materials[1].SetColor("_BaseColor", colorPicker.color);
+                sunglasses[glasses.clothNo].materials[1].SetColor("Color_3D7C8326", colorPicker.color);
                 currentColorButton.color = colorPicker.color;
                 break;
 

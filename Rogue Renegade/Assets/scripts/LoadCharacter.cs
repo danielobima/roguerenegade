@@ -116,7 +116,7 @@ public class LoadCharacter : NetworkBehaviour
                     clothRendererArrays[i][clothSave.clothItems[i].clothNo].gameObject.SetActive(true);
                     for (int z = 0; z < clothRendererArrays[i][clothSave.clothItems[i].clothNo].materials.Length; z++)
                     {
-                        clothRendererArrays[i][clothSave.clothItems[i].clothNo].materials[z].SetColor("_BaseColor", new Color(clothSave.clothItems[i].colors[z][0],
+                        clothRendererArrays[i][clothSave.clothItems[i].clothNo].materials[z].SetColor("Color_3D7C8326", new Color(clothSave.clothItems[i].colors[z][0],
                             clothSave.clothItems[i].colors[z][1],
                             clothSave.clothItems[i].colors[z][2],
                             clothSave.clothItems[i].colors[z][3]));
@@ -164,9 +164,9 @@ public class LoadCharacter : NetworkBehaviour
 
             }
             toggleBodyType2(!male);
-            meshRenderers[10].materials[0].SetColor("_BaseColor", new Color(clothSave.eyes[0], clothSave.eyes[1], clothSave.eyes[2], clothSave.eyes[3]));//eyes
-            meshRenderers[28].materials[0].SetColor("_BaseColor", new Color(clothSave.trousers[0], clothSave.trousers[1], clothSave.trousers[2], clothSave.trousers[3]));//legs
-            meshRenderers[2].materials[0].SetColor("_BaseColor", new Color(clothSave.shoes[0], clothSave.shoes[1], clothSave.shoes[2], clothSave.shoes[3]));//shoes
+            meshRenderers[10].materials[0].SetColor("Color_3D7C8326", new Color(clothSave.eyes[0], clothSave.eyes[1], clothSave.eyes[2], clothSave.eyes[3]));//eyes
+            meshRenderers[28].materials[0].SetColor("Color_3D7C8326", new Color(clothSave.trousers[0], clothSave.trousers[1], clothSave.trousers[2], clothSave.trousers[3]));//legs
+            meshRenderers[2].materials[0].SetColor("Color_3D7C8326", new Color(clothSave.shoes[0], clothSave.shoes[1], clothSave.shoes[2], clothSave.shoes[3]));//shoes
         }
         else
         {
@@ -223,7 +223,7 @@ public class LoadCharacter : NetworkBehaviour
                     clothRendererArrays[i][clothSave.clothItems[i].clothNo].gameObject.SetActive(true);
                     for (int z = 0; z < clothRendererArrays[i][clothSave.clothItems[i].clothNo].materials.Length; z++)
                     {
-                        clothRendererArrays[i][clothSave.clothItems[i].clothNo].materials[z].SetColor("_BaseColor", new Color(clothSave.clothItems[i].colors[z][0],
+                        clothRendererArrays[i][clothSave.clothItems[i].clothNo].materials[z].SetColor("Color_3D7C8326", new Color(clothSave.clothItems[i].colors[z][0],
                             clothSave.clothItems[i].colors[z][1],
                             clothSave.clothItems[i].colors[z][2],
                             clothSave.clothItems[i].colors[z][3]));
@@ -271,9 +271,9 @@ public class LoadCharacter : NetworkBehaviour
 
             }
             toggleBodyType2(!male);
-            meshRenderers[10].materials[0].SetColor("_BaseColor", new Color(clothSave.eyes[0], clothSave.eyes[1], clothSave.eyes[2], clothSave.eyes[3]));//eyes
-            meshRenderers[28].materials[0].SetColor("_BaseColor", new Color(clothSave.trousers[0], clothSave.trousers[1], clothSave.trousers[2], clothSave.trousers[3]));//legs
-            meshRenderers[2].materials[0].SetColor("_BaseColor", new Color(clothSave.shoes[0], clothSave.shoes[1], clothSave.shoes[2], clothSave.shoes[3]));//shoes
+            meshRenderers[10].materials[0].SetColor("Color_3D7C8326", new Color(clothSave.eyes[0], clothSave.eyes[1], clothSave.eyes[2], clothSave.eyes[3]));//eyes
+            meshRenderers[28].materials[0].SetColor("Color_3D7C8326", new Color(clothSave.trousers[0], clothSave.trousers[1], clothSave.trousers[2], clothSave.trousers[3]));//legs
+            meshRenderers[2].materials[0].SetColor("Color_3D7C8326", new Color(clothSave.shoes[0], clothSave.shoes[1], clothSave.shoes[2], clothSave.shoes[3]));//shoes
         }
         else
         {
@@ -377,17 +377,17 @@ public class LoadCharacter : NetworkBehaviour
     public void setSkinColor(Color color)
     {
 
-        meshRenderers[3].material.SetColor("_BaseColor", color); //female
-        meshRenderers[29].material.SetColor("_BaseColor", color); //male
-        meshRenderers[9].material.SetColor("_BaseColor", color); //hands
-        meshRenderers[10].materials[3].SetColor("_BaseColor", color); //kichwa
+        meshRenderers[3].material.SetColor("Color_3D7C8326", color); //female
+        meshRenderers[29].material.SetColor("Color_3D7C8326", color); //male
+        meshRenderers[9].material.SetColor("Color_3D7C8326", color); //hands
+        meshRenderers[10].materials[3].SetColor("Color_3D7C8326", color); //kichwa
         bodyMat = meshRenderers[10].materials[3];
 
 
         if (!sleeves)
         {
-            meshRenderers[0].material.SetColor("_BaseColor", color);
-            meshRenderers[1].material.SetColor("_BaseColor", color);
+            meshRenderers[0].material.SetColor("Color_3D7C8326", color);
+            meshRenderers[1].material.SetColor("Color_3D7C8326", color);
         }
         if (!lipstick)
         {
@@ -403,7 +403,7 @@ public class LoadCharacter : NetworkBehaviour
         Material[] mats = meshRenderers[10].materials;
         mats[4] = lipstickMat;
         meshRenderers[10].materials = mats;
-        meshRenderers[10].materials[4].SetColor("_BaseColor", color);
+        meshRenderers[10].materials[4].SetColor("Color_3D7C8326", color);
         //lipstickColor = colorPicker.color;
         //colorButtons["lipstick"].updateMyColor(lipstickColor);
     }

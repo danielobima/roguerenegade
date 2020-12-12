@@ -9,7 +9,7 @@ public class ShotgunBullet : MonoBehaviour
     public float damage = 1;
     public GameObject bloodParicleSystem;
     public bool isMultiplayer = true;
-    public uint shooterId = default;
+    public int shooterId = default;
 
     private void Start()
     {

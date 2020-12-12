@@ -44,7 +44,7 @@ public class EnemyGun : NetworkBehaviour {
                 GameObject go;
                 go = Instantiate(bullet, bulletSpawnPos.position, bulletSpawnPos.rotation);
                 go.GetComponent<Gunshot>().damage = gunDetails.damage;
-                
+                go.GetComponent<Gunshot>().isMultiplayer = isMultiPlayer;
                 muzzleFlash.Play();
                 ParticleSystem smo = Instantiate(smoke, bulletSpawnPos.position, bulletSpawnPos.rotation);
                 if (isMultiPlayer)
@@ -57,7 +57,6 @@ public class EnemyGun : NetworkBehaviour {
             {
                 GameObject go;
                 go = Instantiate(shotgunBullet, bulletSpawnPos.position, bulletSpawnPos.rotation);
-                
                 muzzleFlash.Play();
                 ParticleSystem smo =  Instantiate(smoke, bulletSpawnPos.position, bulletSpawnPos.rotation);
                 if (isMultiPlayer)

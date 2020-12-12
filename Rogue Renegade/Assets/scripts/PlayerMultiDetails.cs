@@ -31,19 +31,27 @@ public class PlayerMultiDetails : NetworkBehaviour
         target = GetComponent<Target>();
         playerGun = GetComponent<PlayerGun>();
         playerMotion = GetComponent<PlayerMotion>();
-        gameMechMulti = GameObject.FindGameObjectWithTag("GameMechMulti").GetComponent<GameMechMulti>();
+        GameObject g = GameObject.FindGameObjectWithTag("GameMechMulti");
+        if (g != null)
+        {
+            gameMechMulti = GameObject.FindGameObjectWithTag("GameMechMulti").GetComponent<GameMechMulti>();
+        }
         screenObjects = GameObject.FindGameObjectWithTag("screen objects").GetComponent<ScreenObjects>();
-        TMP_InputField tMP_InputField = screenObjects.chatMessager.GetComponent<TMP_InputField>();
-        tMP_InputField.onEndEdit.AddListener(sendchatMsg);
-        chatObjPreset = screenObjects.chatbar.transform.GetChild(0).gameObject;
-        chatObjPreset.SetActive(false);
+        
         if (!isMultiPlayer)
         {
             gameObject.SetActive(true);
-            nameCanvas.gameObject.SetActive(false);
+            if(nameCanvas != null)
+            {
+                nameCanvas.gameObject.SetActive(false);
+            }
         }
         else
         {
+            TMP_InputField tMP_InputField = screenObjects.chatMessager.GetComponent<TMP_InputField>();
+            tMP_InputField.onEndEdit.AddListener(sendchatMsg);
+            chatObjPreset = screenObjects.chatbar.transform.GetChild(0).gameObject;
+            chatObjPreset.SetActive(false);
             playerGun.bullet = gameMechMulti.spawnPrefabs.Find(prefab => prefab.name == "bullet");
             playerGun.shotGunBullet = gameMechMulti.spawnPrefabs.Find(prefab => prefab.name == "shotgun bullet");
             if (isLocalPlayer)
@@ -204,9 +212,26 @@ public class PlayerMultiDetails : NetworkBehaviour
     [Command]
     public void CmdStartGame(NetworkConnectionToClient conn = null)
     {
-        if (canStartGame && !gameMechMulti.survivalMechMulti.gameStarted)
+        if (canStartGame )
         {
-            gameMechMulti.survivalMechMulti.gameStarted = true;
+            
+            switch (GameMechMulti.gameMode)
+            {
+                case GameMechMulti.GameMode.Survival:
+                    if(!gameMechMulti.survivalMechMulti.gameStarted)
+                        gameMechMulti.survivalMechMulti.gameStarted = true;
+                    break;
+                case GameMechMulti.GameMode.Deathmatch:
+                    if (!gameMechMulti.deathmatchMech.gameStarted)
+                    {
+                        gameMechMulti.deathmatchMech.gameStarted = true;
+                        gameMechMulti.deathmatchMech.startedCounter = false;
+                    }
+                      
+                    break;
+
+
+            }
             
         }
         TargetRemoveStartGameButton(conn);
@@ -224,9 +249,20 @@ public class PlayerMultiDetails : NetworkBehaviour
         {
             gameMechMulti = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMechMulti>();
         }
-        gameMechMulti.respawnPlayer(conn, prevPlayer,name);
+        gameMechMulti.respawnPlayer(conn, prevPlayer,name,conn.identity.netId);
     }
-
+    public void DiedPleaseRespawnMe()
+    {
+        StartCoroutine(Respawning());
+    }
+    IEnumerator Respawning()
+    {
+        for(int i = 0; i < 5; i++)
+        {
+            yield return new WaitForSeconds(1);
+        }
+        respawn();
+    }
 
     [Command]
     public void CmdRestartGame()
@@ -239,12 +275,22 @@ public class PlayerMultiDetails : NetworkBehaviour
         {
             Destroy(g);
         }
+        switch (GameMechMulti.gameMode)
+        {
+            case GameMechMulti.GameMode.Survival:
+                gameMechMulti.survivalMechMulti.playerscores.Clear();
+                gameMechMulti.survivalMechMulti.spawnedEnemies.Clear();
+                gameMechMulti.survivalMechMulti.hasSpawned = false;
+                gameMechMulti.survivalMechMulti.gameStarted = false;
+                gameMechMulti.survivalMechMulti.waveNo = 1;
+                break;
+            case GameMechMulti.GameMode.Deathmatch:
+                gameMechMulti.deathmatchMech.gameStarted = false;
+                gameMechMulti.deathmatchMech.startedCounter = false;
+                break;
+
+        }
         
-        gameMechMulti.survivalMechMulti.playerscores.Clear();
-        gameMechMulti.survivalMechMulti.spawnedEnemies.Clear();
-        gameMechMulti.survivalMechMulti.hasSpawned = false;
-        gameMechMulti.survivalMechMulti.gameStarted = false;
-        gameMechMulti.survivalMechMulti.waveNo = 1;
 
         RpcRespawn();
     }

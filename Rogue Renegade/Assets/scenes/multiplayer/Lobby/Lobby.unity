@@ -663,8 +663,8 @@ MonoBehaviour:
   aimCylinder: {fileID: 3861775088239414711, guid: 5ea8a518daa68a641adfcb33005b7fe3,
     type: 3}
   tpp: {fileID: 2989530459282827703, guid: ff40f65157534444ab090496bf811021, type: 3}
-  gameMode: 0
-  gameScene: Assets/scenes/multiplayer/Beta test/Beta.unity
+  survivalScene: Assets/scenes/multiplayer/Beta test/Beta.unity
+  deathmatchScene: Assets/scenes/multiplayer/Beta test/Beta 1.unity
   enemies:
   - {fileID: 1653721402969281317, guid: 282a5adf88a040b43baccdb998174d9a, type: 3}
   - {fileID: 6578890816193878789, guid: 78d92f34e2794af4b96a7915a25f640e, type: 3}
@@ -678,6 +678,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  deathmatchMech: {fileID: 0}
   survivalMechMulti: {fileID: 0}
   lobbyListView: {fileID: 1362876782}
   lobbyManager: {fileID: 13972832}

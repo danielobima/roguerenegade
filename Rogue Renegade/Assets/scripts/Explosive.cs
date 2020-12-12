@@ -46,7 +46,7 @@ public class Explosive : NetworkBehaviour
                     if(t.health <= 0 && !c.CompareTag("Player"))
                     {
                         Rigidbody pelvis = c.transform.GetChild(0).GetChild(0).GetComponent<Rigidbody>();
-                        pelvis.AddExplosionForce(explosionForce, explosionPos, explosionRadius, upforce, ForceMode.Impulse);
+                        pelvis.AddExplosionForce(explosionForce/20, explosionPos, explosionRadius, upforce, ForceMode.Impulse);
                     }
                 }
             }
@@ -90,22 +90,25 @@ public class Explosive : NetworkBehaviour
         Collider[] colliders = Physics.OverlapSphere(explosionPos, explosionRadius);
         foreach (Collider c in colliders)
         {
-            if (!c.CompareTag("DroppedGun") && !c.CompareTag("pickup") && c != gameObject.GetComponent<Collider>())
+            if (!c.CompareTag("DroppedGun") && !c.CompareTag("pickup") && c != gameObject.GetComponent<Collider>() && !c.gameObject.layer.Equals(19))
             {
                 Rigidbody rb = c.GetComponent<Rigidbody>();
                 Target t = c.GetComponent<Target>();
-                if (rb != null)
-                {
-                    rb.AddExplosionForce(explosionForce, explosionPos, explosionRadius, upforce, ForceMode.Impulse);
-                }
+                
                 if (t != null)
                 {
                     t.TakeDamage(damage * (1 / Vector3.Distance(t.transform.position, transform.position)));
                     if (t.health <= 0)
                     {
                         Rigidbody pelvis = c.transform.GetChild(0).GetChild(0).GetComponent<Rigidbody>();
-                        pelvis.AddExplosionForce(explosionForce, explosionPos, explosionRadius, upforce, ForceMode.Impulse);
+                        pelvis.AddExplosionForce(explosionForce, explosionPos, explosionRadius, explosionForce, ForceMode.Impulse);
+                        
                     }
+                    
+                }
+                if (rb != null)
+                {
+                    rb.AddExplosionForce(explosionForce, explosionPos, explosionRadius, explosionForce, ForceMode.Impulse);
                 }
             }
         }

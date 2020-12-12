@@ -13,7 +13,8 @@ public class Gunshot : NetworkBehaviour {
     private float t;
     private GameMechMulti gameMechMulti;
     public bool isMultiplayer = true;
-    public uint shooterId = default;
+    [SyncVar]
+    public int shooterId = default;
     
     
 
@@ -75,11 +76,10 @@ public class Gunshot : NetworkBehaviour {
         {
             Destroy(gameObject);
         }
-        // Debug.Log(collision.collider.name);
        
     }
-    [Server]
-    public static void BulletCollision(Vector3 collisionPoint, Collider collider,float damage,GameObject bloodParticleSystem,uint shooterId = default)
+    [ServerCallback]
+    public static void BulletCollision(Vector3 collisionPoint, Collider collider,float damage,GameObject bloodParticleSystem,int shooterId = 100010101)
     {
         if (collider.GetComponent<Target>())
         {
@@ -122,13 +122,18 @@ public class Gunshot : NetworkBehaviour {
                  }
              }*/
            
-            if(shooterId != default)
+            if(shooterId != 100010101)
             {
                 t.TakeDamage(damage, shooterId);
+                if (t.isPlayer)
+                {
+                    t.TargetAddAttacker(t.netIdentity.connectionToClient, shooterId);
+                }
             }
             else
             {
                 t.TakeDamage(damage);
+                Debug.Log("Bruuuh");
             }
             t.damagePoint(collisionPoint - collider.transform.position);
             if (collider.GetComponent<Bloody>())
@@ -149,13 +154,20 @@ public class Gunshot : NetworkBehaviour {
             }
             b.mainBody.damagePoint(collisionPoint - collider.transform.position);
 
-            if (shooterId != default)
+            if (shooterId != 100010101)
             {
                 b.mainBody.TakeDamage(damage, shooterId);
+                if (b.mainBody.isPlayer)
+                {
+                    b.mainBody.TargetAddAttacker(b.mainBody.netIdentity.connectionToClient, shooterId);
+                }
             }
             else
             {
+                
                 b.mainBody.TakeDamage(damage);
+                Debug.Log("Bruuuh");
+
             }
 
         }

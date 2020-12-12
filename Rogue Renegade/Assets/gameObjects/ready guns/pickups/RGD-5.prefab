@@ -126,6 +126,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fd3c37d9a13b21439401e6c324c56ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   explosionRadius: 5
   explosionForce: 200
   upforce: 1

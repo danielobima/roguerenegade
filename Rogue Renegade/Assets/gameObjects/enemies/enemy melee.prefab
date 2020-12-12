@@ -785,6 +785,36 @@ CharacterJoint:
   m_EnablePreprocessing: 0
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!1 &2608997173534550637
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1414699134447682435}
+  m_Layer: 9
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1414699134447682435
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2608997173534550637}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 9127833358072121391}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3085200276499933028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1683,6 +1713,7 @@ Transform:
   - {fileID: 6613315523974207968}
   - {fileID: 3085200276499933035}
   - {fileID: 3085200277206406293}
+  - {fileID: 1414699134447682435}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1752,12 +1783,13 @@ MonoBehaviour:
   health: 5
   healthFull: 5
   isPlayer: 0
+  player: {fileID: 0}
   myRing: {fileID: 3085200277206406294}
   currentLookAt: {fileID: 0}
   isDead: 0
   isAiming: 0
-  p: {fileID: 0}
   damageCooldown: 4
+  attackers: 
   playerMiddleSpine: {fileID: 0}
   damagePointer: {fileID: 0}
 --- !u!114 &2630987485933487615
@@ -1772,6 +1804,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 517bd8fa828b5b840947f2c2ec042ee0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   healthBar: {fileID: 865049275503723768}
   reductionSpeed: 0.5
   glowAnim: {fileID: 0}
@@ -1787,6 +1821,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e8c3d5aa5e7fa74bbd40f907b6f2aa9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   timeToAttack: 0
   attackType: 1
   enemyGun: {fileID: 0}
@@ -1799,6 +1835,7 @@ MonoBehaviour:
   shootSeconds: 0.5
   distanceToStartAttack: 5
   myMiddleSpine: {fileID: 0}
+  virtualMiddleSpine: {fileID: 2608997173534550637}
 --- !u!114 &771770174238803263
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1880,9 +1917,10 @@ MonoBehaviour:
   fresnelColor: {r: 1, g: 1, b: 1, a: 1}
   fresnelShader: {fileID: -6465566751694194690, guid: cae77b49a8cf5de439253b454ed969c9,
     type: 3}
-  duration: 1
   speed: 5
   minMax: {x: 0, y: 1}
+  notSkinned: 0
+  onObject: 0
 --- !u!114 &2637834318741843515
 MonoBehaviour:
   m_ObjectHideFlags: 0

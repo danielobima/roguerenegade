@@ -29,8 +29,9 @@ public class Target : NetworkBehaviour {
     private float dc;
     public float damageCooldown = 4;
     private GameMechMulti gameMechMulti;
-    public List<uint> attackers;
+    public List<int> attackers;
     private bool hasDroppedGun = false;
+    public List<TeammateMech> playerTeammates;
 
     [Header("LEAVE EMPTY")]
     public Transform playerMiddleSpine;
@@ -54,7 +55,8 @@ public class Target : NetworkBehaviour {
             playerGun = GetComponent<PlayerGun>();
             playerMultiDetails = GetComponent<PlayerMultiDetails>();
         }
-        attackers = new List<uint>();
+        attackers = new List<int>();
+
         
         
     }
@@ -80,7 +82,7 @@ public class Target : NetworkBehaviour {
         
         
     }
-    public void TakeDamage(float DamageAmount,uint attackerId = default)
+    public void TakeDamage(float DamageAmount,int attackerId = default)
     {
 
         if (!isDead)
@@ -111,11 +113,21 @@ public class Target : NetworkBehaviour {
             dc = 0;
             if (attackerId != default)
             {
-                attackers.Add(attackerId);
+                if (!isPlayer)
+                {
+                    attackers.Add(attackerId);
+                }
+               
             }
         }
 
     }
+    [TargetRpc]
+    public void TargetAddAttacker(NetworkConnection conn, int attacker)
+    {
+        attackers.Add(attacker);
+    }
+
     public void addHealth(float HealthAmount)
     {
         
@@ -156,13 +168,27 @@ public class Target : NetworkBehaviour {
         }
     }
     [Command]
-    private void CmdDie()
+    private void CmdDie(int killer,NetworkConnectionToClient conn = null)
     {
         if(gameMechMulti == null)
         {
             gameMechMulti = GameObject.FindGameObjectWithTag("GameMechMulti").GetComponent<GameMechMulti>();
         }
-        gameMechMulti.survivalMechMulti.playerDied();
+        switch (GameMechMulti.gameMode)
+        {
+            case GameMechMulti.GameMode.Survival:
+                gameMechMulti.survivalMechMulti.playerDied();
+                break;
+            case GameMechMulti.GameMode.Deathmatch:
+                gameMechMulti.deathmatchMech.playerDied(killer,conn.connectionId);
+                TargetDied(conn);
+                break;
+        }
+    }
+    [TargetRpc]
+    private void TargetDied(NetworkConnection conn)
+    {
+        playerMultiDetails.DiedPleaseRespawnMe();
     }
     private void Update()
     {
@@ -179,7 +205,13 @@ public class Target : NetworkBehaviour {
                     e.Die();
                     //e.myCanvas.SetActive(false);
                 }
-               
+                TeammateMech teammate = gameObject.GetComponent<TeammateMech>();
+                if (teammate != null)
+                {
+                    teammate.Die();
+                    //e.myCanvas.SetActive(false);
+                }
+
                 //myHealthBar.SetActive(false);
             }
             else
@@ -192,7 +224,7 @@ public class Target : NetworkBehaviour {
                         playerGun.dropSecondaryGun();
                         if (isClient)
                         {
-                            CmdDie();
+                            CmdDie(attackers[attackers.Count - 1]);
                         }
                         hasDroppedGun = true;
                         
@@ -208,6 +240,10 @@ public class Target : NetworkBehaviour {
             if (!hasSwitchedRagdoll)
             {
                 ragdollSwitch.SwitchRagdoll(isDead);
+            }
+            if (!isPlayer)
+            {
+                Destroy(this);
             }
         }
         if (!isPlayer)

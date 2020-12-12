@@ -5,32 +5,51 @@ using UnityEngine;
 public class FresnelHighlight : MonoBehaviour
 {
     private MeshRenderer meshRenderer;
-    private Material fresnel;
-    private Material defaultMat;
+    private Material[] defaultMats;
     private Color defaultColor;
     public Color fresnelColor;
     public Shader fresnelShader;
     public float speed;
     public bool isFresnating = false;
+    private List<Material> fresnels;
+    
 
+    /// <summary>
+    /// use this if you will switch off manually
+    /// </summary>
     public void fresnate()
     {
         if (!isFresnating)
         {
             meshRenderer = GetComponent<MeshRenderer>();
-            defaultMat = meshRenderer.material;
-            defaultColor = meshRenderer.material.color;
-            fresnel = new Material(fresnelShader);
-            fresnel.SetFloat("Vector1_D75BD163", speed);
-            fresnel.SetColor("Color_3D7C8326", defaultColor);
-            fresnel.SetColor("Color_3539850B", fresnelColor);
-            meshRenderer.material = fresnel;
+            
+
+            foreach(Material m in meshRenderer.materials)
+            {
+                m.SetVector("Vector2_B0A441B", new Vector4(0, 1, 0, 0));
+                m.SetFloat("Vector1_D75BD163", speed);
+                m.SetColor("Color_3539850B", fresnelColor);
+            }
             isFresnating = true;
         }
     }
+    /// <summary>
+    /// use this if you want to switch off automatically
+    /// </summary>
+    /// <param name="duration">How long till it switches off</param>
+    public void fresnate(float duration)
+    {
+        fresnate();
+        Invoke("defresnate", duration);
+    }
+
     public void defresnate()
     {
-        meshRenderer.material = defaultMat;
+        foreach (Material m in meshRenderer.materials)
+        {
+            m.SetVector("Vector2_B0A441B", new Vector4());
+            
+        }
         isFresnating = false;
     }
 }

@@ -6,7 +6,10 @@ using Mirror;
 
 public class EnemyMech : NetworkBehaviour {
     
-    private Transform playerTransform;
+    /// <summary>
+    /// Not this object's transfrom, please remember always.
+    /// </summary>
+    public Transform enemyTransform;//I said enemy over here because as the player you are the enemy's enemy
     public bool timeToAttack = false;
     public int attackType = 0;
     // 0 is weapon
@@ -19,7 +22,7 @@ public class EnemyMech : NetworkBehaviour {
     private bool isPunching = false;
     public float punchRate = 0;
     public float pp = 2;
-    private bool canAttack = false;
+    public bool canAttack = false;
     public float deathTime = 4;
     public float meleeDamage = 0;
     public float shootSeconds = 0.5f;
@@ -35,7 +38,7 @@ public class EnemyMech : NetworkBehaviour {
     private float b = 0;
     private Target t;
     private GunDetails gunDetails;
-    private Target playerTarget;
+    public Target enemyTarget;
     private bool hasReachedPlayer;
     public Transform myMiddleSpine;
     private float weight;
@@ -43,6 +46,27 @@ public class EnemyMech : NetworkBehaviour {
     private EnemyMultiDetails enemyMultiDetails;
     private GameMechMulti gameMechMulti;
     private GameMech gameMech;
+    public GameObject virtualMiddleSpine;
+    public bool ShouldSeePlayer;
+    private GameObject handContainer;
+
+
+    private float maxUpRecoil = -5;
+    private float minLeftRightRecoil = 0;
+    private float maxLeftRightRecoil = 5;
+    private float minUpRecoil = 0;
+    private float currentUpRecoil;
+    private float currentLeftRightRecoil;
+    private float recoilX;
+    private float recoilY;
+    private float recoilXRef;
+    private float recoilYRef;
+
+    public EnemyVision vision;
+    public EnemyManager enemyManager;
+    public bool searchingAround = false;
+
+    private bool canCheckIfReachedDestination;
 
 
 
@@ -62,20 +86,74 @@ public class EnemyMech : NetworkBehaviour {
         if (enemyMultiDetails.isMultiPlayer)
         {
             gameMechMulti = GameObject.FindGameObjectWithTag("GameMechMulti").GetComponent<GameMechMulti>();
+            setPlayerInstanceM();
         }
-        setPlayerInstance();
+        else
+        {
+            setEnemyInstance();
+        }
 
+        setVirtualMiddleSpine();
+        setRecoil();
+        if (ShouldSeePlayer)
+        {
+            vision.isChecking = true;
+            vision.raycastStart = transform.position;
+            vision.parent = gameObject;
+            vision.visionCallBack = OnSeeEnemy;
+            
+            
+        }
+        
     }
-    [Server]
+    
+    private void OnSeeEnemy()
+    {
+        if(enemyManager != null)
+        {
+            enemyTarget = vision.whatISaw.GetComponent<Target>();
+            enemyTransform = vision.whatISaw.transform;
+            distanceToStartAttack = Vector3.Distance(transform.position, enemyTransform.position);
+            enemyManager.enemyTarget = enemyTarget;
+            enemyManager.EnemySpotted();
+        }
+        //Debug.Log("Ive seen you :). by: " + gameObject.name + ". Sent from my IPhone.");
+    }
+    private void setVirtualMiddleSpine()
+    {
+        virtualMiddleSpine.transform.SetParent(myMiddleSpine.parent);
+        virtualMiddleSpine.transform.localPosition =
+        new Vector3(2.035827e-16f, 0.00865172f, 2.793968e-09f);
+        virtualMiddleSpine.transform.localEulerAngles = new Vector3();
+        myMiddleSpine.SetParent(virtualMiddleSpine.transform);
+
+        handContainer = Instantiate(new GameObject("handContainer"), myMiddleSpine);
+        handContainer.transform.localPosition = new Vector3();
+        handContainer.transform.localEulerAngles = new Vector3();
+        myMiddleSpine.GetChild(2).SetParent(handContainer.transform);
+        myMiddleSpine.GetChild(1).SetParent(handContainer.transform);
+    }
+
     private void FixedUpdate()
     {
+
+        if (enemyMultiDetails.isMultiPlayer)
+        {
+            LogicM();
+        }
+        else
+        {
+            Logic();
+        }
         
-        
+    }
+    public void Logic()
+    {
         if (!t.isDead)
         {
             if (timeToAttack)
             {
-                if (!isSeekingCover)
+                if (!isSeekingCover )
                 {
                     checkDistanceFromPlayer();
                 }
@@ -85,22 +163,56 @@ public class EnemyMech : NetworkBehaviour {
                 }
                 else
                 {
-                    searchForPlayer();
+                    if (!ShouldSeePlayer)
+                    {
+                        searchForPlayer();
+                    }
+                    animator.SetInteger("upperbody", 0);
                 }
             }
             else
             {
                 idleStance();
             }
-            
+
         }
-        if(playerTarget != null)
+        if (enemyTarget != null)
         {
-            if (playerTarget.isDead)
+            if (enemyTarget.isDead)
             {
-                if (!setPlayerInstance())
+                if (enemyMultiDetails.isMultiPlayer)
                 {
-                    timeToAttack = false;
+                    if (!setPlayerInstanceM())
+                    {
+                        timeToAttack = false;
+                    }
+                }
+                else
+                {
+                    if (!setEnemyInstance())
+                    {
+                        timeToAttack = false;
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (timeToAttack)
+            {
+                if (enemyMultiDetails.isMultiPlayer)
+                {
+                    if (!setPlayerInstanceM())
+                    {
+                        timeToAttack = false;
+                    }
+                }
+                else
+                {
+                    if (!setEnemyInstance())
+                    {
+                        timeToAttack = false;
+                    }
                 }
             }
         }
@@ -119,6 +231,15 @@ public class EnemyMech : NetworkBehaviour {
             }
 
         }
+        if (canCheckIfReachedDestination)
+        {
+            CheckIfReachedDestination();
+        }
+    }
+    [Server]
+    public void LogicM()
+    {
+        Logic();
     }
     private void checkDistanceFromPlayer()
     {
@@ -130,19 +251,21 @@ public class EnemyMech : NetworkBehaviour {
                 {
                     canAttack = true;
                     isSearchingForPlayer = false;
-                    navAgent.StopNav();
+                    if (!searchingAround)
+                    {
+                        navAgent.StopNav();
+                    }
                     
                 }
             }
         }
         else
         {
-            if (!isSearchingForPlayer)
+            if (!isSearchingForPlayer && !ShouldSeePlayer)
             {
                 searchForPlayer();
-                canAttack = false;
                 isSearchingForPlayer = true;
-                
+                canAttack = false;
             }
         }
     }
@@ -152,27 +275,16 @@ public class EnemyMech : NetworkBehaviour {
         {
             navAgent.StopNav();
         }
-        if (attackType == 0)
+        if (attackType == 1)
         {
-            if (!isBeingPunched)
-            {
-                animator.SetInteger("state", 5);
-            }
-                
-        }
-        else if (attackType == 1)
-        {
-            if (!isBeingPunched)
-            {
-                animator.SetInteger("state", 0);
-            }
-            
             isMeleeAttacking = false;
         }
+
+        animator.SetInteger("upperbody", 0);
     }
     private bool CheckCloseToTag(string tag, float minimumDistance)
     {
-        GameObject[] goWithTag = GameObject.FindGameObjectsWithTag(tag);
+        /*GameObject[] goWithTag = GameObject.FindGameObjectsWithTag(tag);
 
         for (int i = 0; i < goWithTag.Length; ++i)
         {
@@ -180,6 +292,9 @@ public class EnemyMech : NetworkBehaviour {
                 return true;
         }
 
+        return false;*/
+        if (Vector3.Distance(transform.position, enemyTransform.position) <= minimumDistance)
+            return true;
         return false;
     }
 
@@ -191,7 +306,7 @@ public class EnemyMech : NetworkBehaviour {
             Rigidbody r = GetComponent<Rigidbody>();
             r.isKinematic = false;
             canAttack = false;
-            
+           
             if(enemyGun != null)
             {
                 if (enemyMultiDetails.isMultiPlayer)
@@ -213,10 +328,10 @@ public class EnemyMech : NetworkBehaviour {
                 {
                     enemyGun.transform.parent = null;
                     enemyGun.tag = "DroppedGun";
-                    gameMech.enemyDeathCallBack(t);
+                    //gameMech.enemyDeathCallBack(t);
                 }
             }
-            
+
             Destroy(gameObject, 10);
             
             
@@ -229,37 +344,93 @@ public class EnemyMech : NetworkBehaviour {
     {
         Destroy(enemyGun.gameObject);
     }
+    private void middleSpineLook(Vector3 target)
+    {
+        Vector3 lMTargetDir = new Vector3(target.x, target.y, target.z) - virtualMiddleSpine.transform.position;
+        Quaternion mTargetRotation = Quaternion.LookRotation(lMTargetDir);
+        virtualMiddleSpine.transform.rotation = Quaternion.Slerp(virtualMiddleSpine.transform.rotation, mTargetRotation, 10 * Time.deltaTime);
+    }
+    private void middleSpineLook(Transform target)
+    {
+        middleSpineLook(target.position);
+    }
+    private void fullBodyLook(Vector3 target)
+    {
+        Vector3 lTargetDir = new Vector3(target.x, target.y, target.z) - transform.position;
+        Quaternion targetRotation = Quaternion.LookRotation(lTargetDir);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 10 * Time.deltaTime);
+    }
+    private void fullBodyLook(Transform target)
+    {
+        fullBodyLook(target.position);
+    }
+    private void RecoilUp()
+    {
+        recoilX = Mathf.SmoothDampAngle(handContainer.transform.localEulerAngles.x, currentUpRecoil, ref recoilXRef, 0.1f);
+        recoilY = Mathf.SmoothDampAngle(handContainer.transform.localEulerAngles.y, currentLeftRightRecoil, ref recoilYRef, 0.1f);
+    }
+    private void RecoilDown()
+    {
+        recoilX = Mathf.SmoothDampAngle(handContainer.transform.localEulerAngles.x, 0, ref recoilXRef, 0.1f);
+        recoilY = Mathf.SmoothDampAngle(handContainer.transform.localEulerAngles.y, 0, ref recoilYRef, 0.1f);
+    }
+    private void setRecoil()
+    {
+        currentUpRecoil = Random.Range(maxUpRecoil, minUpRecoil);
+        int i = Random.Range(0, 2);
+        bool left = i < 1 ? true : false;
+        if (left)
+        {
+            currentLeftRightRecoil = Random.Range(minLeftRightRecoil, maxLeftRightRecoil);
+        }
+        else
+        {
+            currentLeftRightRecoil = Random.Range(-maxLeftRightRecoil, -minLeftRightRecoil);
+        }
+       
+    }
     private void WeaponAttack()
     {
         
         //if (animator.GetCurrentAnimatorStateInfo(0).IsName("easy") || animator.GetCurrentAnimatorStateInfo(0).IsName("medium")
         //    || animator.GetCurrentAnimatorStateInfo(0).IsName("hard"))
-        if(!isSeekingCover)
+        if(!isSeekingCover && enemyTarget != null)
         {
-            transform.LookAt(new Vector3(playerTransform.position.x,transform.position.y,playerTransform.position.z));
-            a += 1 * Time.deltaTime;
-            b += 1 * Time.deltaTime;
+            //transform.LookAt(new Vector3(playerTransform.position.x,transform.position.y,playerTransform.position.z));
+            fullBodyLook(enemyTransform);
+            middleSpineLook(enemyTransform);
+            if(enemyManager != null)
+            {
+                enemyManager.lastKnownPos = enemyTransform.position;
+            }
+
+            a += 1 * Time.deltaTime; //The one that goes like taptaptap
+            b += 1 * Time.deltaTime; //How long the taptaptap is
             if (b <= shootTime)
             {
+                animator.SetInteger("upperbody", 4);
+                enemyGun.transform.rotation = Quaternion.FromToRotation(Vector3.forward * -1, myMiddleSpine.transform.forward);
                 if (a <= shootSeconds && !gunDetails.gunSound.isPlaying)
                 {
-                    animator.SetInteger("state", GameMech.Difficulty + 1);
                     enemyGun.Shoot(enemyMultiDetails.isMultiPlayer);
-
+                    RecoilUp();
                 }
                 else
                 {
-                    animator.SetInteger("state", 5);
                     if (a >= shootSeconds + 1)
                     {
+                        setRecoil();
                         a = 0;
+                        
                     }
+                    RecoilDown();
                 }
+                handContainer.transform.localEulerAngles = new Vector3(recoilX, recoilY);
             }
             else
             {
                 seekCover();
-                animator.SetInteger("state", 1);
+                animator.SetInteger("upperbody", 0);
             }
         }
         else
@@ -267,11 +438,54 @@ public class EnemyMech : NetworkBehaviour {
             if (isSeekingCover)
             {
                 seekCover();
-                animator.SetInteger("state", 1);
+                animator.SetInteger("upperbody", 0);
             }
+            
         }
        
         
+    }
+    private bool CanSeeTarget()
+    {
+        if (enemyTransform != null)
+        {
+            if (Physics.Raycast(new Ray(transform.position, enemyTransform.position - transform.position), out RaycastHit hit
+                , Vector3.Distance(transform.position, enemyTransform.position)))
+            {
+                if (hit.collider.gameObject.layer == 19 || hit.collider.gameObject.layer == 9 || hit.collider.gameObject.layer == 13)
+                {
+                    switch (hit.collider.gameObject.layer)
+                    {
+                        case 19:
+                            BodyPart bo = hit.collider.gameObject.GetComponent<BodyPart>();
+                            if (bo != null)
+                                if (bo.mainBody.GetComponent<TeammateMech>() || bo.mainBody.isPlayer)
+                                {
+                                    return true;
+                                }
+                            break;
+                        case 9:
+                            if (hit.collider.GetComponent<TeammateMech>())
+                            {
+                                return true;
+                            }
+                            break;
+                        case 13:
+                            return true;
+
+                    }
+                    return false;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+                return false;
+        }
+        else
+            return false;
     }
     public Vector3 RandomNavmeshLocation(float radius)
     {
@@ -283,6 +497,10 @@ public class EnemyMech : NetworkBehaviour {
         {
             finalPosition = hit.position;
         }
+        else
+        {
+            Debug.Log("NONONONO");
+        }
         return finalPosition;
     }
     private void seekCover()
@@ -293,19 +511,25 @@ public class EnemyMech : NetworkBehaviour {
     }
     private void resumeShooting()
     {
+        
         b = 0;
-        if (Vector3.Distance(transform.position, playerTransform.position) >= distanceToStartAttack)
+        if (CanSeeTarget())
         {
-            distanceToStartAttack = Vector3.Distance(transform.position, playerTransform.position);
+            distanceToStartAttack = Vector3.Distance(transform.position, enemyTransform.position);
+        }
+        else
+        {
+            if (!ShouldSeePlayer)
+            {
+                searchForPlayer();
+            }
+            else
+            {
+                searchAroundForPlayer();
+            }
         }
         isSeekingCover = false;
-    }
-    private void LateUpdate()
-    {
-        /*if (animator.GetCurrentAnimatorStateInfo(0).IsName("idle with gun") && !t.isDead)
-        {
-            myMiddleSpine.LookAt(new Vector3(playerTransform.position.x, playerTransform.position.y, playerTransform.position.z));
-        }*/
+
     }
     private void Attack(int AttackType)
     {
@@ -350,7 +574,7 @@ public class EnemyMech : NetworkBehaviour {
         if (!hasReachedPlayer)
         {
             
-            transform.LookAt(new Vector3(playerTransform.position.x, transform.position.y, playerTransform.position.z));
+            transform.LookAt(new Vector3(enemyTransform.position.x, transform.position.y, enemyTransform.position.z));
             isMeleeAttacking = true;
             if (!isPunching)
             {
@@ -427,44 +651,127 @@ public class EnemyMech : NetworkBehaviour {
         
 
     }
-    private void searchForPlayer()
+    /// <summary>
+    /// Used if enemy knows where the player is
+    /// </summary>
+    public void searchForPlayer()
     {
         if (isOnfloor)
         {
-            navAgent.NavToTransform(playerTransform);
-            animator.SetInteger("state", 1);
+            navAgent.NavToTransform(enemyTransform);
+            //animator.SetInteger("state", 1);
             canAttack = false;
             isSearchingForPlayer = true;
             fightingMode(false);
         }
     }
+    /// <summary>
+    /// Used if enemy does not know where the player is
+    /// </summary>
+    private void searchAroundForPlayer()
+    {
+        Debug.Log("Aaa");
+        if (isOnfloor)
+        {
+            canAttack = false;
+            vision.canCheck = true;
+            searchingAround = true;
+            if (!navAgent.agent.isStopped)
+            {
+                navAgent.StopNav();
+                Debug.Log("HAHAHA YOU THOUGHT I WAS STOPPED!");
+            }
+            Debug.Log("Going to " + enemyManager.lastKnownPos);
+            //NavAgent.NavCallBack callBack = searchingAroundCallBack;
+            //navAgent.navToThenStop(enemyManager.lastKnownPos, callBack);
+            navAgent.justNavMan(enemyManager.lastKnownPos);
+            canCheckIfReachedDestination = true;
+
+            
+        }
+    }
+    private void CheckIfReachedDestination()
+    {
+        if(navAgent.agent.remainingDistance <= navAgent.agent.stoppingDistance)
+        {
+            searchingAroundCallBack();
+            navAgent.StopNav();
+            Debug.Log("VICTORY!!!!!");
+            canCheckIfReachedDestination = false;
+        }
+    }
 
 
-    [ServerCallback]
-    public bool setPlayerInstance()
+    private void searchingAroundCallBack()
+    {
+        Debug.Log("bbb");
+        b = 0;
+        vision.canCheck = false;
+        if (vision.stillSeeing)
+        {
+            canAttack = true;
+        }
+        else
+        {
+            enemyManager.SearchingAroundForEnemy(this);
+        }
+        searchingAround = false;
+    }
+
+
+    
+    public bool setEnemyInstance()
     {
         if (!enemyMultiDetails.isMultiPlayer)
         {
-            playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-            playerTarget = GameObject.FindGameObjectWithTag("Player").GetComponent<Target>();
-            if (playerTarget != null && playerTransform != null)
+            int i = Random.Range(0, 2);
+            bool getTeammate = i < 1 ? true : false;
+            Target playerTarget = GameObject.FindGameObjectWithTag("Player").GetComponent<Target>(); 
+            if (!getTeammate)
             {
-                return !playerTarget.isDead;
+                enemyTransform = playerTarget.transform;
+                enemyTarget = playerTarget;
+                if (enemyTarget != null && enemyTransform != null)
+                {
+                    return !enemyTarget.isDead;
+                }
+                return false;
             }
             else
             {
-                return false;
+                if (playerTarget.playerTeammates.Count > 0)
+                {
+                    int u = Random.Range(0, playerTarget.playerTeammates.Count);
+                    enemyTransform = playerTarget.playerTeammates[u].transform;
+                    enemyTarget = playerTarget.playerTeammates[u].GetComponent<Target>();
+                    if (enemyTarget != null && enemyTransform != null)
+                    {
+                        return !enemyTarget.isDead;
+                    }
+                    return false;
+                }
+                else
+                {
+                    enemyTransform = playerTarget.transform;
+                    enemyTarget = playerTarget;
+                    if (enemyTarget != null && enemyTransform != null)
+                    {
+                        return !enemyTarget.isDead;
+                    }
+                    return false;
+                }
             }
+            
         }
         else
         {
             int i = Random.Range(0, gameMechMulti.playerTargets.Count );
             List<uint> ids = new List<uint>(gameMechMulti.playerTargets.Keys);
-            playerTransform = gameMechMulti.playerTargets[ids[i]].transform;
-            playerTarget = gameMechMulti.playerTargets[ids[i]];
-            if (playerTarget != null && playerTransform != null)
+            enemyTransform = gameMechMulti.playerTargets[ids[i]].transform;
+            enemyTarget = gameMechMulti.playerTargets[ids[i]];
+            if (enemyTarget != null && enemyTransform != null)
             {
-                return !playerTarget.isDead;
+                return !enemyTarget.isDead;
             }
             else
             {
@@ -472,10 +779,15 @@ public class EnemyMech : NetworkBehaviour {
             }
         }
     }
+    [ServerCallback]
+    public bool setPlayerInstanceM()
+    {
+        return setEnemyInstance();
+    }
 
 
 
-   
+
     public void stopPunchImpact()
     {
         isBeingPunched = false;

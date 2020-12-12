@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class SurvivalMech : MonoBehaviour
 {
     
-    private GameObject[] spawnerGOs;
+    public GameObject[] spawnerGOs;
     private float a = 0;
     public float w = 0;
     public int waveNo = 1;
@@ -23,6 +23,7 @@ public class SurvivalMech : MonoBehaviour
     public int floor;
     private int easyWeapons = 50;
     private GameMech gameMech;
+    private EnemyManager enemyManager;
     private int meduimWeapons = 80;
     //private int hardWeapons = 100;
 
@@ -30,7 +31,7 @@ public class SurvivalMech : MonoBehaviour
     // Floor is now called level. PLEASE DONT CONFUSE AND MAKE RUSSIA EXPLODE FOR NO REASON!
     void Start()
     {
-        spawnerGOs = GameObject.FindGameObjectsWithTag("Spawners");
+        //spawnerGOs = GameObject.FindGameObjectsWithTag("Spawners");
         playerTarget = GameObject.FindGameObjectWithTag("Player").GetComponent<Target>();
         floor = PlayerPrefs.GetInt("Survival-floor", 1);
         spawnBeneficiaryAfterSeconds = 30 + (floor - 1) * 2;
@@ -40,6 +41,7 @@ public class SurvivalMech : MonoBehaviour
             playerTarget.health = playerTarget.healthFull;
         }
         gameMech = GetComponent<GameMech>();
+        enemyManager = GetComponent<EnemyManager>();
     }
 
    
@@ -53,7 +55,7 @@ public class SurvivalMech : MonoBehaviour
     }
     private int randomEnemy(int Difficulty, int bias = 1)
     {
-        int random = Random.Range(bias < 80 ? bias : 80, Difficulty < 100? Difficulty : 100);
+        /*int random = Random.Range(bias < 80 ? bias : 80, Difficulty < 100? Difficulty : 100);
         if (random < easyWeapons)
         {
             return Random.Range(1, 3);
@@ -68,7 +70,8 @@ public class SurvivalMech : MonoBehaviour
             {
                 return Random.Range(5, 8);
             }
-        }
+        }*/
+        return Random.Range(0, 8);
     }
     private void spawnEnemies()
     {
@@ -79,8 +82,10 @@ public class SurvivalMech : MonoBehaviour
             {
                 int i = Random.Range(0, spawnerGOs.Length - 1);
 
-
-                spawnedEnemies.Add(spawnerGOs[i].GetComponent<Spawner>().SpawnEnemy(randomEnemy(calculateDifficulty(waveNo, floor), calculateBias(waveNo, floor)), floor));
+                GameObject go = spawnerGOs[i].GetComponent<Spawner>().SpawnEnemy(randomEnemy(calculateDifficulty(waveNo, floor), calculateBias(waveNo, floor)), floor);
+                spawnedEnemies.Add(go);
+                enemyManager.enemies.Add(go.GetComponent<EnemyMech>());
+                go.GetComponent<EnemyMech>().enemyManager = enemyManager;
                 a = 0;
             }
         }

@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 using Mirror;
+using System;
 
 public class HomeScreen : MonoBehaviour
 {
@@ -11,18 +12,21 @@ public class HomeScreen : MonoBehaviour
     public Window CustomizeCharacter;
     public Window changeName;
     public Window IpAddressWindow;
+    public Window HostGameWindow;
     public Window ErrorMessagePreset;
     private Window ErrorMessage;
     public Transform canvas;
     public TMP_InputField nameInputField;
     public TMP_InputField IPAddressInputField;
     public TMP_InputField PortInputField;
+    public TMP_Dropdown gameModeDropDown;
     [Scene]
     public string gameScene;
 
     private Window currentWidow;
     private Window prevWindow;
     public static bool error = false;
+    private GameMechMulti.GameMode mode;
     public static string errorMsg = "Failed to connect";
     public Animator cameraAnimator;
     public static bool clientStarted = true;
@@ -38,6 +42,8 @@ public class HomeScreen : MonoBehaviour
         {
             showErrorMessage(errorMsg);
         }
+        gameModeDropDown.ClearOptions();
+        gameModeDropDown.AddOptions(new List<string>(Enum.GetNames(typeof(GameMechMulti.GameMode))));
     }
     public void showErrorMessage(string message)
     {
@@ -86,14 +92,36 @@ public class HomeScreen : MonoBehaviour
         SceneManager.LoadScene(gameScene,LoadSceneMode.Single);
         HomeScreen.clientStarted = false;
     }
+    public void showHostGameWindow()
+    {
+        currentWidow.hideWindow(WindowAnimationTriggers.popOut);
+        HostGameWindow.showWindow(WindowAnimationTriggers.popIn);
+
+        currentWidow = HostGameWindow;
+    }
     public void HostGame()
     {
-        GameMechMulti.isHost = true;
-        SceneManager.LoadScene(gameScene, LoadSceneMode.Single);
+        if(mode == GameMechMulti.GameMode.Possession  )
+        {
+            Debug.Log("Not yet made :(");
+        }
+        else
+        {
+           
+
+            GameMechMulti.isHost = true;
+            GameMechMulti.gameMode = mode;
+            SceneManager.LoadScene(gameScene, LoadSceneMode.Single);
+        }
+    }
+    public void ChangeMode(int Mode)
+    {
+        mode = (GameMechMulti.GameMode) Mode;
+
+        
     }
     public void back()
     {
-        Debug.Log("Sema YEEE");
         if(currentWidow != prevWindow)
         {
             if (currentWidow == CustomizeCharacter)

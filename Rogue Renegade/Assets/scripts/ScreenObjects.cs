@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class ScreenObjects : MonoBehaviour
 {
@@ -19,4 +20,7 @@ public class ScreenObjects : MonoBehaviour
     public GameObject survivalScoresList;
     public GameObject survivalWaveText;
     public GameObject survivalScoreItem;
+
+    [Header("Leave empty if not deathmatch multiplayer")]
+    public TextMeshProUGUI timeRemaining;
 }

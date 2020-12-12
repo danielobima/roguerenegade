@@ -17,13 +17,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/scenes/home screen/Home screen.unity
     guid: cf48e00d88f544d4eb2d51ba2d24fd9f
-  - enabled: 0
-    path: Assets/scenes/multiplayer/scripter/multiplayerScripter.unity
-    guid: e217b92df5686a74db95841ecfa9d61f
   - enabled: 1
     path: Assets/scenes/multiplayer/Lobby/Lobby.unity
     guid: 94d1513437912f143a66eb3c46228272
   - enabled: 1
     path: Assets/scenes/multiplayer/Beta test/Beta.unity
     guid: ebb209f7850e07e43b60011a8a4f93eb
+  - enabled: 1
+    path: Assets/scenes/multiplayer/Beta test/Beta 1.unity
+    guid: 5e033fd214419af49855fd89734dc434
   m_configObjects: {}
