@@ -5,8 +5,6 @@ TagManager:
   serializedVersion: 2
   tags:
   - joystick
-  - gun
-  - Playergun
   - Fire
   - Attack Handler
   - GameMech
@@ -15,11 +13,8 @@ TagManager:
   - DroppedGun
   - PlayerMiddleSpine
   - joystickImg
-  - shootButton
-  - playerRightElbow
   - wall
   - floor
-  - SecondaryGun
   - Pause menu
   - pickup
   - DroppedGrenade
@@ -33,11 +28,14 @@ TagManager:
   - screen objects
   - crossHair
   - SlowMoBar
+  - GameMechMulti
+  - Mech
+  - gun
+  - shootButton
   - dropGun
   - throw
   - switchGun
-  - GameMechMulti
-  - Mech
+  - Playergun
   layers:
   - Default
   - TransparentFX

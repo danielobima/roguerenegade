@@ -28,7 +28,7 @@ public class EnemyGun : NetworkBehaviour {
     }
     private void FixedUpdate()
     {
-        if (f < gunDetails.timeToNextShot)
+        if (f < gunDetails.fireRate)
         {
             f += 1 * Time.deltaTime;
         }
@@ -36,7 +36,7 @@ public class EnemyGun : NetworkBehaviour {
     public void Shoot(bool isMultiPlayer)
     {
         
-        if (f >= gunDetails.timeToNextShot)
+        if (f >= gunDetails.fireRate)
         {
 
             if (!gunDetails.gunType.Equals("Bennelli M4"))

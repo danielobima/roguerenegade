@@ -61,21 +61,21 @@ public class GameplayButtons : MonoBehaviour, IDragHandler, IPointerDownHandler,
                 switch (buttonFunction)
                 {
                     case "shoot":
-                        if (playerGun.gun != null)
-                        {
-                            playerGun.attacking = true;
-                        }
-                        else
-                        {
-                            playerGun.punchWhenTold();
-                        }
+                        //if (playerGun.gun != null)
+                        //{
+                        //    playerGun.attacking = true;
+                        //}
+                        //else
+                        //{
+                        //    playerGun.punchWhenTold();
+                        //}
                         break;
-                    case "switchGun":
-                        playerGun.startSwitchGunAnim();
-                        break;
-                    case "dropGun":
-                        playerGun.dropGun();
-                        break;
+                    //case "switchGun":
+                    //    playerGun.startSwitchGunAnim();
+                    //    break;
+                    //case "dropGun":
+                    //    playerGun.dropGun();
+                    //   break;
                     case "jump":
                         playerMotion.jump();
                         break;
@@ -100,9 +100,9 @@ public class GameplayButtons : MonoBehaviour, IDragHandler, IPointerDownHandler,
                     case "resume":
                         gameMech.ResumeGame();
                         break;
-                    case "throw":
-                        playerGun.throwGrenade();
-                        break;
+                    //case "throw":
+                    //    playerGun.throwGrenade();
+                    //    break;
                     case "restart survival scene":
                         SceneManager.LoadScene("survival scene");
                         break;
@@ -130,17 +130,17 @@ public class GameplayButtons : MonoBehaviour, IDragHandler, IPointerDownHandler,
                 {
                     playerGun.attacking = true;
                 }
-                else
-                {
-                    playerGun.punchWhenTold();
-                }
+                //else
+                //{
+                //    playerGun.punchWhenTold();
+                //}
                 break;
-            case "switchGun":
-                playerGun.startSwitchGunAnim();
-                break;
-            case "dropGun":
-                playerGun.dropGun();
-                break;
+            //case "switchGun":
+            //    playerGun.startSwitchGunAnim();
+            //    break;
+            //case "dropGun":
+            //    playerGun.dropGun();
+            //    break;
             case "jump":
                 playerMotion.jump();
                 break;
@@ -165,9 +165,9 @@ public class GameplayButtons : MonoBehaviour, IDragHandler, IPointerDownHandler,
             case "resume":
                 gameMech.ResumeGame();
                 break;
-            case "throw":
-                playerGun.throwGrenade();
-                break;
+            //case "throw":
+            //    playerGun.throwGrenade();
+             //   break;
             case "restart survival scene":
                 SceneManager.LoadScene("survival scene");
                 break;

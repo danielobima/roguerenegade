@@ -5029,12 +5029,13 @@ GameObject:
   - component: {fileID: 7452545267946963602}
   - component: {fileID: 7441580270379274454}
   - component: {fileID: 7427561811050472992}
-  - component: {fileID: 7427561811050472995}
   - component: {fileID: 4584701274241427138}
   - component: {fileID: 1934175956446333783}
+  - component: {fileID: 2775331386688874842}
+  - component: {fileID: 5084732488709826914}
   m_Layer: 0
   m_Name: M249 pickup
-  m_TagString: DroppedGun
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5046,9 +5047,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7426571647576100648}
-  m_LocalRotation: {x: 0.000000059604645, y: -1, z: 0.000000059604645, w: -0.000000059604645}
+  m_LocalRotation: {x: 0, y: -1, z: 0, w: 0.00000028088027}
   m_LocalPosition: {x: 0.0217, y: 0.0641, z: -0.4481}
-  m_LocalScale: {x: 0.9984225, y: 0.9984223, z: 0.99842256}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_Children:
   - {fileID: 595239582438936483}
   - {fileID: 602850538678602585}
@@ -5059,7 +5060,7 @@ Transform:
   - {fileID: 2011005474114414834}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -179.99998, z: 0}
 --- !u!33 &7452545267946963602
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -5121,40 +5122,6 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: 01890195b95a26f4fa4aa4f8f5a0cc5e, type: 3}
---- !u!114 &7427561811050472995
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7426571647576100648}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3bf92bd7936912740ad7e5d142c5195b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gunType: M249
-  gunInt: 4
-  timeToNextShot: 0.1
-  localPos: {x: -0.0003, y: 0.018, z: 0.0006}
-  localRot: {x: 60, y: -18.162, z: 36.586}
-  localScale: {x: 0.04176981, y: 0.04176976, z: 0.04176978}
-  damage: 2
-  enemyDamage: 2
-  ammoMax: 20
-  ammoSpare: 20
-  handgun: 0
-  ammoLoaded: 0
-  isContinuousShooting: 1
-  gunSound: {fileID: 3113415202191108644}
-  gunSoundLoops: 1
-  d: 0
-  yCamOffset: 0.085
-  zCamOffset: 0
-  xCamOffset: -0.0178
-  recoilTime: 0.1
-  recoilUpSpeed: -10
-  recoilDownSpeed: 10
 --- !u!54 &4584701274241427138
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5188,6 +5155,34 @@ MonoBehaviour:
     type: 3}
   speed: 3
   isFresnating: 0
+--- !u!135 &2775331386688874842
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7426571647576100648}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.0009136
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5084732488709826914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7426571647576100648}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8dc1a63963b576d46955277e40f0ccb2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefabToEquip: {fileID: 6535640607545796984, guid: fda1d40948ec2094b91985511d6c7114,
+    type: 3}
+  highlight: {fileID: 0}
 --- !u!1 &7426874016762528678
 GameObject:
   m_ObjectHideFlags: 0

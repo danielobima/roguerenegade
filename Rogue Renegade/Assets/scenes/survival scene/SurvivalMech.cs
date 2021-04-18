@@ -33,6 +33,7 @@ public class SurvivalMech : MonoBehaviour
     {
         //spawnerGOs = GameObject.FindGameObjectsWithTag("Spawners");
         playerTarget = GameObject.FindGameObjectWithTag("Player").GetComponent<Target>();
+        
         floor = PlayerPrefs.GetInt("Survival-floor", 1);
         spawnBeneficiaryAfterSeconds = 30 + (floor - 1) * 2;
         playerTarget.healthFull = 20 - 1.5f * floor;
@@ -42,6 +43,7 @@ public class SurvivalMech : MonoBehaviour
         }
         gameMech = GetComponent<GameMech>();
         enemyManager = GetComponent<EnemyManager>();
+        playerTarget.GetComponent<PlayerMotion>().currentEnemyManager = enemyManager;
     }
 
    

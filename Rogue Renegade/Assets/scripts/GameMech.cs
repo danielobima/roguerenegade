@@ -31,6 +31,7 @@ public class GameMech : MonoBehaviour
 
     [Header("Only for Single player")]
     public CinemachineFreeLook tpp;
+    public CinemachineFreeLook fineAim;
     public Transform cylinder;
 
 
@@ -67,6 +68,7 @@ public class GameMech : MonoBehaviour
             }
         }
         Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
     public void spawnPlayer(bool randomPoint, int spawner = 0)
     {
@@ -90,10 +92,12 @@ public class GameMech : MonoBehaviour
         {
             spawner = Random.Range(0, playerSpawners.Length);
             go = Instantiate(playerAsset, playerSpawners[spawner].transform.position, playerSpawners[spawner].transform.rotation);
+            go.SetActive(true);
         }
         else
         {
-           go = Instantiate(playerAsset, playerSpawners[spawner].transform.position, playerSpawners[spawner].transform.rotation);
+            go = Instantiate(playerAsset, playerSpawners[spawner].transform.position, playerSpawners[spawner].transform.rotation);
+            go.SetActive(true);
         }
         extraSetup(go);
         return go;
@@ -104,7 +108,7 @@ public class GameMech : MonoBehaviour
         if (go == null)
         {
             player = GameObject.FindGameObjectWithTag("Player").transform;
-          
+            
         }
         else
         {
@@ -112,8 +116,12 @@ public class GameMech : MonoBehaviour
             
         }
         
-     
-       
+        tpp.m_Follow = player;
+        tpp.m_LookAt = player;
+        screentexts.playerGun = player.GetComponent<PlayerGun>();
+
+
+
     }
     public void setQuality()
     {
