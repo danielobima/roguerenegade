@@ -1378,7 +1378,7 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.3
+  - time: 0.28333333
     functionName: setAnimatorWeight
     data: 
     objectReferenceParameter: {fileID: 0}

@@ -43,13 +43,13 @@ public class RagdollSwitch : NetworkBehaviour
         {
             networkAnimator.enabled = !value;
         }
-        animator.enabled = !value;
+        /*animator.enabled = !value;
         foreach (Collider c in colliders)
         {
-            /*if (!isPlayer)
-            {
-                c.enabled = value;
-            }*/
+            //if (!isPlayer)
+            //{
+            //    c.enabled = value;
+            //}
             if (!hasInitedBodyParts)
             {
                 BodyPart b = c.gameObject.AddComponent<BodyPart>();
@@ -163,21 +163,21 @@ public class RagdollSwitch : NetworkBehaviour
             {
                 navMeshAgent.enabled = !value;
             }
-        }
-       
-            
-        
-        
+        }*/
+
+
+
+
     }
     public bool ragdollJokes(bool value)
     {
-        animator.enabled = !value;
+        /*animator.enabled = !value;
         foreach (Collider c in colliders)
         {
-            /*if (!isPlayer)
-            {
-                c.enabled = value;
-            }*/
+            //if (!isPlayer)
+            //{
+            //    c.enabled = value;
+            //}
             
             Rigidbody r = c.gameObject.GetComponent<Rigidbody>();
             if (r != null)
@@ -185,7 +185,7 @@ public class RagdollSwitch : NetworkBehaviour
                 r.useGravity = value;
                 r.freezeRotation = !value;
             }
-        }
+        }*/
         
         return !value;
     }

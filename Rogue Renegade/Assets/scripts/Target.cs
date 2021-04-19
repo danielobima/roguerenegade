@@ -216,24 +216,7 @@ public class Target : NetworkBehaviour {
             }
             else
             {
-                if (playerGun.playerMultiDetails.isMultiPlayer)
-                {
-                    if (isLocalPlayer && !hasDroppedGun)
-                    {
-                        playerGun.dropGun();
-                        playerGun.dropSecondaryGun();
-                        if (isClient)
-                        {
-                            CmdDie(attackers[attackers.Count - 1]);
-                        }
-                        hasDroppedGun = true;
-                        
-                    }
-                    if (Input.GetKeyDown("p"))
-                    {
-                        //gameMechMulti.respawnPlayer(connectionToClient,gameObject);
-                    }
-                }
+               
                
             }
             isDead = true;

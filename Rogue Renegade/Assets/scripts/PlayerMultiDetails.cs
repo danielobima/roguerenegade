@@ -52,8 +52,6 @@ public class PlayerMultiDetails : NetworkBehaviour
             tMP_InputField.onEndEdit.AddListener(sendchatMsg);
             chatObjPreset = screenObjects.chatbar.transform.GetChild(0).gameObject;
             chatObjPreset.SetActive(false);
-            playerGun.bullet = gameMechMulti.spawnPrefabs.Find(prefab => prefab.name == "bullet");
-            playerGun.shotGunBullet = gameMechMulti.spawnPrefabs.Find(prefab => prefab.name == "shotgun bullet");
             if (isLocalPlayer)
             {
                 if (GameMechMulti.isHost)
@@ -198,7 +196,6 @@ public class PlayerMultiDetails : NetworkBehaviour
     private void respawn()
     {
         Destroy(playerMotion.cylinder.gameObject);
-        Destroy(playerGun.thirdPersonCam.gameObject);
         CmdRespawn(gameObject, playerName);
 
     }
@@ -206,7 +203,6 @@ public class PlayerMultiDetails : NetworkBehaviour
     {
         PlayerMultiDetails multiDetails = g.GetComponent<PlayerMultiDetails>();
         Destroy(multiDetails.playerMotion.cylinder.gameObject);
-        Destroy(multiDetails.playerGun.thirdPersonCam.gameObject);
         CmdRespawn(g, multiDetails.playerName);
     }
     [Command]
