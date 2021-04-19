@@ -122,13 +122,12 @@ GameObject:
   - component: {fileID: 1129726391846315193}
   - component: {fileID: 1129726391847446137}
   - component: {fileID: 1129726391845255358}
+  - component: {fileID: 1129726391845255352}
   - component: {fileID: 7771908419386268849}
   - component: {fileID: 7365221092167822268}
-  - component: {fileID: 2410282886404506185}
-  - component: {fileID: 4010614269449974743}
   m_Layer: 0
   m_Name: M107 pickup
-  m_TagString: Untagged
+  m_TagString: DroppedGun
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -142,7 +141,7 @@ Transform:
   m_GameObject: {fileID: 1129726391845255353}
   m_LocalRotation: {x: 0.099793695, y: -0.50248694, z: -0.3138392, w: 0.79940796}
   m_LocalPosition: {x: -8.550709, y: 1.3941939, z: -10.8395}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_LocalScale: {x: 0.79362625, y: 0.7936253, z: 0.79362583}
   m_Children:
   - {fileID: 3889827401710358358}
   - {fileID: 3883236510943136684}
@@ -215,6 +214,41 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: a0e70037533056249a1bcaf8b480c5cb, type: 3}
+--- !u!114 &1129726391845255352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1129726391845255353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bf92bd7936912740ad7e5d142c5195b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gunType: M107
+  gunInt: 3
+  timeToNextShot: 1.5
+  localPos: {x: -0.0008, y: 0.0156, z: 0.0019}
+  localRot: {x: 60, y: -18.162, z: 36.586}
+  localScale: {x: 0.04176981, y: 0.04176976, z: 0.04176978}
+  damage: 3
+  enemyDamage: 3
+  ammoMax: 30
+  ammoSpare: 30
+  handgun: 0
+  ammoLoaded: 0
+  isContinuousShooting: 1
+  gunSound: {fileID: 1232295321165266033}
+  gunSoundLoops: 1
+  d: 0
+  yCamOffset: 0.09
+  zCamOffset: 0
+  xCamOffset: 0
+  recoilTime: 0.1
+  recoilUpSpeed: -10
+  recoilDownSpeed: 10
+  scopeCam: {fileID: 750442921}
 --- !u!54 &7771908419386268849
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -248,34 +282,6 @@ MonoBehaviour:
     type: 3}
   speed: 3
   isFresnating: 0
---- !u!114 &2410282886404506185
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1129726391845255353}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8dc1a63963b576d46955277e40f0ccb2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  prefabToEquip: {fileID: 8078456788064759677, guid: ec0312abcdbcbcd428091388a76f10a1,
-    type: 3}
-  highlight: {fileID: 0}
---- !u!135 &4010614269449974743
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1129726391845255353}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 1.0009136
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1129726391845255355
 GameObject:
   m_ObjectHideFlags: 0

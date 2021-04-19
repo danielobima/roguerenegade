@@ -406,14 +406,13 @@ GameObject:
   - component: {fileID: 4284577691191122479}
   - component: {fileID: 4284577691194546703}
   - component: {fileID: 4284577691193546959}
+  - component: {fileID: 4284577691191281164}
   - component: {fileID: 4284577691191281166}
   - component: {fileID: 7890271899980199143}
   - component: {fileID: 5156000815279167809}
-  - component: {fileID: 3554698821642564392}
-  - component: {fileID: 4894834602202444243}
   m_Layer: 0
   m_Name: M4 pickup
-  m_TagString: Untagged
+  m_TagString: DroppedGun
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -425,9 +424,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4284577691191281167}
-  m_LocalRotation: {x: 0.099793695, y: -0.50248694, z: -0.3138392, w: 0.79940796}
+  m_LocalRotation: {x: 0.099794, y: -0.5024902, z: -0.31384146, w: 0.799405}
   m_LocalPosition: {x: -8.604858, y: 1.3761438, z: -10.83285}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_LocalScale: {x: 0.79362607, y: 0.7936256, z: 0.793626}
   m_Children:
   - {fileID: 7108524423430457673}
   - {fileID: 7113993257215053235}
@@ -439,7 +438,7 @@ Transform:
   - {fileID: 476393662977629721}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -8.966001, y: -61.251003, z: -37.554}
+  m_LocalEulerAnglesHint: {x: 60, y: -18.162, z: 36.586002}
 --- !u!33 &4284577691194546703
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -487,6 +486,40 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &4284577691191281164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4284577691191281167}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bf92bd7936912740ad7e5d142c5195b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gunType: M4
+  gunInt: 2
+  timeToNextShot: 0.15
+  localPos: {x: 0.00095, y: 0.01715, z: -0.00015}
+  localRot: {x: 60, y: -18.162, z: 36.586}
+  localScale: {x: 0.04176981, y: 0.04176976, z: 0.04176978}
+  damage: 1.5
+  enemyDamage: 1.5
+  ammoMax: 30
+  ammoSpare: 30
+  handgun: 0
+  ammoLoaded: 0
+  isContinuousShooting: 1
+  gunSound: {fileID: 2024224111544596844}
+  gunSoundLoops: 1
+  d: 0
+  yCamOffset: 0.09
+  zCamOffset: -0.15
+  xCamOffset: 0
+  recoilTime: 0.1
+  recoilUpSpeed: -10
+  recoilDownSpeed: 10
 --- !u!64 &4284577691191281166
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -534,34 +567,6 @@ MonoBehaviour:
     type: 3}
   speed: 3
   isFresnating: 0
---- !u!135 &3554698821642564392
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4284577691191281167}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 1.0009136
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &4894834602202444243
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4284577691191281167}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8dc1a63963b576d46955277e40f0ccb2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  prefabToEquip: {fileID: 9003206778895678429, guid: 4d64365d59394634d9539cce9e2964f0,
-    type: 3}
-  highlight: {fileID: 0}
 --- !u!1 &5998319478077499607
 GameObject:
   m_ObjectHideFlags: 0

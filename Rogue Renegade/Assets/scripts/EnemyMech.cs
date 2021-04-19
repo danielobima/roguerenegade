@@ -445,7 +445,6 @@ public class EnemyMech : NetworkBehaviour {
        
         
     }
-    
     private bool CanSeeTarget()
     {
         if (enemyTransform != null)

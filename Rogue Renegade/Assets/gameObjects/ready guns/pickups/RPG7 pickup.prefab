@@ -9784,7 +9784,7 @@ GameObject:
   - component: {fileID: 3720719831364403303}
   m_Layer: 14
   m_Name: RPG7 pickup
-  m_TagString: Untagged
+  m_TagString: DroppedGun
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9798,7 +9798,7 @@ Transform:
   m_GameObject: {fileID: 7129502749840690361}
   m_LocalRotation: {x: -0.31202862, y: -0.40631709, z: -0.8079798, w: 0.29105535}
   m_LocalPosition: {x: -9.047103, y: 0.8113545, z: -10.7939}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_LocalScale: {x: 0.7936262, y: 0.79362524, z: 0.7936255}
   m_Children:
   - {fileID: 7126042940932557559}
   - {fileID: 7125825774004683363}
@@ -9881,28 +9881,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gunType: RPG7
   gunInt: 6
-  gunSound: {fileID: 6915466277561939322}
-  gunSoundLoops: 1
-  gunID: 0
-  canDestroy: 1
-  handgun: 0
-  isContinuousShooting: 1
-  damage: 0
-  enemyDamage: 0
+  timeToNextShot: 5
   localPos: {x: -0.0008, y: 0.0156, z: 0.0019}
   localRot: {x: 60, y: -18.162, z: 36.586}
-  handPose: {fileID: 0}
-  fireRate: 0
+  localScale: {x: 0.04176981, y: 0.04176976, z: 0.04176978}
+  damage: 0
+  enemyDamage: 0
   ammoMax: 0
   ammoSpare: 20
+  handgun: 0
   ammoLoaded: 0
-  isShooting: 0
-  bulletTracer: {fileID: 0}
-  impacts: []
-  bulletSpeed: 1000
-  bulletDrop: 0
-  maxLifeTime: 2
-  gunDrop: {fileID: 0}
+  isContinuousShooting: 1
+  gunSound: {fileID: 6915466277561939322}
+  gunSoundLoops: 1
+  d: 0
+  yCamOffset: 0.08
+  zCamOffset: -0.15
+  xCamOffset: -0.03
 --- !u!114 &7129502749840690360
 MonoBehaviour:
   m_ObjectHideFlags: 0

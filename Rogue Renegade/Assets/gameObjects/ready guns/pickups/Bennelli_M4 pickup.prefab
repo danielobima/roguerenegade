@@ -5187,13 +5187,12 @@ GameObject:
   - component: {fileID: 8365862101411600551}
   - component: {fileID: 8373600834425213435}
   - component: {fileID: 8387261037728960575}
+  - component: {fileID: 8387261037728960560}
   - component: {fileID: 4654038893887631368}
   - component: {fileID: 2605584111276347629}
-  - component: {fileID: 7425431294042003818}
-  - component: {fileID: 8432786599802490279}
   m_Layer: 0
   m_Name: Bennelli_M4 pickup
-  m_TagString: Untagged
+  m_TagString: DroppedGun
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5205,9 +5204,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8387261037728960561}
-  m_LocalRotation: {x: 0, y: -1, z: 0, w: 0.00000028088027}
+  m_LocalRotation: {x: 0.0000000074505797, y: -1, z: 0.00000008940696, w: -0.000000059604638}
   m_LocalPosition: {x: -0.001, y: -0.0033, z: -0.4821}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_LocalScale: {x: 0.9984224, y: 0.9984224, z: 0.9984225}
   m_Children:
   - {fileID: 5648029514448688375}
   - {fileID: 5656136899114553357}
@@ -5216,7 +5215,7 @@ Transform:
   - {fileID: 6332568449951836188}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: -179.99998, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8365862101411600551
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -5278,6 +5277,40 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: bf2593fe0c804b84688e307cfb1ddfae, type: 3}
+--- !u!114 &8387261037728960560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8387261037728960561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bf92bd7936912740ad7e5d142c5195b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gunType: Bennelli M4
+  gunInt: 1
+  timeToNextShot: 1.9
+  localPos: {x: -0.0011, y: 0.02, z: 0.0004}
+  localRot: {x: 60, y: -18.162, z: 36.586}
+  localScale: {x: 0.0417698, y: 0.04176978, z: 0.04176979}
+  damage: 1
+  enemyDamage: 1
+  ammoMax: 8
+  ammoSpare: 16
+  handgun: 0
+  ammoLoaded: 0
+  isContinuousShooting: 1
+  gunSound: {fileID: 3194014377461224164}
+  gunSoundLoops: 1
+  d: 0
+  yCamOffset: 0.025
+  zCamOffset: -0.15
+  xCamOffset: 0
+  recoilTime: 0.1
+  recoilUpSpeed: -10
+  recoilDownSpeed: 10
 --- !u!54 &4654038893887631368
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5311,31 +5344,3 @@ MonoBehaviour:
     type: 3}
   speed: 3
   isFresnating: 0
---- !u!135 &7425431294042003818
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8387261037728960561}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 1.0009136
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8432786599802490279
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8387261037728960561}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8dc1a63963b576d46955277e40f0ccb2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  prefabToEquip: {fileID: 949480695630177372, guid: abe2924135f596a4185f631d1000336a,
-    type: 3}
-  highlight: {fileID: 0}

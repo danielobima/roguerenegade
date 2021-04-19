@@ -170,13 +170,12 @@ GameObject:
   - component: {fileID: 741812068152452848}
   - component: {fileID: 750257596623472020}
   - component: {fileID: 7643407842182128172}
+  - component: {fileID: 51495244466835925}
   - component: {fileID: 2179724956820518037}
   - component: {fileID: 518200313070152612}
-  - component: {fileID: 227378695926916602}
-  - component: {fileID: 1001171400728369043}
   m_Layer: 0
   m_Name: M1911 pickup
-  m_TagString: Untagged
+  m_TagString: DroppedGun
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -190,7 +189,7 @@ Transform:
   m_GameObject: {fileID: 737243901954171428}
   m_LocalRotation: {x: 0.51024306, y: -0.51031625, z: 0.48976445, w: 0.48924452}
   m_LocalPosition: {x: -8.092, y: 0.842, z: -10.813}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_LocalScale: {x: 0.793626, y: 0.7936256, z: 0.793626}
   m_Children:
   - {fileID: 1205700207058212871}
   - {fileID: 2016871646917494455}
@@ -263,6 +262,40 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: b812e42521a5a27499e76cc5ed56e3ac, type: 3}
+--- !u!114 &51495244466835925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 737243901954171428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bf92bd7936912740ad7e5d142c5195b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gunType: M1911
+  gunInt: 5
+  timeToNextShot: 0.7
+  localPos: {x: -0.001035635, y: 0.01562979, z: 0.001127773}
+  localRot: {x: 92.38098, y: -0.6329956, z: 89.40099}
+  localScale: {x: 0.0417698, y: 0.04176977, z: 0.0417698}
+  damage: 1
+  enemyDamage: 1
+  ammoMax: 18
+  ammoSpare: 18
+  handgun: 1
+  ammoLoaded: 0
+  isContinuousShooting: 1
+  gunSound: {fileID: 8128168874695020438}
+  gunSoundLoops: 1
+  d: 0
+  yCamOffset: 0.05
+  zCamOffset: -0.1
+  xCamOffset: 0
+  recoilTime: 0.1
+  recoilUpSpeed: -10
+  recoilDownSpeed: 10
 --- !u!54 &2179724956820518037
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -296,34 +329,6 @@ MonoBehaviour:
     type: 3}
   speed: 3
   isFresnating: 0
---- !u!114 &227378695926916602
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 737243901954171428}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8dc1a63963b576d46955277e40f0ccb2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  prefabToEquip: {fileID: 2843592534378945299, guid: 02bce6dfbc9e9f543948c0340a9c4d24,
-    type: 3}
-  highlight: {fileID: 0}
---- !u!135 &1001171400728369043
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 737243901954171428}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 1.0009136
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &737257971454390436
 GameObject:
   m_ObjectHideFlags: 0
