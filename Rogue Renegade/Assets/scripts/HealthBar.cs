@@ -17,12 +17,10 @@ public class HealthBar : NetworkBehaviour {
     public Animator glowAnim;
     private GameMech gameMech;
     private ColorAdjustments colorAdjustments;
-    private PlayerMultiDetails playerMultiDetails;
 
     private void Start()
     {
         target = GetComponent<Target>();
-        playerMultiDetails = GetComponent<PlayerMultiDetails>();
         if(gameObject.tag == "Player")
         {
             healthBar = GameObject.FindGameObjectWithTag("healthBar");
@@ -49,19 +47,16 @@ public class HealthBar : NetworkBehaviour {
         ratio = (target.health / target.healthFull);
         if (gameObject.tag == "Player")
         {
-            if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
+            if (colorAdjustments != null)
             {
-                if (colorAdjustments != null)
+                colorAdjustments.saturation.value = (100 - (ratio * 100)) * -1;
+            }
+            else
+            {
+                ColorAdjustments co;
+                if (gameMech.volume.profile.TryGet(out co))
                 {
-                    colorAdjustments.saturation.value = (100 - (ratio * 100)) * -1;
-                }
-                else
-                {
-                    ColorAdjustments co;
-                    if (gameMech.volume.profile.TryGet(out co))
-                    {
-                        colorAdjustments = co;
-                    }
+                    colorAdjustments = co;
                 }
             }
         }

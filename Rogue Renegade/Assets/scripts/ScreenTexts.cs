@@ -71,12 +71,12 @@ public class ScreenTexts : MonoBehaviour
         {
             Destroy(secondaryGun);
         }
-        if(playerGun.secondaryGun != null)
+        if(playerGun.holsteredRifle != null)
         {
-            secondaryGun = Instantiate(guns[playerGun.secondaryGun.GetComponent<GunDetails>().gunInt], AmmoTextP.transform);
+            secondaryGun = Instantiate(guns[playerGun.holsteredRifle.GetComponent<GunDetails>().gunInt], AmmoTextP.transform);
             secondaryGun.transform.localPosition = new Vector3(100, 50, 0);
             secondaryGun.transform.localEulerAngles = new Vector3(0, 90, 0);
-            if (playerGun.secondaryGun.GetComponent<GunDetails>().gunType.Equals("RPG7"))
+            if (playerGun.holsteredRifle.GetComponent<GunDetails>().gunType.Equals("RPG7"))
             {
                 secondaryGun.transform.localScale = new Vector3(40, 40, 40);
             }

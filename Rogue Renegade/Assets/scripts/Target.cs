@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Mirror;
 
-public class Target : NetworkBehaviour {
+public class Target : MonoBehaviour {
 
-    [SyncVar]
     public float health = 5;
     public float healthFull = 5;
     public bool isPlayer = false;
@@ -28,17 +26,14 @@ public class Target : NetworkBehaviour {
     private HealthBar healthBar;
     private float dc;
     public float damageCooldown = 4;
-    private GameMechMulti gameMechMulti;
     public List<int> attackers;
     private bool hasDroppedGun = false;
-    public List<TeammateMech> playerTeammates;
 
     [Header("LEAVE EMPTY")]
     public Transform playerMiddleSpine;
 
     [Header("Only for player")]
     public GameObject damagePointer;
-    private PlayerMultiDetails playerMultiDetails;
 
     private void Start()
     {
@@ -47,13 +42,11 @@ public class Target : NetworkBehaviour {
         
         
         
-        gameMechMulti = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMechMulti>();
         if (isPlayer)
         {
             //playerMiddleSpine = GameObject.FindGameObjectWithTag("PlayerMiddleSpine").transform;
             healthBar = GetComponent<HealthBar>();
             playerGun = GetComponent<PlayerGun>();
-            playerMultiDetails = GetComponent<PlayerMultiDetails>();
         }
         attackers = new List<int>();
 
@@ -65,18 +58,14 @@ public class Target : NetworkBehaviour {
 
         if (isPlayer)
         {
-            if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
+            float z = Camera.main.transform.eulerAngles.y - (Mathf.Atan2(pos.normalized.x, pos.normalized.z) * Mathf.Rad2Deg);
+            //Debug.Log(Camera.main.transform.eulerAngles.y);
+            damagePointer.transform.localRotation = Quaternion.Euler(0, 0, z);
+            Animator[] a = damagePointer.transform.GetComponentsInChildren<Animator>();
+
+            foreach (Animator an in a)
             {
-
-                float z = Camera.main.transform.eulerAngles.y - (Mathf.Atan2(pos.normalized.x, pos.normalized.z) * Mathf.Rad2Deg);
-                //Debug.Log(Camera.main.transform.eulerAngles.y);
-                damagePointer.transform.localRotation = Quaternion.Euler(0, 0, z);
-                Animator[] a = damagePointer.transform.GetComponentsInChildren<Animator>();
-
-                foreach (Animator an in a)
-                {
-                    an.SetTrigger("slow-glow");
-                }
+                an.SetTrigger("slow-glow");
             }
         }
         
@@ -122,11 +111,7 @@ public class Target : NetworkBehaviour {
         }
 
     }
-    [TargetRpc]
-    public void TargetAddAttacker(NetworkConnection conn, int attacker)
-    {
-        attackers.Add(attacker);
-    }
+    
 
     public void addHealth(float HealthAmount)
     {
@@ -143,53 +128,7 @@ public class Target : NetworkBehaviour {
         
 
     }
-    public void TakePunchForce(Transform puncher, float force)
-    {
-        /*
-        if(timeForPunchForce < time)
-        {
-            r.AddForce(puncher.forward * 1000);
-            timeForPunchForce += 1 * Time.deltaTime;
-        }
-        else
-        {
-            timeForPunchForce = 0;
-        }*/
-        if (isPlayer)
-        {
-            if (isLocalPlayer || !playerMultiDetails.isMultiPlayer)
-            {
-                r.AddForce(puncher.forward * force);
-            }
-        }
-        else
-        {
-            r.AddForce(puncher.forward * force);
-        }
-    }
-    [Command]
-    private void CmdDie(int killer,NetworkConnectionToClient conn = null)
-    {
-        if(gameMechMulti == null)
-        {
-            gameMechMulti = GameObject.FindGameObjectWithTag("GameMechMulti").GetComponent<GameMechMulti>();
-        }
-        switch (GameMechMulti.gameMode)
-        {
-            case GameMechMulti.GameMode.Survival:
-                gameMechMulti.survivalMechMulti.playerDied();
-                break;
-            case GameMechMulti.GameMode.Deathmatch:
-                gameMechMulti.deathmatchMech.playerDied(killer,conn.connectionId);
-                TargetDied(conn);
-                break;
-        }
-    }
-    [TargetRpc]
-    private void TargetDied(NetworkConnection conn)
-    {
-        playerMultiDetails.DiedPleaseRespawnMe();
-    }
+    
     private void Update()
     {
         
@@ -199,18 +138,7 @@ public class Target : NetworkBehaviour {
             if (!isPlayer)
             {
                 //Debug.Log("YEET");
-                EnemyMech e = gameObject.GetComponent<EnemyMech>();
-                if (e != null)
-                {
-                    e.Die();
-                    //e.myCanvas.SetActive(false);
-                }
-                TeammateMech teammate = gameObject.GetComponent<TeammateMech>();
-                if (teammate != null)
-                {
-                    teammate.Die();
-                    //e.myCanvas.SetActive(false);
-                }
+               
 
                 //myHealthBar.SetActive(false);
             }
@@ -298,20 +226,7 @@ public class Target : NetworkBehaviour {
                 {
                     dc = 0;
                 }*/
-                if(gameMechMulti != null)
-                {
-                    if(gameMechMulti.survivalMechMulti != null)
-                    {
-                        if (gameMechMulti.survivalMechMulti.isOnCooldown)
-                        {
-                            if (health < healthFull)
-                            {
-                                health += 1 * Time.deltaTime;
-
-                            }
-                        }
-                    }
-                }
+                
             }
             
         }

@@ -14,13 +14,6 @@ public class ReverbZone : MonoBehaviour
     }
     void Update()
     {
-        if (PlayerMotion.isSlowMo)
-        {
-            reverbZone.room = defaultRoomSetting + 2000;
-        }
-        else
-        {
-            reverbZone.room = defaultRoomSetting;
-        }
+        reverbZone.room = defaultRoomSetting;
     }
 }

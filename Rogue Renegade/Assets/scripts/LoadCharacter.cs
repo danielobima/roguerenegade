@@ -1,9 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Mirror;
 
-public class LoadCharacter : NetworkBehaviour
+public class LoadCharacter : MonoBehaviour
 {
     
 
@@ -27,35 +26,12 @@ public class LoadCharacter : NetworkBehaviour
     private bool chain;
     private bool male;
 
-
-    private PlayerMultiDetails playerMultiDetails;
-    [SyncVar]
     public ClothSaveData clothData;
     private ClothSaveData SaveData;
-    private GameMechMulti gameMechMulti;
 
     private void Start()
     {
-        playerMultiDetails = GetComponent<PlayerMultiDetails>();
-        if (playerMultiDetails.isMultiPlayer)
-        {
-            if (isLocalPlayer)
-            {
-                Load();
-            }
-            gameMechMulti = GameObject.FindGameObjectWithTag("GameMech").GetComponent<GameMechMulti>();
-            GameObject[] playerObjs = GameObject.FindGameObjectsWithTag("Player");
-            foreach(GameObject g in playerObjs)
-            {
-                if (!isLocalPlayer)
-                {
-                    LoadCharacter loadChara = g.GetComponent<LoadCharacter>();
-                    loadChara.LoadExternal(loadChara.clothData);
-                }
-            }
-           
-        }
-        else
+        
             Load();
         
         
@@ -69,10 +45,7 @@ public class LoadCharacter : NetworkBehaviour
         {
 
             SaveData = clothSave;
-            if (playerMultiDetails.isMultiPlayer)
-            {
-                CmdLoad(SaveData, netId,gameObject);
-            }
+            
 
             SkinnedMeshRenderer[][] clothRendererArrays;
             
@@ -283,20 +256,7 @@ public class LoadCharacter : NetworkBehaviour
 
     }
 
-    [Command]
-    private void CmdLoad(ClothSaveData clothSave, uint net,GameObject me)
-    {
-        RpcLoad(clothSave,  net);
-        clothData = clothSave;
-    }
-    [ClientRpc]
-    private void RpcLoad(ClothSaveData clothSave,uint net)
-    {
-        if(net == netId)
-        {
-            LoadExternal(clothSave);
-        }
-    }
+    
 
     private void removeLipstick()
     {

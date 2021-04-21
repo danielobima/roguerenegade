@@ -191,7 +191,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3bf92bd7936912740ad7e5d142c5195b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gunType: Bennelli M4
+  gunType: Bennelli_M4
   gunInt: 1
   gunSound: {fileID: 6132734973288818313}
   gunSoundLoops: 1

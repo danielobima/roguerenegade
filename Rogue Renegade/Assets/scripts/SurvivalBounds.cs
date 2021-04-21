@@ -27,7 +27,6 @@ public class SurvivalBounds : MonoBehaviour
                 LauchMissiles();
                 t = 0;
             }
-            playerMotion.slowMoMeter = 0;
         }
     }
     private void LauchMissiles()

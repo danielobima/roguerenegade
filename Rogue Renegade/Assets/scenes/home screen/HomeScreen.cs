@@ -26,7 +26,6 @@ public class HomeScreen : MonoBehaviour
     private Window currentWidow;
     private Window prevWindow;
     public static bool error = false;
-    private GameMechMulti.GameMode mode;
     public static string errorMsg = "Failed to connect";
     public Animator cameraAnimator;
     public static bool clientStarted = true;
@@ -43,7 +42,6 @@ public class HomeScreen : MonoBehaviour
             showErrorMessage(errorMsg);
         }
         gameModeDropDown.ClearOptions();
-        gameModeDropDown.AddOptions(new List<string>(Enum.GetNames(typeof(GameMechMulti.GameMode))));
     }
     public void showErrorMessage(string message)
     {
@@ -84,14 +82,7 @@ public class HomeScreen : MonoBehaviour
         currentWidow = IpAddressWindow;
     }
 
-    public void JoinGame()
-    {
-        GameMechMulti.IPAddress = IPAddressInputField.text;
-        GameMechMulti.isHost = false;
-        GameMechMulti.port = (ushort)int.Parse(PortInputField.text);
-        SceneManager.LoadScene(gameScene,LoadSceneMode.Single);
-        HomeScreen.clientStarted = false;
-    }
+    
     public void showHostGameWindow()
     {
         currentWidow.hideWindow(WindowAnimationTriggers.popOut);
@@ -99,27 +90,8 @@ public class HomeScreen : MonoBehaviour
 
         currentWidow = HostGameWindow;
     }
-    public void HostGame()
-    {
-        if(mode == GameMechMulti.GameMode.Possession  )
-        {
-            Debug.Log("Not yet made :(");
-        }
-        else
-        {
-           
-
-            GameMechMulti.isHost = true;
-            GameMechMulti.gameMode = mode;
-            SceneManager.LoadScene(gameScene, LoadSceneMode.Single);
-        }
-    }
-    public void ChangeMode(int Mode)
-    {
-        mode = (GameMechMulti.GameMode) Mode;
-
-        
-    }
+    
+    
     public void back()
     {
         if(currentWidow != prevWindow)

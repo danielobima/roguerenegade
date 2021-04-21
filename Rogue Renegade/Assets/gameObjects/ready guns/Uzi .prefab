@@ -520,7 +520,7 @@ Transform:
   m_GameObject: {fileID: 4742130442308354327}
   m_LocalRotation: {x: 0.09979412, y: -0.5024902, z: -0.31384146, w: 0.799405}
   m_LocalPosition: {x: 13.595691, y: 1.4093939, z: 4.506099}
-  m_LocalScale: {x: 0.793626, y: 0.7936256, z: 0.793626}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4501716194079488412}
   - {fileID: 3836944733531924268}
@@ -593,23 +593,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gunType: Uzi
   gunInt: 7
-  timeToNextShot: 0.05
-  localPos: {x: -0.0012, y: 0.0119, z: 0.00164}
-  localRot: {x: 92.38098, y: -0.6329956, z: 89.40099}
-  localScale: {x: 0.0417698, y: 0.04176977, z: 0.0417698}
-  damage: 0.5
-  enemyDamage: 0.5
-  ammoMax: 32
-  ammoSpare: 32
-  handgun: 1
-  ammoLoaded: 0
-  isContinuousShooting: 1
   gunSound: {fileID: 2283240956081543805}
   gunSoundLoops: 1
-  d: 0
-  yCamOffset: 0.06
-  zCamOffset: 0
-  xCamOffset: 0
+  gunID: 0
+  canDestroy: 1
+  handgun: 1
+  isContinuousShooting: 1
+  damage: 0.5
+  enemyDamage: 0.5
+  localPos: {x: -0.0012, y: 0.0119, z: 0.00164}
+  localRot: {x: 92.38098, y: -0.6329956, z: 89.40099}
+  handPose: {fileID: 0}
+  fireRate: 0
+  ammoMax: 32
+  ammoSpare: 32
+  ammoLoaded: 0
+  isShooting: 0
+  bulletTracer: {fileID: 4342547127244030492, guid: 5d73053b1c122444280f5890969eb569,
+    type: 3}
+  impacts: []
+  bulletSpeed: 1000
+  bulletDrop: 0
+  maxLifeTime: 2
+  gunDrop: {fileID: 0}
 --- !u!64 &4742130442308354324
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -636,6 +642,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d189347ccbb6a924293c3856daa9dccd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   smoke: {fileID: 198029985508498878, guid: e026391e924d9bc4ea95bd86b1ef48ed, type: 3}
   bullet: {fileID: 1653814031381372, guid: 46be1246a2cba5d46b7eaea8b1b6eb64, type: 3}
   shotgunBullet: {fileID: 0}

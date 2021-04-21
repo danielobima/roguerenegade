@@ -78,6 +78,7 @@ public class GunDetails : MonoBehaviour
     {
         Bullet b = new Bullet(initPos,initVelocity);
         b.tracer = Instantiate(bulletTracer, initPos, Quaternion.identity);
+        b.tracer.AddPosition(initPos);
         return b;
     }
     Vector3 GetBulletPos(Bullet bullet)
@@ -88,6 +89,10 @@ public class GunDetails : MonoBehaviour
     public void startShooting()
     {
         isShooting = true;
+        shoot();
+    }
+    public void singleShot()
+    {
         shoot();
     }
     public void UpdateFiring(float deltaTime)

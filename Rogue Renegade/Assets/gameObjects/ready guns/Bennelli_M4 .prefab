@@ -351,7 +351,7 @@ Transform:
   m_GameObject: {fileID: 6228256565090340102}
   m_LocalRotation: {x: 0.09979391, y: -0.5024903, z: -0.31384155, w: 0.799405}
   m_LocalPosition: {x: -5.9217086, y: 1.4150937, z: -8.4824}
-  m_LocalScale: {x: 0.79362607, y: 0.7936255, z: 0.79362607}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7812456494835272128}
   - {fileID: 7814903877375397178}
@@ -436,23 +436,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gunType: Bennelli M4
   gunInt: 1
-  timeToNextShot: 1.9
-  localPos: {x: -0.0011, y: 0.02, z: 0.0004}
-  localRot: {x: 60, y: -18.162, z: 36.586}
-  localScale: {x: 0.0417698, y: 0.04176978, z: 0.04176979}
-  damage: 1
-  enemyDamage: 1
-  ammoMax: 8
-  ammoSpare: 16
-  handgun: 0
-  ammoLoaded: 0
-  isContinuousShooting: 1
   gunSound: {fileID: 7570643405644252807}
   gunSoundLoops: 1
-  d: 0
-  yCamOffset: 0.025
-  zCamOffset: -0.15
-  xCamOffset: 0
+  gunID: 0
+  canDestroy: 1
+  handgun: 0
+  isContinuousShooting: 1
+  damage: 1
+  enemyDamage: 1
+  localPos: {x: -0.0011, y: 0.02, z: 0.0004}
+  localRot: {x: 60, y: -18.162, z: 36.586}
+  handPose: {fileID: 0}
+  fireRate: 0
+  ammoMax: 8
+  ammoSpare: 16
+  ammoLoaded: 0
+  isShooting: 0
+  bulletTracer: {fileID: 4342547127244030492, guid: 5d73053b1c122444280f5890969eb569,
+    type: 3}
+  impacts: []
+  bulletSpeed: 1000
+  bulletDrop: 0
+  maxLifeTime: 2
+  gunDrop: {fileID: 0}
 --- !u!114 &6228256565090340106
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -465,6 +471,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d189347ccbb6a924293c3856daa9dccd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   smoke: {fileID: 198029985508498878, guid: e026391e924d9bc4ea95bd86b1ef48ed, type: 3}
   bullet: {fileID: 1653814031381372, guid: 46be1246a2cba5d46b7eaea8b1b6eb64, type: 3}
   shotgunBullet: {fileID: 3438188127385316086, guid: 299b522cee62ad24ab66ef8257d08ef4,

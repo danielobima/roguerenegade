@@ -9542,7 +9542,7 @@ Transform:
   m_GameObject: {fileID: 4432814557664236262}
   m_LocalRotation: {x: -0.31202862, y: -0.40631709, z: -0.8079798, w: 0.29105535}
   m_LocalPosition: {x: -9.045405, y: 0.8101816, z: -10.792787}
-  m_LocalScale: {x: 0.7936262, y: 0.79362524, z: 0.7936255}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 7100933603929150260}
   - {fileID: 1689652650225226653}
@@ -9631,6 +9631,8 @@ MonoBehaviour:
   explostionParticleSystem: {fileID: 100010, guid: 031d08f52af1daa4f929b85221519426,
     type: 3}
   isLaunched: 0
+  homingTarget: {fileID: 0}
+  isHoming: 0
 --- !u!1 &7161155900773789239
 GameObject:
   m_ObjectHideFlags: 0

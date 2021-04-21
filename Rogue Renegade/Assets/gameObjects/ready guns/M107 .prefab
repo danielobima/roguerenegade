@@ -4953,7 +4953,7 @@ Transform:
   m_GameObject: {fileID: 2387336964966709874}
   m_LocalRotation: {x: 0.09979409, y: -0.5024902, z: -0.31384143, w: 0.799405}
   m_LocalPosition: {x: 9.089292, y: 1.3941939, z: 4.9304996}
-  m_LocalScale: {x: 0.7936264, y: 0.79362524, z: 0.7936257}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1979172682073689501}
   - {fileID: 1974856407865477479}
@@ -5040,27 +5040,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gunType: M107
   gunInt: 3
-  timeToNextShot: 1.5
-  localPos: {x: -0.0008, y: 0.0156, z: 0.0019}
-  localRot: {x: 60, y: -18.162, z: 36.586}
-  localScale: {x: 0.04176981, y: 0.04176976, z: 0.04176978}
-  damage: 3
-  enemyDamage: 3
-  ammoMax: 30
-  ammoSpare: 30
-  handgun: 0
-  ammoLoaded: 0
-  isContinuousShooting: 1
   gunSound: {fileID: 733180936717361740}
   gunSoundLoops: 1
-  d: 0
-  yCamOffset: 0.09
-  zCamOffset: 0
-  xCamOffset: 0
-  recoilTime: 0.1
-  recoilUpSpeed: -10
-  recoilDownSpeed: 10
-  scopeCam: {fileID: 4477235292796649526}
+  gunID: 0
+  canDestroy: 1
+  handgun: 0
+  isContinuousShooting: 1
+  damage: 3
+  enemyDamage: 3
+  localPos: {x: -0.0008, y: 0.0156, z: 0.0019}
+  localRot: {x: 60, y: -18.162, z: 36.586}
+  handPose: {fileID: 0}
+  fireRate: 0
+  ammoMax: 30
+  ammoSpare: 30
+  ammoLoaded: 0
+  isShooting: 0
+  bulletTracer: {fileID: 4342547127244030492, guid: 5d73053b1c122444280f5890969eb569,
+    type: 3}
+  impacts: []
+  bulletSpeed: 1000
+  bulletDrop: 0
+  maxLifeTime: 2
+  gunDrop: {fileID: 0}
 --- !u!114 &310376318801743563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5073,6 +5075,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d189347ccbb6a924293c3856daa9dccd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   smoke: {fileID: 198029985508498878, guid: e026391e924d9bc4ea95bd86b1ef48ed, type: 3}
   bullet: {fileID: 1653814031381372, guid: 46be1246a2cba5d46b7eaea8b1b6eb64, type: 3}
   shotgunBullet: {fileID: 0}

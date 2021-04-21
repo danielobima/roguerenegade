@@ -23,7 +23,6 @@ public class SurvivalMech : MonoBehaviour
     public int floor;
     private int easyWeapons = 50;
     private GameMech gameMech;
-    private EnemyManager enemyManager;
     private int meduimWeapons = 80;
     //private int hardWeapons = 100;
 
@@ -42,8 +41,6 @@ public class SurvivalMech : MonoBehaviour
             playerTarget.health = playerTarget.healthFull;
         }
         gameMech = GetComponent<GameMech>();
-        enemyManager = GetComponent<EnemyManager>();
-        playerTarget.GetComponent<PlayerMotion>().currentEnemyManager = enemyManager;
     }
 
    
@@ -75,27 +72,7 @@ public class SurvivalMech : MonoBehaviour
         }*/
         return Random.Range(0, 8);
     }
-    private void spawnEnemies()
-    {
-        if (spawnedEnemies.Count < waveNo)
-        {
-            a += 1 * Time.deltaTime;
-            if (a >= 1)
-            {
-                int i = Random.Range(0, spawnerGOs.Length - 1);
-
-                GameObject go = spawnerGOs[i].GetComponent<Spawner>().SpawnEnemy(randomEnemy(calculateDifficulty(waveNo, floor), calculateBias(waveNo, floor)), floor);
-                spawnedEnemies.Add(go);
-                enemyManager.enemies.Add(go.GetComponent<EnemyMech>());
-                go.GetComponent<EnemyMech>().enemyManager = enemyManager;
-                a = 0;
-            }
-        }
-        else
-        {
-            hasSpawned = true;
-        }
-    }
+    
     private void goToNextWave()
     {
         w += 1 * Time.deltaTime;
@@ -187,7 +164,7 @@ public class SurvivalMech : MonoBehaviour
         {
             if (!hasSpawned)
             {
-                spawnEnemies();
+                //spawnEnemies();
             }
             else
             {
