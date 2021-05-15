@@ -3,9 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using Mirror;
 
-public class RagdollSwitch : NetworkBehaviour
+public class RagdollSwitch : MonoBehaviour
 {
     public bool isPlayer = false;
     public Collider mainBody;
@@ -22,7 +21,6 @@ public class RagdollSwitch : NetworkBehaviour
     [Header("Only for players")]
     public PlayerMotion playerMotion;
 
-    private NetworkAnimator networkAnimator;
     
     
 
@@ -30,7 +28,6 @@ public class RagdollSwitch : NetworkBehaviour
     {
        
         navMeshAgent = GetComponent<NavMeshAgent>();
-        networkAnimator = GetComponent<NetworkAnimator>();
         SwitchRagdoll(false);
        
         
@@ -39,10 +36,6 @@ public class RagdollSwitch : NetworkBehaviour
     public void SwitchRagdoll(bool value)
     {
 
-        if (networkAnimator != null)
-        {
-            networkAnimator.enabled = !value;
-        }
         /*animator.enabled = !value;
         foreach (Collider c in colliders)
         {

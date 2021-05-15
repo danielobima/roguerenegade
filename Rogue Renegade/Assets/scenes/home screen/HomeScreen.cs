@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
-using Mirror;
 using System;
 
 public class HomeScreen : MonoBehaviour
@@ -20,7 +19,6 @@ public class HomeScreen : MonoBehaviour
     public TMP_InputField IPAddressInputField;
     public TMP_InputField PortInputField;
     public TMP_Dropdown gameModeDropDown;
-    [Scene]
     public string gameScene;
 
     private Window currentWidow;

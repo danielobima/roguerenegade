@@ -41,10 +41,10 @@ public class BotWeapon : MonoBehaviour
     }
     private void setAnim()
     {
-        anim.Play(gunDetails.gunType, 1);
+        anim.Play(gunDetails.gunType);
     }
     private void initAnim()
     {
-        anim.Play("New Animation", 1);
+        anim.Play("New Animation");
     }
 }

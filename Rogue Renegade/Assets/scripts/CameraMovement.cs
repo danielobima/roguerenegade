@@ -14,7 +14,7 @@ public class CameraMovement : MonoBehaviour
         AimTarget = transform.GetChild(0);
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         ray.origin = transform.position;
         ray.direction = transform.forward;

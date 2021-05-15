@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7717354647474461652}
   - component: {fileID: 8459596006722586786}
   - component: {fileID: 3677993455043225347}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -117,7 +117,7 @@ GameObject:
   - component: {fileID: 588560244271268605}
   - component: {fileID: 629275582347535077}
   - component: {fileID: 576802841185497265}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: bullet spawn pos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -209,7 +209,7 @@ GameObject:
   - component: {fileID: 595239582438936483}
   - component: {fileID: 761369866105659539}
   - component: {fileID: 762247641825150561}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: muzzle flash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4891,7 +4891,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2011005474114414834}
   - component: {fileID: 3113415202191108644}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Audio Source
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5033,7 +5033,7 @@ GameObject:
   - component: {fileID: 1934175956446333783}
   - component: {fileID: 2775331386688874842}
   - component: {fileID: 5084732488709826914}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: M249 pickup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5194,7 +5194,7 @@ GameObject:
   - component: {fileID: 7429520972731875696}
   - component: {fileID: 7449846088339112196}
   - component: {fileID: 7442156455771573292}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Magazin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5273,7 +5273,7 @@ GameObject:
   - component: {fileID: 7429530878009703958}
   - component: {fileID: 7452339314511946896}
   - component: {fileID: 7440251417856657768}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Bolt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5352,7 +5352,7 @@ GameObject:
   - component: {fileID: 7429736950487565184}
   - component: {fileID: 7449626685354069538}
   - component: {fileID: 7441659218209855086}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Slide
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5431,7 +5431,7 @@ GameObject:
   - component: {fileID: 7429580995212967468}
   - component: {fileID: 7452524568522938740}
   - component: {fileID: 7440276279905409976}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}

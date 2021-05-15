@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5477867191520234800}
   - component: {fileID: 4757998425917201900}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Audio Source
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -147,7 +147,7 @@ GameObject:
   - component: {fileID: 461197874249309433}
   - component: {fileID: 5668156232619808636}
   - component: {fileID: 508594935987346045}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -253,7 +253,7 @@ GameObject:
   - component: {fileID: 8036025905463553612}
   - component: {fileID: 6171942341349408965}
   - component: {fileID: 1657150877701095525}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: bullet spawn pos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -345,7 +345,7 @@ GameObject:
   - component: {fileID: 1699866296277636675}
   - component: {fileID: 631131399053403859}
   - component: {fileID: 5436634206528344107}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: muzzle flash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5033,7 +5033,7 @@ GameObject:
   - component: {fileID: 649255029713580907}
   - component: {fileID: 7170326880839337407}
   - component: {fileID: 6051798934814939202}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Uzi pickup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5194,7 +5194,7 @@ GameObject:
   - component: {fileID: 7506516504549013058}
   - component: {fileID: 7517703222181513598}
   - component: {fileID: 7527764518239824290}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5273,7 +5273,7 @@ GameObject:
   - component: {fileID: 7506920453460258154}
   - component: {fileID: 7518089807362821440}
   - component: {fileID: 7525653207050876922}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Stock_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5352,7 +5352,7 @@ GameObject:
   - component: {fileID: 7508173589130536446}
   - component: {fileID: 7519499325859522434}
   - component: {fileID: 7525573347326880986}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Stock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5432,7 +5432,7 @@ GameObject:
   - component: {fileID: 7506433956576400940}
   - component: {fileID: 7517640190720561448}
   - component: {fileID: 7526459389463381762}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Bolt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5511,7 +5511,7 @@ GameObject:
   - component: {fileID: 7506617115127782154}
   - component: {fileID: 7518139343963884636}
   - component: {fileID: 7525719231434155368}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Magazin
   m_TagString: Untagged
   m_Icon: {fileID: 0}

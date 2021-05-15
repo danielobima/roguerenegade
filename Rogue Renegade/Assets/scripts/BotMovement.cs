@@ -12,6 +12,9 @@ public class BotMovement : MonoBehaviour
     /// </summary>
     public bool isMoving;
     private float moveSpeed = 0;
+    private Vector3 movingRifleWeaponPose = new Vector3(0.27044f, 1.1234f, 0.133f);
+    private Vector3 stationaryRifleWeaponPose = new Vector3(0.265f, 1.222f, 0.122f);
+    public Transform WeaponPose;
 
     private void Start()
     {
@@ -33,12 +36,12 @@ public class BotMovement : MonoBehaviour
             {
                 isMoving = false;
             }
-            
+            WeaponPose.localPosition = movingRifleWeaponPose;
         }
         else
         {
             anim.SetFloat("move-speed", 0, 0.25f, Time.deltaTime);
-            
+            WeaponPose.localPosition = stationaryRifleWeaponPose;
         }
            
     }

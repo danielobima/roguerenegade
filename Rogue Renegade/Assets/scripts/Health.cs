@@ -1,9 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Mirror;
 
-public class Health : NetworkBehaviour
+public class Health : MonoBehaviour
 {
     public float amountOfHealth;
     public float speed;
@@ -31,7 +30,6 @@ public class Health : NetworkBehaviour
             Collided(collision);
         }
     }
-    [ServerCallback]
     private void Collided(Collision collision)
     {
         if (collision.collider.CompareTag("Player"))
@@ -40,7 +38,7 @@ public class Health : NetworkBehaviour
             collision.collider.GetComponent<Target>().addHealth(amountOfHealth);
             
             
-            NetworkServer.Destroy(gameObject);
+            Destroy(gameObject);
         }
     }
     

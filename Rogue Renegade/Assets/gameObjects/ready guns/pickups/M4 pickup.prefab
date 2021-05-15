@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4284577691191122469}
   - component: {fileID: 4284577691194546693}
   - component: {fileID: 4284577691193546949}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Sight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 4284577691191122471}
   - component: {fileID: 4284577691194546695}
   - component: {fileID: 4284577691193546951}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -169,7 +169,7 @@ GameObject:
   - component: {fileID: 4284577691191122473}
   - component: {fileID: 4284577691194546697}
   - component: {fileID: 4284577691193546953}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Mag
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -248,7 +248,7 @@ GameObject:
   - component: {fileID: 4284577691191122475}
   - component: {fileID: 4284577691194546699}
   - component: {fileID: 4284577691193546955}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Rear_Sight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -327,7 +327,7 @@ GameObject:
   - component: {fileID: 4284577691191122477}
   - component: {fileID: 4284577691194546701}
   - component: {fileID: 4284577691193546957}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Bolt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -411,7 +411,7 @@ GameObject:
   - component: {fileID: 5156000815279167809}
   - component: {fileID: 3554698821642564392}
   - component: {fileID: 4894834602202444243}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: M4 pickup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -573,7 +573,7 @@ GameObject:
   - component: {fileID: 6153130610384499990}
   - component: {fileID: 2444797917038900538}
   - component: {fileID: 138098251260793753}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -679,7 +679,7 @@ GameObject:
   - component: {fileID: 7119845899327521815}
   - component: {fileID: 7088552276756947983}
   - component: {fileID: 7126116636356556379}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: bullet spawn pos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -771,7 +771,7 @@ GameObject:
   - component: {fileID: 7108524423430457673}
   - component: {fileID: 6950417241757099641}
   - component: {fileID: 6949113885980524683}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: muzzle flash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5453,7 +5453,7 @@ GameObject:
   m_Component:
   - component: {fileID: 476393662977629721}
   - component: {fileID: 2024224111544596844}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Audio Source
   m_TagString: Untagged
   m_Icon: {fileID: 0}

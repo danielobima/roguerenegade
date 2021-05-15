@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8370720624075618778}
   - component: {fileID: 7067837853456067288}
   - component: {fileID: 7684604602883231130}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -115,7 +115,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6332568449951836188}
   - component: {fileID: 3194014377461224164}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Audio Source
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -252,7 +252,7 @@ GameObject:
   - component: {fileID: 5648029514448688375}
   - component: {fileID: 5526917366443588551}
   - component: {fileID: 5528010097830829365}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: muzzle flash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4936,7 +4936,7 @@ GameObject:
   - component: {fileID: 5623201225098942889}
   - component: {fileID: 5663488853084895665}
   - component: {fileID: 5630155894947359717}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: bullet spawn pos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5028,7 +5028,7 @@ GameObject:
   - component: {fileID: 8390256015169615893}
   - component: {fileID: 8365402387611069275}
   - component: {fileID: 8373786309532501769}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5107,7 +5107,7 @@ GameObject:
   - component: {fileID: 8390472638535347783}
   - component: {fileID: 8365210181792671689}
   - component: {fileID: 8373590437289460627}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Pump
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5191,7 +5191,7 @@ GameObject:
   - component: {fileID: 2605584111276347629}
   - component: {fileID: 7425431294042003818}
   - component: {fileID: 8432786599802490279}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Bennelli_M4 pickup
   m_TagString: Untagged
   m_Icon: {fileID: 0}

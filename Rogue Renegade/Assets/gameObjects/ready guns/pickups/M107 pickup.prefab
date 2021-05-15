@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 750442922}
   - component: {fileID: 750442921}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: CM vcam1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -77,7 +77,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1067654733}
   - component: {fileID: 1067654734}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: cm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -126,7 +126,7 @@ GameObject:
   - component: {fileID: 7365221092167822268}
   - component: {fileID: 2410282886404506185}
   - component: {fileID: 4010614269449974743}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: M107 pickup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -287,7 +287,7 @@ GameObject:
   - component: {fileID: 1129726391845545115}
   - component: {fileID: 1129726391846315195}
   - component: {fileID: 1129726391847446139}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Bolt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -366,7 +366,7 @@ GameObject:
   - component: {fileID: 1129726391845545117}
   - component: {fileID: 1129726391846315197}
   - component: {fileID: 1129726391847446141}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -445,7 +445,7 @@ GameObject:
   - component: {fileID: 1129726391845545119}
   - component: {fileID: 1129726391846315199}
   - component: {fileID: 1129726391847446143}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Magazin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -525,7 +525,7 @@ GameObject:
   - component: {fileID: 3860493327437939208}
   - component: {fileID: 3819726039582925328}
   - component: {fileID: 3871109370868445252}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: bullet spawn pos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -617,7 +617,7 @@ GameObject:
   - component: {fileID: 3889827401710358358}
   - component: {fileID: 3974756031877783654}
   - component: {fileID: 3976056592702277268}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: muzzle flash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5299,7 +5299,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2913226102246457797}
   - component: {fileID: 1232295321165266033}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Audio Source
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5436,7 +5436,7 @@ GameObject:
   - component: {fileID: 4445107278150325064}
   - component: {fileID: 6904316357764936476}
   - component: {fileID: 6975026550313320216}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5540,6 +5540,14 @@ PrefabInstance:
     - target: {fileID: 1378609178869200, guid: 49535f27af2648646a94c1f9918737d6, type: 3}
       propertyPath: m_Name
       value: TAN_LR_Scope_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 1378609178869200, guid: 49535f27af2648646a94c1f9918737d6, type: 3}
+      propertyPath: m_Layer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1796153942692692, guid: 49535f27af2648646a94c1f9918737d6, type: 3}
+      propertyPath: m_Layer
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4523601712017382, guid: 49535f27af2648646a94c1f9918737d6, type: 3}
       propertyPath: m_LocalPosition.x

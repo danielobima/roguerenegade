@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 4976478476493229424}
   - component: {fileID: 8277673223964292920}
   - component: {fileID: 8277673223964292921}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: AK74 pickup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -173,7 +173,7 @@ GameObject:
   - component: {fileID: 8283303500549184456}
   - component: {fileID: 8255670671801730310}
   - component: {fileID: 8265417255061491372}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Bolt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -252,7 +252,7 @@ GameObject:
   - component: {fileID: 8283540006178387196}
   - component: {fileID: 8258978620195377014}
   - component: {fileID: 8266305967842684054}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -331,7 +331,7 @@ GameObject:
   - component: {fileID: 8283478868285066780}
   - component: {fileID: 8258865522820093108}
   - component: {fileID: 8266178852080531140}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Mag
   m_TagString: Untagged
   m_Icon: {fileID: 0}

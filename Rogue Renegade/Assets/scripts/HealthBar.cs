@@ -3,9 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Rendering.Universal;
 using UnityEngine;
-using Mirror;
 
-public class HealthBar : NetworkBehaviour {
+public class HealthBar : MonoBehaviour {
 
     private Target target;
     [Header("PLEASE LEAVE THE HEALTHBAR SPACE EMPTY")]

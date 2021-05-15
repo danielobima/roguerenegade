@@ -142,34 +142,31 @@ public class PlayerMotion : MonoBehaviour {
         animator.SetFloat("InputY", Mathf.MoveTowards(animator.GetFloat("InputY"), vertical, Time.deltaTime * 5));
         direction = new Vector3(horizontal, 0, vertical).normalized;
         targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
-        if (!obstaculated  && !isRolling && !isLanding && !isCrouchJumping)
+        if (!obstaculated  && !isRolling  && !isCrouchJumping)
         {
-            if (!isBeingPunched)
-            {
-                float target =
+            float target =
                     //targetAngle + 
                     cam.transform.eulerAngles.y;
 
-                float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, target, ref turnSmoothRef, turnSmoothing);
+            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, target, ref turnSmoothRef, turnSmoothing);
 
 
-                transform.rotation = Quaternion.Euler(0, target, 0);
-                if (direction.magnitude >= .1f && !GameMech.gameIsPaused )
+            transform.rotation = Quaternion.Euler(0, target, 0);
+            if (direction.magnitude >= .1f && !GameMech.gameIsPaused)
+            {
+
+                if (!isOnFloor || isJumping)
                 {
-
-                    if (!isOnFloor || isJumping)
-                    {
-
-                    }
-
-                    isMoving = true;
-
+                    myTransform.Translate(direction * Time.deltaTime * jumpSpeed);
                 }
-                else
-                {
 
-                    isMoving = false;
-                }
+                isMoving = true;
+
+            }
+            else
+            {
+
+                isMoving = false;
             }
 
         }
@@ -264,30 +261,13 @@ public class PlayerMotion : MonoBehaviour {
                             {
                                 if (!isCrouching)
                                 {
-                                    if (!PlayerGun.isFineAim)
+                                    if (playerGun.gun)
                                     {
-                                        /*if (Quaternion.Angle(virtualMiddleSpine.transform.rotation, transform.rotation) < 120)
-                                        {
-
-                                            animator.SetInteger("motion", 2);
-                                        }
-                                        else
-                                        {
-
-                                            animator.SetInteger("motion", 16);
-                                        }*/
-                                        if (playerGun.gun)
-                                        {
-                                            animator.SetInteger("motion", 2);
-                                        }
-                                        else
-                                        {
-                                            animator.SetInteger("motion", 0);
-                                        }
+                                        animator.SetInteger("motion", 2);
                                     }
                                     else
                                     {
-                                        animator.SetInteger("motion", 1);
+                                        animator.SetInteger("motion", 0);
                                     }
                                 }
                                 else
@@ -595,7 +575,7 @@ public class PlayerMotion : MonoBehaviour {
     {
         if (!target.isDead)
         {
-            if (isOnFloor && !PlayerGun.isFineAim && !isJumping && !isRolling && !isCrouchJumping && !isLanding)
+            if (isOnFloor  && !isJumping && !isRolling && !isCrouchJumping && !isLanding)
             {
                 if (isCrouching)
                 {
