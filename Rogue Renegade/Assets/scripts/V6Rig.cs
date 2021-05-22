@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class V6Rig : MonoBehaviour
 {
+    [Header("This script is used on the rig so that the rig animator can use the weapon controller functions.")]
     private Animator rig;
     private WeaponController weaponController;
 

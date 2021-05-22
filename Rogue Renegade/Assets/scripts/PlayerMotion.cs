@@ -42,7 +42,7 @@ public class PlayerMotion : MonoBehaviour {
     public static bool obstaculated = false;
     public float obstacleDistance = 0.7f;
     public bool isBeingPunched = false;
-    public float turnSmoothing = 0.1f;
+    private float turnSmoothing = 0.01f;
     private float turnSmoothRef;
     private Vector3 direction;
     private float targetAngle;
@@ -151,7 +151,7 @@ public class PlayerMotion : MonoBehaviour {
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, target, ref turnSmoothRef, turnSmoothing);
 
 
-            transform.rotation = Quaternion.Euler(0, target, 0);
+            transform.rotation = Quaternion.Euler(0, angle, 0);
             if (direction.magnitude >= .1f && !GameMech.gameIsPaused)
             {
 

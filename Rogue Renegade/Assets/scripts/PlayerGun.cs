@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Cinemachine;
 using UnityEngine.UI;
 using DigitalRuby.Tween;
 using UnityEngine.Animations.Rigging;
@@ -14,15 +13,31 @@ public class PlayerGun : WeaponController {
     [HideInInspector]
     public WeaponPickup possibleGunPickUp;
     
-    
+    private float turnSmoothing = 0.01f;
+    private Vector3 turnSmoothRef;
 
-   public override void UpdateFunc()
+    //Use this instead of Start()
+    public override void StartFunc()
     {
+        base.StartFunc();
+    }
+
+    //Use this instead of Update()
+    public override void UpdateFunc()
+    {
+        
         if (gun)
         {
             if (Input.GetButtonDown("Fire1"))
             {
-                gunDetails.startShooting();
+                if (gunDetails.isContinuousShooting)
+                {
+                    gunDetails.startShooting();
+                }
+                else
+                {
+                    gunDetails.singleShot();
+                }
             }
 
             if (Input.GetButtonUp("Fire1"))
@@ -102,6 +117,10 @@ public class PlayerGun : WeaponController {
             }
         }
     }
-   
-    
+
+    private void FixedUpdate()
+    {
+        aimPos.position = Vector3.SmoothDamp(aimPos.position, Camera.main.transform.GetChild(0).position, ref turnSmoothRef, turnSmoothing);
+        
+    }
 }

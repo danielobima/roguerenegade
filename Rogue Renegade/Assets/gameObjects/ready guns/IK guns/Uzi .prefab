@@ -664,6 +664,7 @@ GameObject:
   - component: {fileID: 6492372368215877521}
   - component: {fileID: 6507238803526086289}
   - component: {fileID: 6507238803526086288}
+  - component: {fileID: 4857607047676449172}
   m_Layer: 0
   m_Name: 'Uzi '
   m_TagString: Untagged
@@ -764,7 +765,13 @@ MonoBehaviour:
   localPos: {x: 0, y: -0.053, z: 0.1619999}
   localRot: {x: 0, y: 180, z: 0}
   handPose: {fileID: 7400000, guid: 977dcf602edf0a948932709afad74bed, type: 2}
-  fireRate: 0
+  cam: {fileID: 0}
+  camShake: {fileID: 0}
+  rig: {fileID: 0}
+  maxVerticalRecoil: 10
+  maxHorizontalRecoil: 10
+  recoilDuration: 0.1
+  fireRate: 20
   ammoMax: 32
   ammoSpare: 32
   ammoLoaded: 0
@@ -790,6 +797,47 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: ff8c9f278b5bc8e4c894e1122f4a81f3, type: 3}
+--- !u!114 &4857607047676449172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6507238803526086291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 180ecf9b41d478f468eb3e9083753217, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ImpulseDefinition:
+    m_ImpulseChannel: 1
+    m_RawSignal: {fileID: 11400000, guid: 96e3e157569372a498ed53e7d8d9e8c4, type: 2}
+    m_AmplitudeGain: 1
+    m_FrequencyGain: 1
+    m_RepeatMode: 0
+    m_Randomize: 1
+    m_TimeEnvelope:
+      m_AttackShape:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      m_DecayShape:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      m_AttackTime: 0
+      m_SustainTime: 0.2
+      m_DecayTime: 0.7
+      m_ScaleWithImpact: 1
+      m_HoldForever: 0
+    m_ImpactRadius: 100
+    m_DirectionMode: 0
+    m_DissipationMode: 2
+    m_DissipationDistance: 1000
 --- !u!1 &6507267314040106413
 GameObject:
   m_ObjectHideFlags: 0

@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using UnityEditor.Animations;
+using Cinemachine;
 
 public class WeaponController : MonoBehaviour
 {
     /// <summary>
     /// What your currently holding
     /// </summary>
-    
+    [HideInInspector]
     public GameObject gun;
     /// <summary>
     /// The gun on your back
     /// </summary>
-   
+    [HideInInspector]
     public GameObject holsteredRifle;
     /// <summary>
     /// The gun on your waist
@@ -31,6 +32,9 @@ public class WeaponController : MonoBehaviour
     public GameObject grenade;
     [HideInInspector]
     public bool hasHandgun = false;
+    
+    [HideInInspector]
+    public CinemachineFreeLook tpp;
 
     public Transform rightHandGrip;
     public Transform leftHandGrip;
@@ -66,13 +70,10 @@ public class WeaponController : MonoBehaviour
     public Animator rig;
 
 
-
-
-
-
     //To make gun drops accessible by the pick up button
-    [Header("LEAVE THIS EMPTY PLEASE")]
+    [HideInInspector]
     public GameObject gunDrop;
+    [HideInInspector]
     public GameObject grenadeDrop;
 
 
@@ -80,9 +81,8 @@ public class WeaponController : MonoBehaviour
     private void Start()
     {
         StartFunc();
-
     }
-    public void StartFunc()
+    public virtual void StartFunc()
     {
         Invoke(nameof(initAnim), 0.001f);
 
@@ -97,7 +97,7 @@ public class WeaponController : MonoBehaviour
     private void Update()
     {
 
-        aimPos.position = Camera.main.transform.GetChild(0).position;
+        
 
         if (gun)
         {
@@ -106,7 +106,7 @@ public class WeaponController : MonoBehaviour
             spine1.data.offset = new Vector3(0, 80, 0);
 
             gunDetails.UpdateBullets(Time.deltaTime);
-            if (gunDetails.isShooting)
+            if (gunDetails.isShooting || !gunDetails.isContinuousShooting)
             {
                 gunDetails.UpdateFiring(Time.deltaTime);
             }
@@ -271,6 +271,11 @@ public class WeaponController : MonoBehaviour
         gun.transform.localPosition = gunDetails.localPos;
         gun.transform.localEulerAngles = gunDetails.localRot;
         gunDetails.impacts = weaponPivot.impacts;
+        if (tpp)
+        {
+            gunDetails.cam = tpp;
+        }
+        gunDetails.rig = rig;
         hasHandgun = gunDetails.handgun;
         rig.SetBool("handgun", hasHandgun);
         if(!unHolstering)

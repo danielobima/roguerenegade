@@ -4,10 +4,16 @@ using UnityEngine;
 
 public class Bot : MonoBehaviour
 {
-    // Start is called before the first frame update
+    BotRig botRig;
+    BotWeapon botWeapon;
+    BotMovement botMovement;
     void Start()
     {
-        
+        botRig = GetComponent<BotRig>();
+        botWeapon = GetComponent<BotWeapon>();
+        botMovement = GetComponent<BotMovement>();
+
+        botRig.SetAim(false);
     }
 
     // Update is called once per frame

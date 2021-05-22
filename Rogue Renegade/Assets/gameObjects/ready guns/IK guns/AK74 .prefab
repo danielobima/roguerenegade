@@ -4880,6 +4880,7 @@ GameObject:
   - component: {fileID: 8024829014613503412}
   - component: {fileID: 1266609399737256701}
   - component: {fileID: 2523070168731424173}
+  - component: {fileID: 4507858725807908390}
   m_Layer: 0
   m_Name: 'AK74 '
   m_TagString: Untagged
@@ -4992,6 +4993,11 @@ MonoBehaviour:
   localPos: {x: 0, y: 0, z: 0.327}
   localRot: {x: 0, y: 180, z: 0}
   handPose: {fileID: 7400000, guid: a2db4d5f5576f1745a744063cfa63680, type: 2}
+  cam: {fileID: 0}
+  camShake: {fileID: 0}
+  maxVerticalRecoil: 10
+  maxHorizontalRecoil: 10
+  recoilDuration: 0.1
   fireRate: 10
   ammoMax: 30
   ammoSpare: 30
@@ -5004,6 +5010,47 @@ MonoBehaviour:
   bulletDrop: 0
   maxLifeTime: 2
   gunDrop: {fileID: 8277673223964292922, guid: ac195aab42d922e42817a931be5058d3, type: 3}
+--- !u!114 &4507858725807908390
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8001883523368668426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 180ecf9b41d478f468eb3e9083753217, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ImpulseDefinition:
+    m_ImpulseChannel: 1
+    m_RawSignal: {fileID: 11400000, guid: 96e3e157569372a498ed53e7d8d9e8c4, type: 2}
+    m_AmplitudeGain: 1
+    m_FrequencyGain: 1
+    m_RepeatMode: 0
+    m_Randomize: 1
+    m_TimeEnvelope:
+      m_AttackShape:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      m_DecayShape:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      m_AttackTime: 0
+      m_SustainTime: 0.2
+      m_DecayTime: 0.7
+      m_ScaleWithImpact: 1
+      m_HoldForever: 0
+    m_ImpactRadius: 100
+    m_DirectionMode: 0
+    m_DissipationMode: 2
+    m_DissipationDistance: 1000
 --- !u!1 &8002222593341026446
 GameObject:
   m_ObjectHideFlags: 0

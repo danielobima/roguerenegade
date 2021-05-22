@@ -118,6 +118,7 @@ public class GameMech : MonoBehaviour
         
         tpp.m_Follow = player;
         tpp.m_LookAt = player;
+        player.GetComponent<PlayerGun>().tpp = tpp;
         screentexts.playerGun = player.GetComponent<PlayerGun>();
 
 

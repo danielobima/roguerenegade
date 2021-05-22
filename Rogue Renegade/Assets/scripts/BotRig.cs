@@ -26,6 +26,11 @@ public class BotRig : MonoBehaviour
         AimLookAt.position = pos;
         BodyAim.weight = 1;
     }
+
+    /// <summary>
+    /// For Switching between weapon pose and weapon aim
+    /// </summary>
+    /// <param name="on">True is weapon aim, False is weapon pose</param>
     public void SetAim(bool on)
     {
         if (on)
