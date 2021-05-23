@@ -196,6 +196,7 @@ MonoBehaviour:
   gunInt: 1
   gunSound: {fileID: 6132734973288818313}
   gunSoundLoops: 1
+  Mag: {fileID: 949672351131991992}
   gunID: 0
   canDestroy: 0
   handgun: 0
@@ -209,6 +210,7 @@ MonoBehaviour:
   cam: {fileID: 0}
   camShake: {fileID: 0}
   rig: {fileID: 0}
+  controller: {fileID: 0}
   maxVerticalRecoil: 10
   maxHorizontalRecoil: 10
   recoilDuration: 0.1
@@ -276,6 +278,7 @@ GameObject:
   - component: {fileID: 952582482721970730}
   - component: {fileID: 963630160531428260}
   - component: {fileID: 971734028708263934}
+  - component: {fileID: 6182515285843375463}
   m_Layer: 0
   m_Name: Pump
   m_TagString: Untagged
@@ -344,6 +347,20 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!64 &6182515285843375463
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 949672351131991992}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300004, guid: bf2593fe0c804b84688e307cfb1ddfae, type: 3}
 --- !u!1 &3980391886854205024
 GameObject:
   m_ObjectHideFlags: 0

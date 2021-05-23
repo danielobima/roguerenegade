@@ -5,6 +5,8 @@ using UnityEngine;
 public class WeaponPickup : MonoBehaviour
 {
     public GameObject prefabToEquip;
+    public int ammoLoaded;
+    public int ammoSpare;
     [HideInInspector]
     public FresnelHighlight highlight;
 
@@ -18,6 +20,8 @@ public class WeaponPickup : MonoBehaviour
         if (playerGun)
         {
             playerGun.gunDrop = prefabToEquip;
+            playerGun.ammoToLoad = ammoLoaded;
+            playerGun.ammoToSpare = ammoSpare;
             if (playerGun.possibleGunPickUp)
             {
                 playerGun.possibleGunPickUp.highlight.defresnate();

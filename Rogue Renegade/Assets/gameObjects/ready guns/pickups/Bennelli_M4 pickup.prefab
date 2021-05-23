@@ -5338,4 +5338,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabToEquip: {fileID: 949480695630177372, guid: abe2924135f596a4185f631d1000336a,
     type: 3}
+  ammoLoaded: 8
+  ammoSpare: 16
   highlight: {fileID: 0}

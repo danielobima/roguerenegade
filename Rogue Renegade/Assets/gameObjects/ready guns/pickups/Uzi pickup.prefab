@@ -5169,6 +5169,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabToEquip: {fileID: 6507238803526086291, guid: c14b5aa49bbec3b4491da47c0c1735a6,
     type: 3}
+  ammoLoaded: 32
+  ammoSpare: 64
   highlight: {fileID: 0}
 --- !u!135 &6051798934814939202
 SphereCollider:

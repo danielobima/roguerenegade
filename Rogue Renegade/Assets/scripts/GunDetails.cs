@@ -9,7 +9,8 @@ public class GunDetails : MonoBehaviour
     public string gunType = "AK47";
     public int gunInt = 0;
     public AudioSource gunSound;
-    public bool gunSoundLoops = true; 
+    public bool gunSoundLoops = true;
+    public GameObject Mag;
     private float d = 0;
     public int gunID = 0;
     public bool canDestroy = true;
@@ -30,6 +31,8 @@ public class GunDetails : MonoBehaviour
     public CinemachineImpulseSource camShake;
     [HideInInspector]
     public Animator rig;
+    [HideInInspector]
+    public WeaponController controller;
     public float maxVerticalRecoil = 10;
     public float maxHorizontalRecoil = 100;
     private float verticalRecoil = 10;
@@ -195,14 +198,31 @@ public class GunDetails : MonoBehaviour
 
     private void shoot()
     {
-        muzzleFlash.Emit(1);
+        if (ammoLoaded > 0)
+        {
+            muzzleFlash.Emit(1);
 
-        Vector3 velocity = (cameraMovement.AimTarget.position - muzzleFlash.transform.position).normalized * bulletSpeed;
-        Bullet bullet = createBullet(muzzleFlash.transform.position, velocity);
-        bullets.Add(bullet);
-        GenerateRecoil();
+            Vector3 velocity = (cameraMovement.AimTarget.position - muzzleFlash.transform.position).normalized * bulletSpeed;
+            Bullet bullet = createBullet(muzzleFlash.transform.position, velocity);
+            bullets.Add(bullet);
+            GenerateRecoil();
+            ammoLoaded--;
+        }
+        else
+        {
+            if(ammoSpare > 0 && !controller.isReloading)
+            {
+                ReloadAnim();
+            }
+        }
+
     }
-
+    private void ReloadAnim()
+    {
+        rig.Play(gunType + "_reload", 0, 0);
+        controller.isReloading = true;
+        controller.SpawnFakeMag();
+    }
     public void stopShooting()
     {
         isShooting = false;
@@ -248,7 +268,6 @@ public class GunDetails : MonoBehaviour
         recoilTime = recoilDuration;
         horizontalRecoil = recoilPattern[recoilIndex].x;
         verticalRecoil = recoilPattern[recoilIndex].y;
-        Debug.Log(recoilPattern[recoilIndex]);
         if (cam)
         {
             camShake.GenerateImpulse(cameraMovement.transform.forward);

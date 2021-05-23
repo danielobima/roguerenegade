@@ -4984,10 +4984,12 @@ MonoBehaviour:
   gunInt: 0
   gunSound: {fileID: 1523582465370705981}
   gunSoundLoops: 1
+  Mag: {fileID: 8002887032596310874}
   gunID: 0
   canDestroy: 0
   handgun: 0
   isContinuousShooting: 1
+  shotsPerSecond: 0
   damage: 1.25
   enemyDamage: 1.25
   localPos: {x: 0, y: 0, z: 0.327}
@@ -4995,6 +4997,8 @@ MonoBehaviour:
   handPose: {fileID: 7400000, guid: a2db4d5f5576f1745a744063cfa63680, type: 2}
   cam: {fileID: 0}
   camShake: {fileID: 0}
+  rig: {fileID: 0}
+  controller: {fileID: 0}
   maxVerticalRecoil: 10
   maxHorizontalRecoil: 10
   recoilDuration: 0.1
@@ -5141,6 +5145,7 @@ GameObject:
   - component: {fileID: 8005290720544011308}
   - component: {fileID: 8030260307160870532}
   - component: {fileID: 8024016529241443572}
+  - component: {fileID: 704607178856410967}
   m_Layer: 0
   m_Name: Mag
   m_TagString: Untagged
@@ -5209,6 +5214,20 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!64 &704607178856410967
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8002887032596310874}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300006, guid: 6f966b9a7c817ed49973b4a8762cbbdf, type: 3}
 --- !u!1 &8048486990730339033
 GameObject:
   m_ObjectHideFlags: 0

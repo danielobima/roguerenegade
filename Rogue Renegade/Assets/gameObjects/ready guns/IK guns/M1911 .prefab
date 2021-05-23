@@ -585,6 +585,7 @@ MonoBehaviour:
   gunInt: 5
   gunSound: {fileID: 6737457279530202785}
   gunSoundLoops: 1
+  Mag: {fileID: 2843624540074629545}
   gunID: 0
   canDestroy: 0
   handgun: 1
@@ -598,6 +599,7 @@ MonoBehaviour:
   cam: {fileID: 0}
   camShake: {fileID: 0}
   rig: {fileID: 0}
+  controller: {fileID: 0}
   maxVerticalRecoil: 10
   maxHorizontalRecoil: 10
   recoilDuration: 0.1
@@ -665,6 +667,7 @@ GameObject:
   - component: {fileID: 2846235038072396377}
   - component: {fileID: 2811975269613959085}
   - component: {fileID: 2820391805513561391}
+  - component: {fileID: 5376715535520794292}
   m_Layer: 0
   m_Name: Magazin
   m_TagString: Untagged
@@ -733,6 +736,20 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!64 &5376715535520794292
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2843624540074629545}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300006, guid: b812e42521a5a27499e76cc5ed56e3ac, type: 3}
 --- !u!1 &5103845037839548542
 GameObject:
   m_ObjectHideFlags: 0

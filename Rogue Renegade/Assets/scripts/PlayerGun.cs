@@ -15,6 +15,8 @@ public class PlayerGun : WeaponController {
     
     private float turnSmoothing = 0.01f;
     private Vector3 turnSmoothRef;
+    [HideInInspector]
+    public string ammoText = "0/0";
 
     //Use this instead of Start()
     public override void StartFunc()
@@ -28,6 +30,7 @@ public class PlayerGun : WeaponController {
         
         if (gun)
         {
+            ammoText = gunDetails.ammoLoaded + "/" + gunDetails.ammoSpare;
             if (Input.GetButtonDown("Fire1"))
             {
                 if (gunDetails.isContinuousShooting)

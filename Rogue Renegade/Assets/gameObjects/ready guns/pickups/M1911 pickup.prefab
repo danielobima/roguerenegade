@@ -310,6 +310,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabToEquip: {fileID: 2843592534378945299, guid: 02bce6dfbc9e9f543948c0340a9c4d24,
     type: 3}
+  ammoLoaded: 18
+  ammoSpare: 36
   highlight: {fileID: 0}
 --- !u!135 &1001171400728369043
 SphereCollider:

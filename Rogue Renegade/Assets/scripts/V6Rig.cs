@@ -22,9 +22,21 @@ public class V6Rig : MonoBehaviour
     {
         weaponController.EndHolsterRifle();
     }
+    public void Reload()
+    {
+        weaponController.Reload();
+    }
+    public void SpawnMag()
+    {
+        weaponController.SpawnMag();
+    }
+    public void DropMag()
+    {
+        weaponController.DropMag();
+    }
 
 
-    
+
     public void HolsteringHandGun()
     {
         weaponController.HolsteringHandGun();

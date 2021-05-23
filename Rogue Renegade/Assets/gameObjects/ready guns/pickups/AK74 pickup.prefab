@@ -161,6 +161,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabToEquip: {fileID: 8001883523368668426, guid: e61506268290edf4c9d46377872fe4c1,
     type: 3}
+  ammoLoaded: 30
+  ammoSpare: 60
   highlight: {fileID: 0}
 --- !u!1 &8277706356133204260
 GameObject:

@@ -185,7 +185,6 @@ public class ScreenTexts : MonoBehaviour
                     hasSetOn = true;
                     hasSetOff = false;
                 }
-
                 AmmoText.text = playerGun.ammoText;
                 if (playerGun.ammoText == "0/0")
                 {

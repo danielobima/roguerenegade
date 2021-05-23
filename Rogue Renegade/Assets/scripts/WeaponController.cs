@@ -53,6 +53,10 @@ public class WeaponController : MonoBehaviour
 
     [HideInInspector]
     public bool switchingGun = false;
+    [HideInInspector]
+    public int ammoToLoad;
+    [HideInInspector]
+    public int ammoToSpare;
 
     [HideInInspector]
     public bool attacking = false;
@@ -62,12 +66,14 @@ public class WeaponController : MonoBehaviour
     public bool isReloading = false;
 
     public GameObject bloodParticleSystem;
-    [HideInInspector]
-    public string ammoText;
+    
 
     
 
     public Animator rig;
+
+    private GameObject fakeMag;
+    private GameObject fakeMag2;
 
 
     //To make gun drops accessible by the pick up button
@@ -243,6 +249,40 @@ public class WeaponController : MonoBehaviour
             setAnim();
         }
     }
+    public void Reload()
+    {
+        if(gunDetails.ammoSpare >= gunDetails.ammoMax)
+        {
+            gunDetails.ammoLoaded = gunDetails.ammoMax;
+            gunDetails.ammoSpare -= gunDetails.ammoMax;
+        }
+        else
+        {
+            gunDetails.ammoLoaded = gunDetails.ammoSpare;
+            gunDetails.ammoSpare = 0;
+        }
+        //Destroy(fakeMag2);
+        gunDetails.Mag.SetActive(true);
+        
+        isReloading = false;
+    }
+    public void SpawnMag()
+    {
+        //fakeMag2 = Instantiate(gunDetails.Mag,leftHandGrip);
+    }
+    public void DropMag()
+    {
+        fakeMag.transform.SetParent(null);
+        fakeMag.AddComponent<Rigidbody>();
+        fakeMag.GetComponent<MeshCollider>().enabled = true;
+        Destroy(fakeMag, 10);
+    }
+    public void SpawnFakeMag()
+    {
+        fakeMag = Instantiate(gunDetails.Mag, leftHandGrip);
+        fakeMag.SetActive(true);
+        gunDetails.Mag.SetActive(false);
+    }
 
 
 
@@ -267,6 +307,8 @@ public class WeaponController : MonoBehaviour
         gun = newGun.gameObject;
         gunDrop = null;
         gunDetails = newGun;
+        gunDetails.ammoLoaded = ammoToLoad;
+        gunDetails.ammoSpare = ammoToSpare;
         gun.transform.SetParent(weaponPivot.transform);
         gun.transform.localPosition = gunDetails.localPos;
         gun.transform.localEulerAngles = gunDetails.localRot;
@@ -276,6 +318,7 @@ public class WeaponController : MonoBehaviour
             gunDetails.cam = tpp;
         }
         gunDetails.rig = rig;
+        gunDetails.controller = this;
         hasHandgun = gunDetails.handgun;
         rig.SetBool("handgun", hasHandgun);
         if(!unHolstering)
@@ -286,10 +329,10 @@ public class WeaponController : MonoBehaviour
     }
     private void setAnim()
     {
-        rig.Play(gunDetails.gunType, 0);
+        rig.Play(gunDetails.gunType, 0,0);
     }
     private void initAnim()
     {
-        rig.Play("BASE", 0);
+        rig.Play("BASE", 0,0);
     }
 }
