@@ -239,12 +239,13 @@ MonoBehaviour:
   HandgunSlot: {fileID: 2265535652172220705}
   spine1: {fileID: 860332583345524336}
   switchingGun: 0
+  ammoToLoad: 0
+  ammoToSpare: 0
   attacking: 0
   addSpeed: 0.5
   isReloading: 0
   bloodParticleSystem: {fileID: 5209554905794623516, guid: 8f08a9b059de55e4fa6c4a35c9d96b78,
     type: 3}
-  ammoText: 
   rig: {fileID: 6097035338916799214}
   gunDrop: {fileID: 0}
   grenadeDrop: {fileID: 0}
@@ -507,6 +508,36 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 24.402666
       objectReference: {fileID: 0}
+    - target: {fileID: -7369257625111246647, guid: 07948580d71b4ce4988a4b9ed9b04695,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 79dd7d783110fe14db781a2e60e91be9, type: 2}
+    - target: {fileID: -7369257625111246647, guid: 07948580d71b4ce4988a4b9ed9b04695,
+        type: 3}
+      propertyPath: m_Materials.Array.data[3]
+      value: 
+      objectReference: {fileID: 2100000, guid: 9f130b8860779b546b83127c33c6c93a, type: 2}
+    - target: {fileID: -7369257625111246647, guid: 07948580d71b4ce4988a4b9ed9b04695,
+        type: 3}
+      propertyPath: m_Materials.Array.data[2]
+      value: 
+      objectReference: {fileID: 2100000, guid: dc5afecb47e6a264b8fd66267db1f253, type: 2}
+    - target: {fileID: -7369257625111246647, guid: 07948580d71b4ce4988a4b9ed9b04695,
+        type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 4185de2f74802644db00dcb53bd0cc7b, type: 2}
+    - target: {fileID: -7369257625111246647, guid: 07948580d71b4ce4988a4b9ed9b04695,
+        type: 3}
+      propertyPath: m_Materials.Array.data[4]
+      value: 
+      objectReference: {fileID: 2100000, guid: 0b5413625fe183644b808d9f75ae4e50, type: 2}
+    - target: {fileID: -7369257625111246647, guid: 07948580d71b4ce4988a4b9ed9b04695,
+        type: 3}
+      propertyPath: m_Materials.Array.data[5]
+      value: 
+      objectReference: {fileID: 2100000, guid: 959f08438a1dd3840a155669de69f813, type: 2}
     - target: {fileID: -7359990308800947477, guid: 07948580d71b4ce4988a4b9ed9b04695,
         type: 3}
       propertyPath: m_Layer
@@ -2238,6 +2269,11 @@ PrefabInstance:
       propertyPath: m_Data.m_Hint
       value: 
       objectReference: {fileID: 7697299948737218138}
+    - target: {fileID: 3972579915689532986, guid: 50711be8af280c043b0cec0c146198ed,
+        type: 3}
+      propertyPath: m_Data.m_SourceObjects.m_Item0.transform
+      value: 
+      objectReference: {fileID: 4934381880838649485}
     - target: {fileID: 4473023441346803330, guid: 50711be8af280c043b0cec0c146198ed,
         type: 3}
       propertyPath: m_Name
@@ -2258,11 +2294,16 @@ PrefabInstance:
       propertyPath: m_Data.m_ConstrainedObject
       value: 
       objectReference: {fileID: 7720894394278382760}
+    - target: {fileID: 6832626485756920010, guid: 50711be8af280c043b0cec0c146198ed,
+        type: 3}
+      propertyPath: m_Data.m_SourceObjects.m_Item0.transform
+      value: 
+      objectReference: {fileID: 4934381880838649485}
     - target: {fileID: 7650610699325143063, guid: 50711be8af280c043b0cec0c146198ed,
         type: 3}
       propertyPath: m_Data.m_SourceObjects.m_Item0.transform
       value: 
-      objectReference: {fileID: 7720894394278382760}
+      objectReference: {fileID: 4934381880838649485}
     - target: {fileID: 8171183486699267030, guid: 50711be8af280c043b0cec0c146198ed,
         type: 3}
       propertyPath: m_Data.m_SourceObjects.m_Item0.transform

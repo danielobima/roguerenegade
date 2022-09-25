@@ -146,7 +146,7 @@ public class WeaponController : MonoBehaviour
         if (isHolsteringRifle)
         {
             holsteredRifle.transform.SetParent(RifleSlot);
-            //holsteredRifle.transform.localPosition = new Vector3(0.1523762f, 0.1048426f, 0.01466675f);
+            holsteredRifle.transform.localPosition = new Vector3(0.1523762f, 0.1048426f, 0.01466675f);
         }
     }
     public void EndHolsterRifle()
@@ -180,7 +180,7 @@ public class WeaponController : MonoBehaviour
         if (isHolsteringHandgun)
         {
             holsteredHandGun.transform.SetParent(HandgunSlot);
-            //holsteredHandGun.transform.localPosition = new Vector3(0.19f, 0.701f, -0.044f);
+            holsteredHandGun.transform.localPosition = new Vector3(0.19f, 0.701f, -0.044f);
         }
     }
     public void EndHolsterHandgun()
